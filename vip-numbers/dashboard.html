@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIP Numbers Admin | Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: { 50:'#FFF9E6',100:'#FFF0BF',200:'#FFE080',300:'#FFD040',400:'#E8C547',500:'#D4AF37',600:'#B8942E',700:'#8C6F23',800:'#604A18',900:'#34260D' },
+                        dark: { 50:'#2A2A2A',100:'#252525',200:'#1F1F1F',300:'#1A1A1A',400:'#161616',500:'#121212',600:'#0E0E0E',700:'#0A0A0A',800:'#060606',900:'#030303' }
+                    },
+                    fontFamily: { display:['Playfair Display','serif'], body:['DM Sans','sans-serif'] },
+                    borderRadius: { xl:'16px', '2xl':'20px', '3xl':'24px' }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --bg-primary:#0D0D0D;--bg-secondary:#1A1A1A;--bg-tertiary:#252525;
+            --gold:#D4AF37;--gold-light:#E8C547;--gold-dark:#B8942E;
+            --text-primary:#FFFFFF;--text-secondary:#A0A0A0;--text-muted:#666666;
+            --blue-accent:#4A90D9;--green:#22C55E;--red:#EF4444;--orange:#F59E0B;
+            --border:rgba(255,255,255,0.06);--glass-bg:rgba(26,26,26,0.6);--glass-border:rgba(212,175,55,0.08);
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'DM Sans',sans-serif;background:var(--bg-primary);color:var(--text-primary);overflow-x:hidden}
+        ::-webkit-scrollbar{width:6px}
+        ::-webkit-scrollbar-track{background:var(--bg-primary)}
+        ::-webkit-scrollbar-thumb{background:var(--bg-tertiary);border-radius:3px}
+        ::-webkit-scrollbar-thumb:hover{background:var(--gold-dark)}
+
+        .bg-gradient-animated{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+        .bg-gradient-animated::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+            background:radial-gradient(ellipse at 20% 50%,rgba(212,175,55,0.03) 0%,transparent 50%),
+            radial-gradient(ellipse at 80% 20%,rgba(74,144,217,0.02) 0%,transparent 50%),
+            radial-gradient(ellipse at 50% 80%,rgba(212,175,55,0.02) 0%,transparent 50%);
+            animation:bgShift 20s ease-in-out infinite alternate}
+        @keyframes bgShift{0%{transform:translate(0,0) rotate(0deg)}50%{transform:translate(-2%,2%) rotate(1deg)}100%{transform:translate(2%,-1%) rotate(-1deg)}}
+
+        .glass-card{background:var(--glass-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:20px;transition:all .3s cubic-bezier(.4,0,.2,1)}
+        .glass-card:hover{border-color:rgba(212,175,55,0.15);box-shadow:0 8px 32px rgba(212,175,55,0.05)}
+
+        .sidebar{position:fixed;top:0;left:0;width:260px;height:100vh;background:rgba(18,18,18,0.95);backdrop-filter:blur(20px);border-right:1px solid var(--border);z-index:50;transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
+        .sidebar-nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;margin:2px 12px;border-radius:12px;color:var(--text-secondary);font-size:14px;font-weight:500;cursor:pointer;transition:all .2s ease;text-decoration:none}
+        .sidebar-nav-item:hover{color:var(--text-primary);background:rgba(255,255,255,0.04)}
+        .sidebar-nav-item.active{color:var(--gold);background:rgba(212,175,55,0.08)}
+        .sidebar-nav-item.active i{color:var(--gold)}
+        .sidebar-nav-item i{width:20px;text-align:center;font-size:15px;transition:color .2s ease}
+
+        .main-header{position:fixed;top:0;left:260px;right:0;height:72px;background:rgba(13,13,13,0.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:40;display:flex;align-items:center;padding:0 32px;transition:left .3s cubic-bezier(.4,0,.2,1)}
+        .main-content{margin-left:260px;margin-top:72px;padding:32px;min-height:calc(100vh - 72px);position:relative;z-index:1;transition:margin-left .3s cubic-bezier(.4,0,.2,1)}
+
+        .stat-card{position:relative;overflow:hidden}
+        .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:20px 20px 0 0}
+        .stat-card.gold::before{background:linear-gradient(90deg,var(--gold),var(--gold-light))}
+        .stat-card.green::before{background:linear-gradient(90deg,#22C55E,#4ADE80)}
+        .stat-card.blue::before{background:linear-gradient(90deg,#4A90D9,#60A5FA)}
+        .stat-card.purple::before{background:linear-gradient(90deg,#D4AF37,#FFE080)}
+        .stat-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px}
+
+        .data-table{width:100%;border-collapse:separate;border-spacing:0}
+        .data-table thead th{padding:12px 16px;text-align:left;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);border-bottom:1px solid var(--border)}
+        .data-table tbody tr{transition:background .15s ease}
+        .data-table tbody tr:hover{background:rgba(255,255,255,0.02)}
+        .data-table tbody td{padding:14px 16px;font-size:13px;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,0.03)}
+
+        .status-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+        .status-available{background:rgba(34,197,94,0.1);color:#22C55E}
+        .status-sold{background:rgba(239,68,68,0.1);color:#EF4444}
+        .status-reserved{background:rgba(245,158,11,0.1);color:#F59E0B}
+        .status-paid{background:rgba(34,197,94,0.1);color:#22C55E}
+        .status-pending{background:rgba(245,158,11,0.1);color:#F59E0B}
+
+        .action-btn{width:32px;height:32px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;border:none;cursor:pointer;transition:all .2s ease}
+        .action-btn.view{background:rgba(74,144,217,0.1);color:#4A90D9}
+        .action-btn.view:hover{background:rgba(74,144,217,0.2)}
+        .action-btn.edit{background:rgba(212,175,55,0.1);color:#D4AF37}
+        .action-btn.edit:hover{background:rgba(212,175,55,0.2)}
+        .action-btn.delete{background:rgba(239,68,68,0.1);color:#EF4444}
+        .action-btn.delete:hover{background:rgba(239,68,68,0.2)}
+
+        .progress-track{width:100%;height:8px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden}
+        .progress-fill{height:100%;border-radius:4px;transition:width 1.5s cubic-bezier(.4,0,.2,1);width:0}
+
+        .timeline-item{position:relative;padding-left:32px;padding-bottom:24px}
+        .timeline-item::before{content:'';position:absolute;left:7px;top:24px;bottom:0;width:1px;background:var(--border)}
+        .timeline-item:last-child::before{display:none}
+        .timeline-dot{position:absolute;left:0;top:6px;width:15px;height:15px;border-radius:50%;border:2px solid;background:var(--bg-primary)}
+
+        .quick-action-btn{display:flex;align-items:center;gap:10px;width:100%;padding:12px 16px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--text-secondary);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s ease;font-family:'DM Sans',sans-serif}
+        .quick-action-btn:hover{background:rgba(212,175,55,0.06);border-color:rgba(212,175,55,0.2);color:var(--gold)}
+        .quick-action-btn i{width:20px;text-align:center}
+
+        .toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+        .toast{padding:14px 20px;border-radius:12px;background:rgba(26,26,26,0.95);backdrop-filter:blur(20px);border:1px solid var(--glass-border);color:var(--text-primary);font-size:13px;font-weight:500;display:flex;align-items:center;gap:10px;animation:toastIn .3s cubic-bezier(.4,0,.2,1);box-shadow:0 8px 32px rgba(0,0,0,0.4)}
+        .toast.removing{animation:toastOut .3s cubic-bezier(.4,0,.2,1) forwards}
+        @keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+        @keyframes toastOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(40px)}}
+
+        .dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:200px;background:rgba(26,26,26,0.95);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:14px;padding:8px;opacity:0;visibility:hidden;transform:translateY(-8px);transition:all .2s cubic-bezier(.4,0,.2,1);box-shadow:0 16px 48px rgba(0,0,0,0.4)}
+        .dropdown-menu.open{opacity:1;visibility:visible;transform:translateY(0)}
+        .dropdown-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;color:var(--text-secondary);font-size:13px;cursor:pointer;transition:all .15s ease}
+        .dropdown-item:hover{background:rgba(255,255,255,0.04);color:var(--text-primary)}
+        .dropdown-item i{width:18px;text-align:center;font-size:14px}
+
+        .notification-panel{position:absolute;top:calc(100% + 8px);right:0;width:360px;background:rgba(26,26,26,0.95);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:16px;opacity:0;visibility:hidden;transform:translateY(-8px);transition:all .2s cubic-bezier(.4,0,.2,1);box-shadow:0 16px 48px rgba(0,0,0,0.4);overflow:hidden}
+        .notification-panel.open{opacity:1;visibility:visible;transform:translateY(0)}
+
+        .search-input{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:9px 16px 9px 40px;color:var(--text-primary);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:all .2s ease;width:280px}
+        .search-input::placeholder{color:var(--text-muted)}
+        .search-input:focus{border-color:rgba(212,175,55,0.3);background:rgba(255,255,255,0.06);box-shadow:0 0 0 3px rgba(212,175,55,0.05)}
+
+        .chart-filter{padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s ease;font-family:'DM Sans',sans-serif}
+        .chart-filter:hover{color:var(--text-secondary);border-color:rgba(255,255,255,0.1)}
+        .chart-filter.active{background:rgba(212,175,55,0.1);border-color:rgba(212,175,55,0.3);color:var(--gold)}
+
+        .section-title{font-family:'Playfair Display',serif;font-weight:600;font-size:18px;color:var(--text-primary)}
+        .fade-in{opacity:0;transform:translateY(20px);transition:all .6s cubic-bezier(.4,0,.2,1)}
+        .fade-in.visible{opacity:1;transform:translateY(0)}
+
+        .revenue-card{padding:16px;border-radius:14px;background:rgba(255,255,255,0.02);border:1px solid var(--border);transition:all .2s ease}
+        .revenue-card:hover{border-color:rgba(212,175,55,0.15);background:rgba(212,175,55,0.03)}
+
+        .mobile-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:45;opacity:0;visibility:hidden;transition:all .3s ease}
+        .mobile-overlay.open{opacity:1;visibility:visible}
+
+        .hamburger{display:none;width:40px;height:40px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text-secondary);font-size:18px;cursor:pointer;align-items:center;justify-content:center;transition:all .2s ease}
+        .hamburger:hover{background:rgba(255,255,255,0.04);color:var(--text-primary)}
+
+        .customer-avatar{width:40px;height:40px;border-radius:12px;object-fit:cover;border:2px solid var(--border)}
+
+        .loading-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg-primary);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;transition:opacity .5s ease}
+        .loading-screen.hidden{opacity:0;pointer-events:none}
+        .loading-spinner{width:40px;height:40px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+
+        .gold-shimmer{position:relative;overflow:hidden}
+        .gold-shimmer::after{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:linear-gradient(45deg,transparent 40%,rgba(212,175,55,0.05) 45%,rgba(212,175,55,0.1) 50%,rgba(212,175,55,0.05) 55%,transparent 60%);animation:shimmer 4s ease-in-out infinite}
+        @keyframes shimmer{0%{transform:translateX(-100%) translateY(-100%)}100%{transform:translateX(100%) translateY(100%)}}
+
+        .number-display{font-family:'DM Sans',monospace;font-weight:600;letter-spacing:.05em}
+
+        @media(max-width:1024px){
+            .sidebar{transform:translateX(-100%)}
+            .sidebar.open{transform:translateX(0)}
+            .main-header{left:0}
+            .main-content{margin-left:0}
+            .hamburger{display:flex}
+            .search-input{width:200px}
+        }
+        @media(max-width:768px){
+            .main-content{padding:20px 16px}
+            .search-input{display:none}
+            .notification-panel{width:300px;right:-50px}
+        }
+        @media(prefers-reduced-motion:reduce){
+            *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-spinner"></div>
+        <span style="color:var(--gold);font-family:'Playfair Display',serif;font-size:14px;letter-spacing:0.1em">VIP NUMBERS</span>
+    </div>
+
+    <!-- Animated Background -->
+    <div class="bg-gradient-animated" aria-hidden="true"></div>
+
+    <!-- Mobile Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
+        <div style="padding:24px 24px 20px;border-bottom:1px solid var(--border)">
+            <div style="display:flex;align-items:center;gap:12px">
+                <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));display:flex;align-items:center;justify-content:center">
+                    <i class="fas fa-crown" style="color:#0D0D0D;font-size:16px"></i>
+                </div>
+                <div>
+                    <div style="font-family:'Playfair Display',serif;font-weight:700;font-size:16px;color:var(--gold);line-height:1.2">VIP Numbers</div>
+                    <div style="font-size:11px;color:var(--text-muted);letter-spacing:0.08em;text-transform:uppercase">Admin Panel</div>
+                </div>
+            </div>
+        </div>
+        <nav style="flex:1;overflow-y:auto;padding:16px 0">
+            <div style="padding:0 24px 8px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted)">Main</div>
+            <a class="sidebar-nav-item active" data-page="dashboard" onclick="setActivePage(this)">
+                <i class="fas fa-th-large"></i><span>Dashboard</span>
+            </a>
+            <a class="sidebar-nav-item" data-page="numbers" onclick="setActivePage(this)">
+                <i class="fas fa-mobile-alt"></i><span>VIP Numbers</span>
+            </a>
+            <a class="sidebar-nav-item" data-page="categories" onclick="setActivePage(this)">
+                <i class="fas fa-tags"></i><span>Categories</span>
+            </a>
+            <div style="padding:16px 24px 8px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted)">Management</div>
+            <a class="sidebar-nav-item" data-page="orders" onclick="setActivePage(this)">
+                <i class="fas fa-shopping-bag"></i><span>Orders</span>
+            </a>
+            <a class="sidebar-nav-item" data-page="customers" onclick="setActivePage(this)">
+                <i class="fas fa-users"></i><span>Customers</span>
+            </a>
+            <a class="sidebar-nav-item" data-page="payments" onclick="setActivePage(this)">
+                <i class="fas fa-credit-card"></i><span>Payments</span>
+            </a>
+            <a class="sidebar-nav-item" data-page="enquiries" onclick="setActivePage(this)">
+                <i class="fas fa-envelope"></i><span>Enquiries</span>
+                <span style="margin-left:auto;background:rgba(239,68,68,0.15);color:#EF4444;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px">5</span>
+            </a>
+            <div style="padding:16px 24px 8px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted)">Analytics</div>
+            <a class="sidebar-nav-item" data-page="reports" onclick="setActivePage(this)">
+                <i class="fas fa-chart-bar"></i><span>Reports</span>
+            </a>
+            <a class="sidebar-nav-item" data-page="settings" onclick="setActivePage(this)">
+                <i class="fas fa-cog"></i><span>Settings</span>
+            </a>
+        </nav>
+        <div style="padding:16px;border-top:1px solid var(--border)">
+            <a class="sidebar-nav-item" style="margin:0;color:var(--red)" onclick="showToast('Logged out successfully','info')">
+                <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Header -->
+    <header class="main-header" id="mainHeader">
+        <button class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div style="margin-left:16px">
+            <h1 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:600;line-height:1.2">Dashboard</h1>
+            <p style="font-size:11px;color:var(--text-muted)">Welcome back, Admin</p>
+        </div>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:16px">
+            <div style="position:relative">
+                <i class="fas fa-search" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:13px"></i>
+                <input type="text" class="search-input" placeholder="Search numbers, orders..." aria-label="Search">
+            </div>
+            <div style="position:relative">
+                <button onclick="toggleNotifications()" style="width:40px;height:40px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text-secondary);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s ease;position:relative" aria-label="Notifications">
+                    <i class="fas fa-bell"></i>
+                    <span style="position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--red);border-radius:50%;border:2px solid var(--bg-primary)"></span>
+                </button>
+                <div class="notification-panel" id="notifPanel">
+                    <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+                        <span style="font-weight:600;font-size:14px">Notifications</span>
+                        <span style="font-size:11px;color:var(--gold);cursor:pointer" onclick="showToast('All marked as read','success')">Mark all read</span>
+                    </div>
+                    <div style="max-height:320px;overflow-y:auto" id="notifList"></div>
+                </div>
+            </div>
+            <div style="position:relative">
+                <button onclick="toggleProfile()" style="display:flex;align-items:center;gap:10px;padding:4px 12px 4px 4px;border-radius:12px;border:1px solid var(--border);background:transparent;cursor:pointer;transition:all .2s ease" aria-label="Profile menu">
+                    <img src="https://picsum.photos/seed/admin42/80/80.jpg" style="width:36px;height:36px;border-radius:10px;object-fit:cover" alt="Admin">
+                    <div style="text-align:left">
+                        <div style="font-size:13px;font-weight:600;color:var(--text-primary);line-height:1.2">Admin User</div>
+                        <div style="font-size:10px;color:var(--text-muted)">Super Admin</div>
+                    </div>
+                    <i class="fas fa-chevron-down" style="font-size:10px;color:var(--text-muted);margin-left:4px"></i>
+                </button>
+                <div class="dropdown-menu" id="profileDropdown">
+                    <div class="dropdown-item" onclick="showToast('Opening profile...','info')"><i class="fas fa-user"></i>My Profile</div>
+                    <div class="dropdown-item" onclick="showToast('Opening settings...','info')"><i class="fas fa-cog"></i>Account Settings</div>
+                    <div class="dropdown-item" onclick="showToast('Opening billing...','info')"><i class="fas fa-receipt"></i>Billing</div>
+                    <div style="height:1px;background:var(--border);margin:4px 0"></div>
+                    <div class="dropdown-item" style="color:var(--red)" onclick="showToast('Logged out successfully','info')"><i class="fas fa-sign-out-alt"></i>Logout</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+
+        <!-- Stats Cards -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-8 fade-in" aria-label="Statistics overview">
+            <div class="glass-card stat-card gold p-6">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between">
+                    <div>
+                        <p style="font-size:12px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Total Numbers</p>
+                        <p style="font-size:32px;font-weight:700;color:var(--text-primary);line-height:1">12,847</p>
+                        <p style="font-size:12px;color:var(--green);margin-top:8px"><i class="fas fa-arrow-up" style="font-size:10px"></i> 12.5% from last month</p>
+                    </div>
+                    <div class="stat-icon" style="background:rgba(212,175,55,0.1);color:var(--gold)"><i class="fas fa-mobile-alt"></i></div>
+                </div>
+            </div>
+            <div class="glass-card stat-card green p-6">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between">
+                    <div>
+                        <p style="font-size:12px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Available Numbers</p>
+                        <p style="font-size:32px;font-weight:700;color:var(--text-primary);line-height:1">8,234</p>
+                        <p style="font-size:12px;color:var(--green);margin-top:8px"><i class="fas fa-check-circle" style="font-size:10px"></i> 64.1% availability rate</p>
+                    </div>
+                    <div class="stat-icon" style="background:rgba(34,197,94,0.1);color:#22C55E"><i class="fas fa-check"></i></div>
+                </div>
+            </div>
+            <div class="glass-card stat-card blue p-6">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between">
+                    <div>
+                        <p style="font-size:12px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Sold Numbers</p>
+                        <p style="font-size:32px;font-weight:700;color:var(--text-primary);line-height:1">4,613</p>
+                        <p style="font-size:12px;color:var(--blue-accent);margin-top:8px"><i class="fas fa-arrow-up" style="font-size:10px"></i> 8.3% revenue growth</p>
+                    </div>
+                    <div class="stat-icon" style="background:rgba(74,144,217,0.1);color:#4A90D9"><i class="fas fa-rupee-sign"></i></div>
+                </div>
+            </div>
+            <div class="glass-card stat-card purple gold-shimmer p-6">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between">
+                    <div>
+                        <p style="font-size:12px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Premium Numbers</p>
+                        <p style="font-size:32px;font-weight:700;color:var(--gold);line-height:1">1,842</p>
+                        <p style="font-size:12px;color:var(--gold);margin-top:8px"><i class="fas fa-crown" style="font-size:10px"></i> High-value inventory</p>
+                    </div>
+                    <div class="stat-icon" style="background:rgba(212,175,55,0.15);color:var(--gold)"><i class="fas fa-crown"></i></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Numbers + Latest Orders -->
+        <section class="grid grid-cols-1 xl:grid-cols-3 gap-5 mb-8">
+            <div class="xl:col-span-2 glass-card fade-in" style="overflow:hidden">
+                <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+                    <h2 class="section-title">Recent Numbers</h2>
+                    <button onclick="showToast('Viewing all numbers','info')" style="font-size:12px;color:var(--gold);background:none;border:none;cursor:pointer;font-weight:600;font-family:'DM Sans',sans-serif">View All <i class="fas fa-arrow-right" style="font-size:10px;margin-left:4px"></i></button>
+                </div>
+                <div style="overflow-x:auto">
+                    <table class="data-table" id="numbersTable">
+                        <thead>
+                            <tr><th>VIP Number</th><th>Category</th><th>Price</th><th>Status</th><th>Date</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody id="numbersBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="glass-card fade-in" style="overflow:hidden">
+                <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+                    <h2 class="section-title">Latest Orders</h2>
+                    <button onclick="showToast('Viewing all orders','info')" style="font-size:12px;color:var(--gold);background:none;border:none;cursor:pointer;font-weight:600;font-family:'DM Sans',sans-serif">View All</button>
+                </div>
+                <div style="padding:4px 0" id="ordersList"></div>
+            </div>
+        </section>
+
+        <!-- Recent Customers + Sales Analytics -->
+        <section class="grid grid-cols-1 xl:grid-cols-2 gap-5 mb-8">
+            <div class="glass-card fade-in" style="overflow:hidden">
+                <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+                    <h2 class="section-title">Recent Customers</h2>
+                    <button onclick="showToast('Viewing all customers','info')" style="font-size:12px;color:var(--gold);background:none;border:none;cursor:pointer;font-weight:600;font-family:'DM Sans',sans-serif">View All</button>
+                </div>
+                <div style="padding:8px 0" id="customersList"></div>
+            </div>
+            <div class="glass-card fade-in" style="overflow:hidden">
+                <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+                    <h2 class="section-title">Sales Analytics</h2>
+                    <div style="display:flex;gap:6px">
+                        <button class="chart-filter" onclick="updateChart('daily',this)">Daily</button>
+                        <button class="chart-filter" onclick="updateChart('weekly',this)">Weekly</button>
+                        <button class="chart-filter active" onclick="updateChart('monthly',this)">Monthly</button>
+                    </div>
+                </div>
+                <div style="padding:20px 24px">
+                    <canvas id="salesChart" height="220"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Category Distribution + Number Availability -->
+        <section class="grid grid-cols-1 xl:grid-cols-2 gap-5 mb-8">
+            <div class="glass-card fade-in" style="overflow:hidden">
+                <div style="padding:20px 24px;border-bottom:1px solid var(--border)">
+                    <h2 class="section-title">Category Distribution</h2>
+                </div>
+                <div style="padding:24px;display:flex;align-items:center;gap:32px;flex-wrap:wrap;justify-content:center">
+                    <div style="width:200px;height:200px;flex-shrink:0">
+                        <canvas id="donutChart"></canvas>
+                    </div>
+                    <div id="donutLegend" style="display:flex;flex-direction:column;gap:12px"></div>
+                </div>
+            </div>
+            <div class="glass-card fade-in" style="overflow:hidden">
+                <div style="padding:20px 24px;border-bottom:1px solid var(--border)">
+                    <h2 class="section-title">Number Availability</h2>
+                </div>
+                <div style="padding:24px" id="availabilityBars"></div>
+            </div>
+        </section>
+
+        <!-- Activity Timeline + Quick Actions + Revenue -->
+        <section class="grid grid-cols-1 xl:grid-cols-3 gap-5 mb-8">
+            <div class="glass-card fade-in" style="overflow:hidden">
+                <div style="padding:20px 24px;border-bottom:1px solid var(--border)">
+                    <h2 class="section-title">Recent Activity</h2>
+                </div>
+                <div style="padding:20px 24px" id="activityTimeline"></div>
+            </div>
+            <div class="glass-card fade-in" style="overflow:hidden">
+                <div style="padding:20px 24px;border-bottom:1px solid var(--border)">
+                    <h2 class="section-title">Quick Actions</h2>
+                </div>
+                <div style="padding:16px 20px;display:flex;flex-direction:column;gap:8px">
+                    <button class="quick-action-btn" onclick="showToast('Add Number form opened','success')"><i class="fas fa-plus" style="color:var(--gold)"></i>Add New VIP Number</button>
+                    <button class="quick-action-btn" onclick="showToast('Import wizard launched','success')"><i class="fas fa-file-import" style="color:var(--blue-accent)"></i>Import Numbers</button>
+                    <button class="quick-action-btn" onclick="showToast('Exporting data as CSV...','success')"><i class="fas fa-file-export" style="color:var(--green)"></i>Export Data</button>
+                    <button class="quick-action-btn" onclick="showToast('Customer form opened','success')"><i class="fas fa-user-plus" style="color:var(--orange)"></i>Add Customer</button>
+                    <button class="quick-action-btn" onclick="showToast('Generating report...','success')"><i class="fas fa-chart-pie" style="color:#A78BFA"></i>Generate Report</button>
+                </div>
+            </div>
+            <div class="glass-card fade-in" style="overflow:hidden">
+                <div style="padding:20px 24px;border-bottom:1px solid var(--border)">
+                    <h2 class="section-title">Revenue Summary</h2>
+                </div>
+                <div style="padding:20px;display:flex;flex-direction:column;gap:12px" id="revenueCards"></div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="fade-in" style="padding:24px 0;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+            <p style="font-size:12px;color:var(--text-muted)">2025 VIP Numbers Admin. All rights reserved.</p>
+            <div style="display:flex;gap:24px">
+                <span style="font-size:12px;color:var(--text-muted)">Version 2.4.1</span>
+                <span style="font-size:12px;color:var(--text-muted)">Last updated: Jan 15, 2025</span>
+            </div>
+        </footer>
+    </main>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        /* ========== DATA ========== */
+        const numbersData = [
+            { number:'99999 99999', category:'Premium', price:'4,50,000', status:'available', date:'2025-01-15' },
+            { number:'88888 88888', category:'Premium', price:'3,80,000', status:'sold', date:'2025-01-14' },
+            { number:'78678 67867', category:'Lucky', price:'1,25,000', status:'available', date:'2025-01-14' },
+            { number:'12345 67890', category:'Fancy', price:'2,10,000', status:'reserved', date:'2025-01-13' },
+            { number:'99990 00001', category:'Premium', price:'5,20,000', status:'available', date:'2025-01-13' },
+            { number:'77777 77777', category:'Premium', price:'3,20,000', status:'sold', date:'2025-01-12' },
+            { number:'11111 11111', category:'Fancy', price:'2,80,000', status:'available', date:'2025-01-12' },
+            { number:'98765 43210', category:'Business', price:'95,000', status:'available', date:'2025-01-11' },
+        ];
+
+        const ordersData = [
+            { customer:'Rajesh Kumar', number:'99999 99999', amount:'4,50,000', status:'paid', date:'2025-01-15' },
+            { customer:'Priya Sharma', number:'88888 88888', amount:'3,80,000', status:'paid', date:'2025-01-14' },
+            { customer:'Amit Patel', number:'12345 67890', amount:'2,10,000', status:'pending', date:'2025-01-13' },
+            { customer:'Neha Gupta', number:'10000 00001', amount:'45,000', status:'paid', date:'2025-01-12' },
+            { customer:'Vikram Singh', number:'77777 77777', amount:'3,20,000', status:'pending', date:'2025-01-11' },
+        ];
+
+        const customersData = [
+            { name:'Rajesh Kumar', email:'rajesh@email.com', mobile:'98765 43210', purchases:3, seed:'raj1' },
+            { name:'Priya Sharma', email:'priya@email.com', mobile:'98765 43211', purchases:2, seed:'priya2' },
+            { name:'Amit Patel', email:'amit@email.com', mobile:'98765 43212', purchases:1, seed:'amit3' },
+            { name:'Neha Gupta', email:'neha@email.com', mobile:'98765 43213', purchases:4, seed:'neha4' },
+            { name:'Vikram Singh', email:'vikram@email.com', mobile:'98765 43214', purchases:2, seed:'vikram5' },
+        ];
+
+        const notifications = [
+            { icon:'fa-shopping-bag', color:'var(--gold)', title:'New order received', desc:'Rajesh Kumar purchased 99999 99999', time:'2 min ago' },
+            { icon:'fa-user-plus', color:'var(--blue-accent)', title:'New customer registered', desc:'Suresh Reddy created an account', time:'15 min ago' },
+            { icon:'fa-exclamation-triangle', color:'var(--orange)', title:'Low stock alert', desc:'Premium numbers below 50 in stock', time:'1 hour ago' },
+            { icon:'fa-credit-card', color:'var(--green)', title:'Payment confirmed', desc:'₹3,80,000 from Priya Sharma', time:'2 hours ago' },
+            { icon:'fa-envelope', color:'var(--text-muted)', title:'New enquiry received', desc:'Regarding number 78678 67867', time:'3 hours ago' },
+        ];
+
+        const activityData = [
+            { type:'add', text:'VIP number 99990 00001 added to Premium', time:'10 min ago', color:'var(--green)' },
+            { type:'sold', text:'Number 88888 88888 sold to Priya Sharma', time:'45 min ago', color:'var(--gold)' },
+            { type:'register', text:'New customer Suresh Reddy registered', time:'1 hour ago', color:'var(--blue-accent)' },
+            { type:'price', text:'Price updated for 78678 67867', time:'2 hours ago', color:'var(--orange)' },
+            { type:'login', text:'Admin logged in from new device', time:'3 hours ago', color:'var(--text-muted)' },
+            { type:'sold', text:'Number 10000 00001 sold to Neha Gupta', time:'5 hours ago', color:'var(--gold)' },
+        ];
+
+        const categoryData = [
+            { name:'Premium Numbers', count:1842, total:2500, color:'#D4AF37' },
+            { name:'Fancy Numbers', count:3200, total:4000, color:'#4A90D9' },
+            { name:'Business Numbers', count:2150, total:3000, color:'#22C55E' },
+            { name:'Lucky Numbers', count:1545, total:2000, color:'#F59E0B' },
+            { name:'Standard Numbers', count:4110, total:5000, color:'#A78BFA' },
+        ];
+
+        const revenueData = [
+            { label:"Today's Revenue", amount:'₹2,45,000', change:'+18.2%', positive:true, icon:'fa-calendar-day', color:'var(--green)' },
+            { label:'This Week', amount:'₹12,80,000', change:'+9.7%', positive:true, icon:'fa-calendar-week', color:'var(--blue-accent)' },
+            { label:'This Month', amount:'₹48,50,000', change:'+14.3%', positive:true, icon:'fa-calendar-alt', color:'var(--gold)' },
+            { label:'Total Revenue', amount:'₹3,42,00,000', change:'+22.1%', positive:true, icon:'fa-coins', color:'#A78BFA' },
+        ];
+
+        const chartDataSets = {
+            monthly: { labels:['Jul','Aug','Sep','Oct','Nov','Dec','Jan'], data:[18.5,22.3,19.8,28.4,25.1,32.7,48.5] },
+            weekly: { labels:['Wk 1','Wk 2','Wk 3','Wk 4','Wk 5','Wk 6','Wk 7','Wk 8'], data:[6.2,8.1,5.4,9.3,7.8,11.2,8.6,12.4] },
+            daily: { labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], data:[1.8,2.4,1.2,3.1,2.8,4.2,1.9] },
+        };
+
+        /* ========== RENDER FUNCTIONS ========== */
+
+        // Render Numbers Table
+        function renderNumbers() {
+            const tbody = document.getElementById('numbersBody');
+            tbody.innerHTML = numbersData.map(n => `
+                <tr>
+                    <td><span class="number-display" style="color:var(--text-primary)">${n.number}</span></td>
+                    <td>${n.category}</td>
+                    <td style="color:var(--gold);font-weight:600">₹${n.price}</td>
+                    <td><span class="status-badge status-${n.status}"><i class="fas fa-circle" style="font-size:5px"></i>${n.status}</span></td>
+                    <td>${formatDate(n.date)}</td>
+                    <td>
+                        <div style="display:flex;gap:6px">
+                            <button class="action-btn view" onclick="showToast('Viewing ${n.number}','info')" aria-label="View"><i class="fas fa-eye"></i></button>
+                            <button class="action-btn edit" onclick="showToast('Editing ${n.number}','success')" aria-label="Edit"><i class="fas fa-pen"></i></button>
+                            <button class="action-btn delete" onclick="deleteNumber('${n.number}')" aria-label="Delete"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Render Orders
+        function renderOrders() {
+            const list = document.getElementById('ordersList');
+            list.innerHTML = ordersData.map(o => `
+                <div style="padding:14px 24px;border-bottom:1px solid rgba(255,255,255,0.03);transition:background .15s ease;cursor:pointer" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+                        <span style="font-size:13px;font-weight:600;color:var(--text-primary)">${o.customer}</span>
+                        <span class="status-badge status-${o.status}"><i class="fas fa-circle" style="font-size:5px"></i>${o.status}</span>
+                    </div>
+                    <div style="font-size:12px;color:var(--text-muted);display:flex;justify-content:space-between">
+                        <span class="number-display">${o.number}</span>
+                        <span style="color:var(--gold);font-weight:600">₹${o.amount}</span>
+                    </div>
+                    <div style="font-size:11px;color:var(--text-muted);margin-top:4px">${formatDate(o.date)}</div>
+                </div>
+            `).join('');
+        }
+
+        // Render Customers
+        function renderCustomers() {
+            const list = document.getElementById('customersList');
+            list.innerHTML = customersData.map(c => `
+                <div style="padding:12px 24px;display:flex;align-items:center;gap:14px;border-bottom:1px solid rgba(255,255,255,0.03);transition:background .15s ease;cursor:pointer" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+                    <img src="https://picsum.photos/seed/${c.seed}/80/80.jpg" class="customer-avatar" alt="${c.name}">
+                    <div style="flex:1;min-width:0">
+                        <div style="font-size:13px;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</div>
+                        <div style="font-size:12px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.email}</div>
+                        <div style="font-size:12px;color:var(--text-muted)">${c.mobile}</div>
+                    </div>
+                    <div style="text-align:right;flex-shrink:0">
+                        <div style="font-size:14px;font-weight:700;color:var(--gold)">${c.purchases}</div>
+                        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">Purchases</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render Notifications
+        function renderNotifications() {
+            const list = document.getElementById('notifList');
+            list.innerHTML = notifications.map(n => `
+                <div style="padding:14px 20px;border-bottom:1px solid rgba(255,255,255,0.03);display:flex;gap:12px;cursor:pointer;transition:background .15s ease" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+                    <div style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                        <i class="fas ${n.icon}" style="font-size:13px;color:${n.color}"></i>
+                    </div>
+                    <div>
+                        <div style="font-size:13px;font-weight:600;color:var(--text-primary)">${n.title}</div>
+                        <div style="font-size:12px;color:var(--text-muted);margin-top:2px">${n.desc}</div>
+                        <div style="font-size:11px;color:var(--text-muted);margin-top:4px">${n.time}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render Activity Timeline
+        function renderTimeline() {
+            const container = document.getElementById('activityTimeline');
+            container.innerHTML = activityData.map(a => `
+                <div class="timeline-item">
+                    <div class="timeline-dot" style="border-color:${a.color}"></div>
+                    <div style="font-size:13px;color:var(--text-secondary);line-height:1.5">${a.text}</div>
+                    <div style="font-size:11px;color:var(--text-muted);margin-top:4px">${a.time}</div>
+                </div>
+            `).join('');
+        }
+
+        // Render Availability Bars
+        function renderAvailability() {
+            const container = document.getElementById('availabilityBars');
+            container.innerHTML = categoryData.map(c => {
+                const pct = Math.round((c.count / c.total) * 100);
+                return `
+                <div style="margin-bottom:20px">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+                        <span style="font-size:13px;font-weight:500;color:var(--text-secondary)">${c.name}</span>
+                        <span style="font-size:13px;font-weight:600;color:var(--text-primary)">${c.count.toLocaleString()} / ${c.total.toLocaleString()}</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" data-width="${pct}" style="background:linear-gradient(90deg,${c.color},${c.color}88)"></div>
+                    </div>
+                    <div style="text-align:right;margin-top:4px;font-size:11px;color:var(--text-muted)">${pct}% in stock</div>
+                </div>`;
+            }).join('');
+        }
+
+        // Render Revenue Cards
+        function renderRevenue() {
+            const container = document.getElementById('revenueCards');
+            container.innerHTML = revenueData.map(r => `
+                <div class="revenue-card">
+                    <div style="display:flex;align-items:center;justify-content:space-between">
+                        <div>
+                            <div style="font-size:12px;color:var(--text-muted);font-weight:500;margin-bottom:6px">${r.label}</div>
+                            <div style="font-size:22px;font-weight:700;color:var(--text-primary)">${r.amount}</div>
+                        </div>
+                        <div style="width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center">
+                            <i class="fas ${r.icon}" style="color:${r.color};font-size:16px"></i>
+                        </div>
+                    </div>
+                    <div style="margin-top:8px;font-size:12px;color:${r.positive ? 'var(--green)' : 'var(--red)'}">
+                        <i class="fas fa-arrow-${r.positive ? 'up' : 'down'}" style="font-size:10px"></i> ${r.change} vs previous period
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* ========== CHARTS ========== */
+        let salesChart, donutChart;
+
+        function initSalesChart() {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 0, 220);
+            gradient.addColorStop(0, 'rgba(212,175,55,0.2)');
+            gradient.addColorStop(1, 'rgba(212,175,55,0.0)');
+
+            salesChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartDataSets.monthly.labels,
+                    datasets: [{
+                        label: 'Revenue (in Lakhs)',
+                        data: chartDataSets.monthly.data,
+                        borderColor: '#D4AF37',
+                        backgroundColor: gradient,
+                        borderWidth: 2.5,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#D4AF37',
+                        pointBorderColor: '#0D0D0D',
+                        pointBorderWidth: 2,
+                        pointHoverRadius: 7,
+                        pointHoverBackgroundColor: '#E8C547',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(26,26,26,0.95)',
+                            titleColor: '#FFFFFF',
+                            bodyColor: '#D4AF37',
+                            borderColor: 'rgba(212,175,55,0.2)',
+                            borderWidth: 1,
+                            cornerRadius: 10,
+                            padding: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(ctx) { return '₹' + ctx.parsed.y + ' Lakh'; }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255,255,255,0.03)', drawBorder: false },
+                            ticks: { color: '#666666', font: { size: 11, family: 'DM Sans' } }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.03)', drawBorder: false },
+                            ticks: { color: '#666666', font: { size: 11, family: 'DM Sans' }, callback: v => '₹' + v + 'L' },
+                            beginAtZero: true
+                        }
+                    },
+                    interaction: { intersect: false, mode: 'index' }
+                }
+            });
+        }
+
+        function updateChart(period, btn) {
+            document.querySelectorAll('.chart-filter').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const d = chartDataSets[period];
+            salesChart.data.labels = d.labels;
+            salesChart.data.datasets[0].data = d.data;
+            salesChart.update('active');
+        }
+
+        function initDonutChart() {
+            const ctx = document.getElementById('donutChart').getContext('2d');
+            const colors = categoryData.map(c => c.color);
+            const counts = categoryData.map(c => c.count);
+
+            donutChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: categoryData.map(c => c.name),
+                    datasets: [{
+                        data: counts,
+                        backgroundColor: colors,
+                        borderColor: '#1A1A1A',
+                        borderWidth: 3,
+                        hoverBorderColor: '#252525',
+                        hoverOffset: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    cutout: '68%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(26,26,26,0.95)',
+                            titleColor: '#FFFFFF',
+                            bodyColor: '#A0A0A0',
+                            borderColor: 'rgba(212,175,55,0.2)',
+                            borderWidth: 1,
+                            cornerRadius: 10,
+                            padding: 12,
+                            callbacks: {
+                                label: function(ctx) { return ctx.label + ': ' + ctx.parsed.toLocaleString() + ' numbers'; }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Render custom legend
+            const legend = document.getElementById('donutLegend');
+            legend.innerHTML = categoryData.map(c => `
+                <div style="display:flex;align-items:center;gap:10px">
+                    <div style="width:12px;height:12px;border-radius:4px;background:${c.color};flex-shrink:0"></div>
+                    <div>
+                        <div style="font-size:12px;color:var(--text-secondary)">${c.name}</div>
+                        <div style="font-size:14px;font-weight:700;color:var(--text-primary)">${c.count.toLocaleString()}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* ========== INTERACTIONS ========== */
+
+        // Sidebar toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('mobileOverlay').classList.toggle('open');
+        }
+
+        // Active page
+        function setActivePage(el) {
+            document.querySelectorAll('.sidebar-nav-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            const page = el.getAttribute('data-page');
+            if (page !== 'dashboard') {
+                showToast(`Navigating to ${el.querySelector('span').textContent}`, 'info');
+            }
+            // Close mobile sidebar
+            if (window.innerWidth <= 1024) toggleSidebar();
+        }
+
+        // Notifications dropdown
+        function toggleNotifications() {
+            const panel = document.getElementById('notifPanel');
+            const profile = document.getElementById('profileDropdown');
+            profile.classList.remove('open');
+            panel.classList.toggle('open');
+        }
+
+        // Profile dropdown
+        function toggleProfile() {
+            const profile = document.getElementById('profileDropdown');
+            const notif = document.getElementById('notifPanel');
+            notif.classList.remove('open');
+            profile.classList.toggle('open');
+        }
+
+        // Close dropdowns on outside click
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.notification-panel') && !e.target.closest('[aria-label="Notifications"]')) {
+                document.getElementById('notifPanel').classList.remove('open');
+            }
+            if (!e.target.closest('.dropdown-menu') && !e.target.closest('[aria-label="Profile menu"]')) {
+                document.getElementById('profileDropdown').classList.remove('open');
+            }
+        });
+
+        // Delete number
+        function deleteNumber(num) {
+            const row = document.querySelector(`#numbersBody tr`);
+            if (row) {
+                row.style.transition = 'all 0.3s ease';
+                row.style.opacity = '0';
+                row.style.transform = 'translateX(20px)';
+                setTimeout(() => {
+                    showToast(`Number ${num} deleted`, 'error');
+                }, 300);
+            } else {
+                showToast(`Number ${num} deleted`, 'error');
+            }
+        }
+
+        // Toast system
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            const iconMap = {
+                success: '<i class="fas fa-check-circle" style="color:var(--green);font-size:16px"></i>',
+                error: '<i class="fas fa-times-circle" style="color:var(--red);font-size:16px"></i>',
+                info: '<i class="fas fa-info-circle" style="color:var(--blue-accent);font-size:16px"></i>',
+            };
+            toast.innerHTML = `${iconMap[type] || iconMap.info}<span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('removing');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Date formatter
+        function formatDate(dateStr) {
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+        }
+
+        // Progress bar animation with IntersectionObserver
+        function animateProgressBars() {
+            const bars = document.querySelectorAll('.progress-fill');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const width = entry.target.getAttribute('data-width');
+                        entry.target.style.width = width + '%';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.3 });
+            bars.forEach(bar => observer.observe(bar));
+        }
+
+        // Fade-in animation with IntersectionObserver
+        function initFadeAnimations() {
+            const elements = document.querySelectorAll('.fade-in');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('visible');
+                        }, index * 80);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+            elements.forEach(el => observer.observe(el));
+        }
+
+        // Counter animation for stat cards
+        function animateCounters() {
+            const statValues = document.querySelectorAll('.stat-card p[style*="font-size:32px"]');
+            statValues.forEach(el => {
+                const text = el.textContent.replace(/,/g, '');
+                const target = parseInt(text);
+                if (isNaN(target)) return;
+                let current = 0;
+                const duration = 1500;
+                const start = performance.now();
+                function step(now) {
+                    const progress = Math.min((now - start) / duration, 1);
+                    const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+                    current = Math.floor(eased * target);
+                    el.textContent = current.toLocaleString('en-IN');
+                    if (progress < 1) requestAnimationFrame(step);
+                }
+                requestAnimationFrame(step);
+            });
+        }
+
+        /* ========== INIT ========== */
+        window.addEventListener('load', function() {
+            // Hide loading screen
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hidden');
+                setTimeout(() => document.getElementById('loadingScreen').remove(), 500);
+            }, 600);
+
+            // Render all sections
+            renderNumbers();
+            renderOrders();
+            renderCustomers();
+            renderNotifications();
+            renderTimeline();
+            renderAvailability();
+            renderRevenue();
+
+            // Init charts
+            initSalesChart();
+            initDonutChart();
+
+            // Init animations
+            initFadeAnimations();
+            animateProgressBars();
+            setTimeout(animateCounters, 400);
+        });
+    </script>
+</body>
+</html>

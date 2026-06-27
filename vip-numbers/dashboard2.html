@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIP Number Management — Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        charcoal: { 950:'#080808', 900:'#0D0D0D', 800:'#121212', 700:'#1A1A1A', 600:'#222222', 500:'#2A2A2A', 400:'#333333' },
+                        gold: { DEFAULT:'#D4AF37', light:'#E8CC6E', dark:'#B8962E', subtle:'rgba(212,175,55,0.1)', muted:'rgba(212,175,55,0.25)' },
+                        accent: { blue:'#4A9DFF', blueSubtle:'rgba(74,157,255,0.1)' }
+                    },
+                    fontFamily: { display:['Playfair Display','serif'], sans:['DM Sans','sans-serif'] },
+                    borderRadius: { card:'18px', xl:'24px' }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --bg: #0D0D0D;
+            --fg: #FFFFFF;
+            --muted: #999999;
+            --accent: #D4AF37;
+            --card: rgba(255,255,255,0.035);
+            --card-hover: rgba(255,255,255,0.065);
+            --border: rgba(255,255,255,0.06);
+            --border-gold: rgba(212,175,55,0.25);
+            --accent-blue: #4A9DFF;
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { background: var(--bg); color: var(--fg); font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
+
+        /* Background atmosphere */
+        body::before {
+            content: '';
+            position: fixed; top: -20%; right: -10%;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(212,175,55,0.04) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
+        }
+        body::after {
+            content: '';
+            position: fixed; bottom: -15%; left: -5%;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(74,157,255,0.03) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+        /* Glass card */
+        .glass-card {
+            background: var(--card);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+        }
+        .glass-card:hover {
+            background: var(--card-hover);
+            border-color: var(--border-gold);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(212,175,55,0.06);
+        }
+
+        /* Sidebar */
+        .sidebar { 
+            width: 260px; min-height: 100vh;
+            background: rgba(18,18,18,0.95);
+            backdrop-filter: blur(30px);
+            border-right: 1px solid var(--border);
+            transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+            z-index: 50;
+        }
+        .sidebar-link {
+            display: flex; align-items: center; gap: 12px;
+            padding: 11px 20px; border-radius: 12px;
+            color: var(--muted); font-size: 14px; font-weight: 500;
+            transition: all 0.25s ease;
+            position: relative; overflow: hidden;
+        }
+        .sidebar-link::before {
+            content: ''; position: absolute; left: 0; top: 50%;
+            transform: translateY(-50%); width: 3px; height: 0;
+            background: var(--accent); border-radius: 0 4px 4px 0;
+            transition: height 0.25s ease;
+        }
+        .sidebar-link:hover { color: #fff; background: rgba(255,255,255,0.04); }
+        .sidebar-link.active { color: var(--accent); background: rgba(212,175,55,0.08); }
+        .sidebar-link.active::before { height: 24px; }
+        .sidebar-link svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        /* Stat card icon wrapper */
+        .stat-icon {
+            width: 48px; height: 48px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* Table */
+        .data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        .data-table thead th {
+            padding: 14px 18px; font-size: 11px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.08em;
+            color: var(--muted); border-bottom: 1px solid var(--border);
+            text-align: left; white-space: nowrap;
+        }
+        .data-table tbody tr {
+            transition: background 0.2s ease;
+        }
+        .data-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+        .data-table tbody td {
+            padding: 14px 18px; font-size: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            white-space: nowrap;
+        }
+
+        /* Status badges */
+        .badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 12px; border-radius: 20px;
+            font-size: 12px; font-weight: 600;
+        }
+        .badge-available { background: rgba(34,197,94,0.12); color: #4ADE80; }
+        .badge-sold { background: rgba(239,68,68,0.12); color: #F87171; }
+        .badge-premium { background: rgba(212,175,55,0.15); color: #E8CC6E; }
+        .badge-reserved { background: rgba(74,157,255,0.12); color: #60B5FF; }
+
+        /* Progress bars */
+        .progress-track {
+            width: 100%; height: 10px; border-radius: 10px;
+            background: rgba(255,255,255,0.06); overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; border-radius: 10px;
+            transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+            width: 0;
+        }
+
+        /* Timeline */
+        .timeline-item { position: relative; padding-left: 32px; padding-bottom: 24px; }
+        .timeline-item::before {
+            content: ''; position: absolute; left: 6px; top: 24px; bottom: 0;
+            width: 1px; background: rgba(255,255,255,0.06);
+        }
+        .timeline-item:last-child::before { display: none; }
+        .timeline-dot {
+            position: absolute; left: 0; top: 6px;
+            width: 14px; height: 14px; border-radius: 50%;
+            border: 2px solid; background: var(--bg);
+        }
+
+        /* Quick action buttons */
+        .quick-btn {
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            padding: 20px 12px; border-radius: 16px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer; transition: all 0.3s ease;
+            color: var(--muted); font-size: 12px; font-weight: 500;
+            text-align: center;
+        }
+        .quick-btn:hover {
+            background: rgba(212,175,55,0.08);
+            border-color: var(--border-gold);
+            color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 24px rgba(212,175,55,0.08);
+        }
+        .quick-btn .icon-wrap {
+            width: 44px; height: 44px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.04);
+            transition: all 0.3s ease;
+        }
+        .quick-btn:hover .icon-wrap { background: rgba(212,175,55,0.15); }
+
+        /* System card */
+        .sys-card {
+            padding: 16px 18px; border-radius: 14px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+        }
+        .sys-card:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        /* Modal overlay */
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 100;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+        .modal-content {
+            background: #1A1A1A; border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px; padding: 32px; width: 90%; max-width: 500px;
+            transform: translateY(20px) scale(0.97);
+            transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+        }
+        .modal-overlay.show .modal-content { transform: translateY(0) scale(1); }
+
+        /* Toast */
+        .toast-container { position: fixed; top: 24px; right: 24px; z-index: 200; display: flex; flex-direction: column; gap: 10px; }
+        .toast {
+            padding: 14px 20px; border-radius: 12px;
+            background: #222; border: 1px solid rgba(255,255,255,0.08);
+            font-size: 13px; color: #fff; min-width: 280px;
+            display: flex; align-items: center; gap: 10px;
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        .toast.show { transform: translateX(0); }
+
+        /* Dropdown */
+        .dropdown {
+            position: absolute; top: calc(100% + 8px); right: 0;
+            background: #1E1E1E; border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px; padding: 8px; min-width: 200px;
+            opacity: 0; pointer-events: none; transform: translateY(-8px);
+            transition: all 0.25s ease;
+            box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+            z-index: 60;
+        }
+        .dropdown.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .dropdown-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 14px; border-radius: 10px;
+            font-size: 13px; color: var(--muted); cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .dropdown-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
+        .dropdown-item svg { width: 16px; height: 16px; }
+
+        /* Scroll reveal */
+        .reveal {
+            opacity: 0; transform: translateY(24px);
+            transition: all 0.6s cubic-bezier(0.4,0,0.2,1);
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* Gold top line */
+        .gold-line {
+            position: fixed; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            z-index: 999;
+        }
+
+        /* Pulse for notification */
+        @keyframes pulse-gold {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(212,175,55,0.4); }
+            50% { box-shadow: 0 0 0 6px rgba(212,175,55,0); }
+        }
+        .pulse-dot { animation: pulse-gold 2s infinite; }
+
+        /* Input styles */
+        .input-field {
+            width: 100%; padding: 10px 14px; border-radius: 10px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+            color: #fff; font-size: 14px; font-family: 'DM Sans', sans-serif;
+            transition: all 0.25s ease; outline: none;
+        }
+        .input-field:focus { border-color: var(--accent); background: rgba(255,255,255,0.07); }
+        .input-field::placeholder { color: #555; }
+
+        select.input-field { appearance: none; cursor: pointer; }
+
+        /* Action icon buttons in table */
+        .action-btn {
+            width: 32px; height: 32px; border-radius: 8px;
+            display: inline-flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.04); border: 1px solid transparent;
+            color: var(--muted); cursor: pointer; transition: all 0.2s ease;
+        }
+        .action-btn:hover { background: rgba(255,255,255,0.08); color: #fff; border-color: rgba(255,255,255,0.1); }
+        .action-btn.danger:hover { background: rgba(239,68,68,0.15); color: #F87171; border-color: rgba(239,68,68,0.2); }
+        .action-btn svg { width: 15px; height: 15px; }
+
+        /* Mobile sidebar overlay */
+        .sidebar-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            z-index: 45; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .sidebar-overlay.show { opacity: 1; pointer-events: auto; }
+
+        @media (max-width: 1024px) {
+            .sidebar { position: fixed; left: 0; top: 0; transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-wrapper { margin-left: 0 !important; }
+        }
+        @media (max-width: 640px) {
+            .data-table { font-size: 12px; }
+            .data-table thead th, .data-table tbody td { padding: 10px 12px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Gold top accent line -->
+    <div class="gold-line"></div>
+
+    <!-- Toast container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Mobile sidebar overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar fixed left-0 top-0 flex flex-col" id="sidebar">
+        <!-- Logo area -->
+        <div class="p-6 pb-4 border-b border-white/5">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center">
+                    <span class="font-display font-bold text-charcoal-900 text-lg">V</span>
+                </div>
+                <div>
+                    <h1 class="font-display font-bold text-base text-white leading-tight">VIP Numbers</h1>
+                    <p class="text-[11px] text-white/30 font-medium tracking-wide uppercase">Admin Panel</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 p-4 space-y-1" aria-label="Main navigation">
+            <p class="text-[10px] font-semibold uppercase tracking-widest text-white/20 px-4 mb-3">Main</p>
+            <a href="#stats" class="sidebar-link active" data-section="stats">
+                <i data-lucide="layout-dashboard"></i> Dashboard
+            </a>
+            <a href="#numbers" class="sidebar-link" data-section="numbers">
+                <i data-lucide="phone"></i> Numbers
+            </a>
+            <a href="#numberStatus" class="sidebar-link" data-section="numberStatus">
+                <i data-lucide="check-circle"></i> Number Status
+            </a>
+            <p class="text-[10px] font-semibold uppercase tracking-widest text-white/20 px-4 mb-3 mt-6">Settings</p>
+            <a href="#profile" class="sidebar-link" data-section="profile">
+                <i data-lucide="user"></i> Profile
+            </a>
+            <a href="#" class="sidebar-link" onclick="event.preventDefault(); showToast('Settings page coming soon', 'info')">
+                <i data-lucide="settings"></i> Settings
+            </a>
+            <a href="#" class="sidebar-link" onclick="event.preventDefault(); showToast('Logged out successfully', 'success')">
+                <i data-lucide="log-out"></i> Logout
+            </a>
+        </nav>
+
+        <!-- Sidebar footer -->
+        <div class="p-4 border-t border-white/5">
+            <div class="glass-card p-4 !bg-gold-subtle !border-gold-muted">
+                <p class="text-xs font-semibold text-gold mb-1">Inventory Health</p>
+                <p class="text-[11px] text-white/40 leading-relaxed">8,432 numbers available across 5 categories</p>
+                <div class="mt-3 progress-track !h-[6px]">
+                    <div class="progress-fill bg-gradient-to-r from-gold-dark to-gold" data-width="65" style="width:65%"></div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main content wrapper -->
+    <div class="main-wrapper" style="margin-left:260px;" id="mainWrapper">
+        <!-- Top header -->
+        <header class="sticky top-0 z-40 border-b border-white/5" style="background:rgba(13,13,13,0.85); backdrop-filter:blur(20px);">
+            <div class="flex items-center justify-between px-6 lg:px-8 py-4">
+                <!-- Left: hamburger (mobile) + title -->
+                <div class="flex items-center gap-4">
+                    <button class="lg:hidden w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 transition-all" onclick="toggleSidebar()" aria-label="Toggle menu">
+                        <i data-lucide="menu" class="w-5 h-5"></i>
+                    </button>
+                    <div>
+                        <h2 class="text-lg font-semibold text-white">Dashboard</h2>
+                        <p class="text-xs text-white/35 mt-0.5">Welcome back, Admin</p>
+                    </div>
+                </div>
+
+                <!-- Right: search, notifications, profile -->
+                <div class="flex items-center gap-3">
+                    <!-- Search -->
+                    <div class="hidden md:flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.06] focus-within:border-gold/30 transition-all w-64">
+                        <i data-lucide="search" class="w-4 h-4 text-white/30 flex-shrink-0"></i>
+                        <input type="text" id="globalSearch" placeholder="Search numbers..." class="bg-transparent border-none outline-none text-sm text-white placeholder-white/25 w-full font-sans" oninput="filterTable(this.value)">
+                    </div>
+
+                    <!-- Notification -->
+                    <div class="relative">
+                        <button class="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-white/50 hover:text-white hover:bg-white/[0.08] transition-all relative" onclick="toggleDropdown('notifDropdown')" aria-label="Notifications">
+                            <i data-lucide="bell" class="w-[18px] h-[18px]"></i>
+                            <span class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gold text-charcoal-900 text-[10px] font-bold flex items-center justify-center pulse-dot">3</span>
+                        </button>
+                        <div class="dropdown" id="notifDropdown" style="min-width:280px;">
+                            <p class="text-[11px] font-semibold uppercase tracking-wider text-white/30 px-3 py-2">Notifications</p>
+                            <div class="dropdown-item" onclick="showToast('Viewing notification details', 'info')">
+                                <div class="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center flex-shrink-0"><i data-lucide="plus-circle" class="w-4 h-4 text-green-400"></i></div>
+                                <div><p class="text-white text-xs font-medium">New number added</p><p class="text-white/30 text-[11px] mt-0.5">2 minutes ago</p></div>
+                            </div>
+                            <div class="dropdown-item" onclick="showToast('Viewing notification details', 'info')">
+                                <div class="w-8 h-8 rounded-lg bg-gold/10 flex items-center justify-center flex-shrink-0"><i data-lucide="star" class="w-4 h-4 text-gold"></i></div>
+                                <div><p class="text-white text-xs font-medium">Premium number tagged</p><p class="text-white/30 text-[11px] mt-0.5">15 minutes ago</p></div>
+                            </div>
+                            <div class="dropdown-item" onclick="showToast('Viewing notification details', 'info')">
+                                <div class="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center flex-shrink-0"><i data-lucide="alert-triangle" class="w-4 h-4 text-red-400"></i></div>
+                                <div><p class="text-white text-xs font-medium">Low stock alert</p><p class="text-white/30 text-[11px] mt-0.5">1 hour ago</p></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile -->
+                    <div class="relative">
+                        <button class="flex items-center gap-2.5 pl-1 pr-3 py-1 rounded-xl hover:bg-white/[0.04] transition-all" onclick="toggleDropdown('profileDropdown')" aria-label="Profile menu">
+                            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-gold/80 to-gold-dark flex items-center justify-center">
+                                <span class="text-charcoal-900 font-bold text-sm">A</span>
+                            </div>
+                            <span class="hidden sm:block text-sm text-white/70 font-medium">Admin</span>
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-white/30"></i>
+                        </button>
+                        <div class="dropdown" id="profileDropdown">
+                            <div class="px-3 py-2.5 border-b border-white/5 mb-1">
+                                <p class="text-sm font-semibold text-white">Admin User</p>
+                                <p class="text-[11px] text-white/35 mt-0.5">admin@vipnumbers.com</p>
+                            </div>
+                            <div class="dropdown-item" onclick="showToast('Opening profile...', 'info')">
+                                <i data-lucide="user"></i> My Profile
+                            </div>
+                            <div class="dropdown-item" onclick="showToast('Opening settings...', 'info')">
+                                <i data-lucide="settings"></i> Settings
+                            </div>
+                            <div class="dropdown-item" onclick="showToast('Logged out successfully', 'success')">
+                                <i data-lucide="log-out"></i> Logout
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main content -->
+        <main class="px-6 lg:px-8 py-6 space-y-8 relative z-10">
+
+            <!-- Statistics Cards -->
+            <section id="stats" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 reveal">
+                <!-- Total Numbers -->
+                <div class="glass-card p-5">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-xs font-medium text-white/40 uppercase tracking-wider">Total Numbers</p>
+                            <p class="text-3xl font-bold text-white mt-2 font-display">12,847</p>
+                            <div class="flex items-center gap-1.5 mt-2">
+                                <i data-lucide="trending-up" class="w-3.5 h-3.5 text-green-400"></i>
+                                <span class="text-xs font-semibold text-green-400">+12.5%</span>
+                                <span class="text-[11px] text-white/25 ml-1">vs last month</span>
+                            </div>
+                        </div>
+                        <div class="stat-icon bg-accent-blueSubtle">
+                            <i data-lucide="phone" class="w-5 h-5 text-accent-blue"></i>
+                        </div>
+                    </div>
+                </div>
+                <!-- Available -->
+                <div class="glass-card p-5">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-xs font-medium text-white/40 uppercase tracking-wider">Available Numbers</p>
+                            <p class="text-3xl font-bold text-white mt-2 font-display">8,432</p>
+                            <div class="flex items-center gap-1.5 mt-2">
+                                <i data-lucide="trending-up" class="w-3.5 h-3.5 text-green-400"></i>
+                                <span class="text-xs font-semibold text-green-400">+8.3%</span>
+                                <span class="text-[11px] text-white/25 ml-1">vs last month</span>
+                            </div>
+                        </div>
+                        <div class="stat-icon" style="background:rgba(34,197,94,0.1);">
+                            <i data-lucide="check-circle" class="w-5 h-5 text-green-400"></i>
+                        </div>
+                    </div>
+                </div>
+                <!-- Premium -->
+                <div class="glass-card p-5">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-xs font-medium text-white/40 uppercase tracking-wider">Premium Numbers</p>
+                            <p class="text-3xl font-bold text-white mt-2 font-display">3,156</p>
+                            <div class="flex items-center gap-1.5 mt-2">
+                                <i data-lucide="trending-up" class="w-3.5 h-3.5 text-gold"></i>
+                                <span class="text-xs font-semibold text-gold">+18.2%</span>
+                                <span class="text-[11px] text-white/25 ml-1">vs last month</span>
+                            </div>
+                        </div>
+                        <div class="stat-icon bg-gold-subtle">
+                            <i data-lucide="crown" class="w-5 h-5 text-gold"></i>
+                        </div>
+                    </div>
+                </div>
+                <!-- Reserved -->
+                <div class="glass-card p-5">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-xs font-medium text-white/40 uppercase tracking-wider">Reserved / Featured</p>
+                            <p class="text-3xl font-bold text-white mt-2 font-display">1,259</p>
+                            <div class="flex items-center gap-1.5 mt-2">
+                                <i data-lucide="trending-down" class="w-3.5 h-3.5 text-red-400"></i>
+                                <span class="text-xs font-semibold text-red-400">-3.1%</span>
+                                <span class="text-[11px] text-white/25 ml-1">vs last month</span>
+                            </div>
+                        </div>
+                        <div class="stat-icon" style="background:rgba(168,85,247,0.1);">
+                            <i data-lucide="bookmark" class="w-5 h-5 text-purple-400"></i>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recently Added Numbers -->
+            <section id="numbers" class="reveal">
+                <div class="glass-card overflow-hidden !hover:transform-none">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between p-5 pb-0 gap-3">
+                        <div>
+                            <h3 class="text-base font-semibold text-white">Recently Added Numbers</h3>
+                            <p class="text-xs text-white/30 mt-0.5">Latest VIP numbers in the inventory</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="flex md:hidden items-center gap-2 px-3 py-2 rounded-lg bg-white/[0.04] border border-white/[0.06] w-48">
+                                <i data-lucide="search" class="w-3.5 h-3.5 text-white/30 flex-shrink-0"></i>
+                                <input type="text" placeholder="Search..." class="bg-transparent border-none outline-none text-xs text-white placeholder-white/25 w-full font-sans" oninput="filterTable(this.value)">
+                            </div>
+                            <select class="input-field !w-auto !py-2 !px-3 !text-xs !rounded-lg" onchange="filterByStatus(this.value)">
+                                <option value="all">All Status</option>
+                                <option value="Available">Available</option>
+                                <option value="Sold">Sold</option>
+                                <option value="Premium">Premium</option>
+                                <option value="Reserved">Reserved</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto mt-4">
+                        <table class="data-table" id="numbersTable">
+                            <thead>
+                                <tr>
+                                    <th>VIP Number</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Status</th>
+                                    <th>Date Added</th>
+                                    <th class="text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="flex items-center justify-between px-5 py-4 border-t border-white/5">
+                        <p class="text-xs text-white/30">Showing <span id="showingCount">8</span> of 12,847 numbers</p>
+                        <div class="flex items-center gap-1">
+                            <button class="w-8 h-8 rounded-lg bg-white/[0.04] flex items-center justify-center text-white/30 hover:text-white hover:bg-white/[0.08] transition-all text-xs" aria-label="Previous page">
+                                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                            </button>
+                            <button class="w-8 h-8 rounded-lg bg-gold/20 flex items-center justify-center text-gold text-xs font-semibold">1</button>
+                            <button class="w-8 h-8 rounded-lg bg-white/[0.04] flex items-center justify-center text-white/40 hover:text-white hover:bg-white/[0.08] transition-all text-xs">2</button>
+                            <button class="w-8 h-8 rounded-lg bg-white/[0.04] flex items-center justify-center text-white/40 hover:text-white hover:bg-white/[0.08] transition-all text-xs">3</button>
+                            <span class="text-white/20 text-xs px-1">...</span>
+                            <button class="w-8 h-8 rounded-lg bg-white/[0.04] flex items-center justify-center text-white/40 hover:text-white hover:bg-white/[0.08] transition-all text-xs">48</button>
+                            <button class="w-8 h-8 rounded-lg bg-white/[0.04] flex items-center justify-center text-white/30 hover:text-white hover:bg-white/[0.08] transition-all text-xs" aria-label="Next page">
+                                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Row 1: Monthly Added + Monthly Sold -->
+            <section id="numberStatus" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                <div class="glass-card p-5 reveal">
+                    <div class="flex items-center justify-between mb-5">
+                        <div>
+                            <h3 class="text-base font-semibold text-white">Monthly Numbers Added</h3>
+                            <p class="text-xs text-white/30 mt-0.5">New inventory added each month</p>
+                        </div>
+                        <div class="w-9 h-9 rounded-xl bg-gold-subtle flex items-center justify-center">
+                            <i data-lucide="trending-up" class="w-4 h-4 text-gold"></i>
+                        </div>
+                    </div>
+                    <div class="relative" style="height:260px;">
+                        <canvas id="monthlyAddedChart"></canvas>
+                    </div>
+                </div>
+                <div class="glass-card p-5 reveal">
+                    <div class="flex items-center justify-between mb-5">
+                        <div>
+                            <h3 class="text-base font-semibold text-white">Numbers Sold (Monthly)</h3>
+                            <p class="text-xs text-white/30 mt-0.5">Monthly sales tracking</p>
+                        </div>
+                        <div class="w-9 h-9 rounded-xl bg-accent-blueSubtle flex items-center justify-center">
+                            <i data-lucide="bar-chart-3" class="w-4 h-4 text-accent-blue"></i>
+                        </div>
+                    </div>
+                    <div class="relative" style="height:260px;">
+                        <canvas id="monthlySoldChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Row 2: Donuts + Comparison -->
+            <section class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                <!-- Status Distribution Donut -->
+                <div class="glass-card p-5 reveal">
+                    <div class="mb-4">
+                        <h3 class="text-base font-semibold text-white">Status Distribution</h3>
+                        <p class="text-xs text-white/30 mt-0.5">Number status breakdown</p>
+                    </div>
+                    <div class="relative mx-auto" style="max-width:220px; height:220px;">
+                        <canvas id="statusDonutChart"></canvas>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                            <p class="text-2xl font-bold text-white font-display">12,847</p>
+                            <p class="text-[11px] text-white/30">Total</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mt-5">
+                        <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-green-400"></span><span class="text-xs text-white/50">Available</span></div>
+                        <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-red-400"></span><span class="text-xs text-white/50">Sold</span></div>
+                        <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-gold"></span><span class="text-xs text-white/50">Premium</span></div>
+                        <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-accent-blue"></span><span class="text-xs text-white/50">Reserved</span></div>
+                    </div>
+                </div>
+
+                <!-- Category Distribution Donut -->
+                <div class="glass-card p-5 reveal">
+                    <div class="mb-4">
+                        <h3 class="text-base font-semibold text-white">Category Distribution</h3>
+                        <p class="text-xs text-white/30 mt-0.5">Numbers by category</p>
+                    </div>
+                    <div class="relative mx-auto" style="max-width:220px; height:220px;">
+                        <canvas id="categoryDonutChart"></canvas>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                            <p class="text-2xl font-bold text-white font-display">5</p>
+                            <p class="text-[11px] text-white/30">Categories</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mt-5">
+                        <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background:#E8CC6E"></span><span class="text-xs text-white/50">Fancy</span></div>
+                        <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background:#D4AF37"></span><span class="text-xs text-white/50">Premium</span></div>
+                        <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background:#4A9DFF"></span><span class="text-xs text-white/50">Business</span></div>
+                        <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background:#A78BFA"></span><span class="text-xs text-white/50">Lucky</span></div>
+                        <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background:#F472B6"></span><span class="text-xs text-white/50">VIP</span></div>
+                    </div>
+                </div>
+
+                <!-- Available vs Sold Bar -->
+                <div class="glass-card p-5 reveal">
+                    <div class="mb-5">
+                        <h3 class="text-base font-semibold text-white">Available vs Sold</h3>
+                        <p class="text-xs text-white/30 mt-0.5">Monthly comparison</p>
+                    </div>
+                    <div class="relative" style="height:280px;">
+                        <canvas id="comparisonChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Inventory Overview -->
+            <section class="reveal">
+                <div class="glass-card p-5 !hover:transform-none">
+                    <div class="mb-5">
+                        <h3 class="text-base font-semibold text-white">Inventory Overview</h3>
+                        <p class="text-xs text-white/30 mt-0.5">Current stock status across all categories</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6" id="inventoryBars">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Activity + Quick Actions -->
+            <section class="grid grid-cols-1 lg:grid-cols-5 gap-5">
+                <!-- Recent Activity -->
+                <div class="lg:col-span-3 glass-card p-5 reveal !hover:transform-none">
+                    <div class="mb-5">
+                        <h3 class="text-base font-semibold text-white">Recent Activity</h3>
+                        <p class="text-xs text-white/30 mt-0.5">Latest administrative actions</p>
+                    </div>
+                    <div class="space-y-0" id="activityTimeline">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="lg:col-span-2 glass-card p-5 reveal !hover:transform-none">
+                    <div class="mb-5">
+                        <h3 class="text-base font-semibold text-white">Quick Actions</h3>
+                        <p class="text-xs text-white/30 mt-0.5">Common management tasks</p>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3" id="quickActions">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- System Overview -->
+            <section id="profile" class="reveal">
+                <div class="glass-card p-5 !hover:transform-none">
+                    <div class="mb-5">
+                        <h3 class="text-base font-semibold text-white">System Overview</h3>
+                        <p class="text-xs text-white/30 mt-0.5">System status and information</p>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4" id="systemCards">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="px-6 lg:px-8 py-6 border-t border-white/5 relative z-10">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-6 h-6 rounded-md bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center">
+                        <span class="font-display font-bold text-charcoal-900 text-[10px]">V</span>
+                    </div>
+                    <span class="text-xs text-white/30 font-medium">VIP Number Management System</span>
+                </div>
+                <div class="flex items-center gap-4 text-[11px] text-white/20">
+                    <span>v2.4.1</span>
+                    <span class="w-1 h-1 rounded-full bg-white/10"></span>
+                    <span>Last updated: Jan 15, 2025</span>
+                    <span class="w-1 h-1 rounded-full bg-white/10"></span>
+                    <span>2025 All Rights Reserved</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- View Number Modal -->
+    <div class="modal-overlay" id="viewModal">
+        <div class="modal-content">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-white">Number Details</h3>
+                <button class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-all" onclick="closeModal('viewModal')" aria-label="Close modal">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div id="viewModalContent"></div>
+        </div>
+    </div>
+
+    <!-- Add Number Modal -->
+    <div class="modal-overlay" id="addModal">
+        <div class="modal-content">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-white">Add New Number</h3>
+                <button class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-all" onclick="closeModal('addModal')" aria-label="Close modal">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <form onsubmit="handleAddNumber(event)" class="space-y-4">
+                <div>
+                    <label class="text-xs font-medium text-white/50 mb-1.5 block">VIP Number</label>
+                    <input type="text" class="input-field" placeholder="e.g. 9999001122" required id="newNumber">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs font-medium text-white/50 mb-1.5 block">Category</label>
+                        <select class="input-field" required id="newCategory">
+                            <option value="">Select</option>
+                            <option value="Fancy">Fancy</option>
+                            <option value="Premium">Premium</option>
+                            <option value="Business">Business</option>
+                            <option value="Lucky">Lucky</option>
+                            <option value="VIP">VIP</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-medium text-white/50 mb-1.5 block">Status</label>
+                        <select class="input-field" required id="newStatus">
+                            <option value="Available">Available</option>
+                            <option value="Premium">Premium</option>
+                            <option value="Reserved">Reserved</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs font-medium text-white/50 mb-1.5 block">Price (INR)</label>
+                    <input type="number" class="input-field" placeholder="e.g. 50000" required id="newPrice" min="0">
+                </div>
+                <div class="flex items-center gap-3 pt-2">
+                    <button type="submit" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-gold-dark to-gold text-charcoal-900 font-semibold text-sm hover:shadow-lg hover:shadow-gold/20 transition-all active:scale-[0.98]">
+                        Add Number
+                    </button>
+                    <button type="button" class="px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white/60 font-medium text-sm hover:bg-white/10 transition-all" onclick="closeModal('addModal')">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        /* =========================================
+           DATA
+        ========================================= */
+        const numbersData = [
+            { number:'9999001122', category:'Fancy', price:45000, status:'Available', date:'2025-01-15' },
+            { number:'8888777766', category:'Premium', price:125000, status:'Sold', date:'2025-01-14' },
+            { number:'7777666655', category:'Business', price:78000, status:'Available', date:'2025-01-14' },
+            { number:'9999111222', category:'Lucky', price:55000, status:'Premium', date:'2025-01-13' },
+            { number:'8888000099', category:'VIP', price:210000, status:'Available', date:'2025-01-13' },
+            { number:'6666555544', category:'Fancy', price:32000, status:'Sold', date:'2025-01-12' },
+            { number:'9999888877', category:'Premium', price:185000, status:'Available', date:'2025-01-12' },
+            { number:'7777000088', category:'Business', price:65000, status:'Reserved', date:'2025-01-11' },
+        ];
+
+        const inventoryData = [
+            { label:'Available Numbers', count:8432, total:12847, color:'#4ADE80', bg:'rgba(34,197,94,0.15)' },
+            { label:'Sold Numbers', count:3156, total:12847, color:'#F87171', bg:'rgba(239,68,68,0.15)' },
+            { label:'Premium Numbers', count:3156, total:12847, color:'#D4AF37', bg:'rgba(212,175,55,0.15)' },
+            { label:'Reserved Numbers', count:1259, total:12847, color:'#60B5FF', bg:'rgba(74,157,255,0.15)' },
+        ];
+
+        const activityData = [
+            { action:'New Number Added', detail:'9999001122 added to Fancy', time:'2 min ago', color:'#4ADE80', icon:'plus-circle' },
+            { action:'Number Updated', detail:'8888777766 price changed to 1,25,000', time:'15 min ago', color:'#D4AF37', icon:'edit-3' },
+            { action:'Status Changed', detail:'9999111222 marked as Premium', time:'32 min ago', color:'#60B5FF', icon:'refresh-cw' },
+            { action:'Number Deleted', detail:'5555444433 removed from inventory', time:'1 hr ago', color:'#F87171', icon:'trash-2' },
+            { action:'Price Changed', detail:'7777666655 updated to 78,000', time:'2 hr ago', color:'#E8CC6E', icon:'dollar-sign' },
+            { action:'Admin Login', detail:'Admin logged in from 192.168.1.1', time:'3 hr ago', color:'#A78BFA', icon:'log-in' },
+        ];
+
+        const quickActionsData = [
+            { label:'Add New Number', icon:'plus', action:()=>openModal('addModal') },
+            { label:'Import Numbers', icon:'upload', action:()=>showToast('Import wizard opened — ready for Excel/CSV', 'info') },
+            { label:'Export Numbers', icon:'download', action:()=>showToast('Exporting 12,847 numbers to CSV...', 'success') },
+            { label:'Manage Categories', icon:'tag', action:()=>showToast('Category manager opened', 'info') },
+            { label:'Update Status', icon:'refresh-cw', action:()=>showToast('Bulk status update panel opened', 'info') },
+        ];
+
+        const systemData = [
+            { label:'Last Number Added', value:'9999001122', icon:'plus-circle', color:'#4ADE80' },
+            { label:'Last Updated', value:'8888777766', icon:'edit-3', color:'#D4AF37' },
+            { label:'Total Categories', value:'5', icon:'layers', color:'#60B5FF' },
+            { label:'Database Health', value:'Healthy', icon:'heart-pulse', color:'#4ADE80' },
+            { label:'Last Backup', value:'Jan 15, 08:00', icon:'shield-check', color:'#A78BFA' },
+        ];
+
+        /* =========================================
+           RENDER FUNCTIONS
+        ========================================= */
+        function renderTable(data) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = data.map((n, i) => {
+                const badgeClass = n.status === 'Available' ? 'badge-available' :
+                                   n.status === 'Sold' ? 'badge-sold' :
+                                   n.status === 'Premium' ? 'badge-premium' : 'badge-reserved';
+                const dotColor = n.status === 'Available' ? '#4ADE80' :
+                                 n.status === 'Sold' ? '#F87171' :
+                                 n.status === 'Premium' ? '#E8CC6E' : '#60B5FF';
+                return `<tr>
+                    <td><span class="font-semibold text-white tracking-wide">${n.number}</span></td>
+                    <td class="text-white/60">${n.category}</td>
+                    <td class="text-white/80 font-medium">${formatPrice(n.price)}</td>
+                    <td><span class="badge ${badgeClass}"><span class="w-1.5 h-1.5 rounded-full" style="background:${dotColor}"></span>${n.status}</span></td>
+                    <td class="text-white/40">${formatDate(n.date)}</td>
+                    <td class="text-right">
+                        <div class="flex items-center justify-end gap-1.5">
+                            <button class="action-btn" onclick="viewNumber(${i})" aria-label="View number"><i data-lucide="eye"></i></button>
+                            <button class="action-btn" onclick="editNumber(${i})" aria-label="Edit number"><i data-lucide="edit-3"></i></button>
+                            <button class="action-btn danger" onclick="deleteNumber(${i})" aria-label="Delete number"><i data-lucide="trash-2"></i></button>
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('');
+            document.getElementById('showingCount').textContent = data.length;
+            lucide.createIcons();
+        }
+
+        function renderInventory() {
+            const container = document.getElementById('inventoryBars');
+            container.innerHTML = inventoryData.map(item => {
+                const pct = ((item.count / item.total) * 100).toFixed(1);
+                return `<div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-white/70 font-medium">${item.label}</span>
+                        <span class="text-sm font-semibold text-white">${item.count.toLocaleString()} <span class="text-white/25 font-normal">(${pct}%)</span></span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" data-width="${pct}" style="background:${item.color}; box-shadow:0 0 12px ${item.bg};"></div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function renderActivity() {
+            const container = document.getElementById('activityTimeline');
+            container.innerHTML = activityData.map(item => `
+                <div class="timeline-item">
+                    <div class="timeline-dot" style="border-color:${item.color}"></div>
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-white">${item.action}</p>
+                            <p class="text-xs text-white/35 mt-0.5">${item.detail}</p>
+                        </div>
+                        <span class="text-[11px] text-white/20 flex-shrink-0 ml-4">${item.time}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderQuickActions() {
+            const container = document.getElementById('quickActions');
+            container.innerHTML = quickActionsData.map(item => `
+                <button class="quick-btn" onclick="quickActionsData[${quickActionsData.indexOf(item)}].action()">
+                    <div class="icon-wrap"><i data-lucide="${item.icon}" class="w-5 h-5"></i></div>
+                    ${item.label}
+                </button>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function renderSystem() {
+            const container = document.getElementById('systemCards');
+            container.innerHTML = systemData.map(item => `
+                <div class="sys-card">
+                    <div class="flex items-center gap-2 mb-2.5">
+                        <i data-lucide="${item.icon}" class="w-4 h-4" style="color:${item.color}"></i>
+                        <span class="text-[11px] text-white/35 font-medium uppercase tracking-wider">${item.label}</span>
+                    </div>
+                    <p class="text-sm font-semibold text-white">${item.value}</p>
+                </div>
+            `).join('');
+        }
+
+        /* =========================================
+           UTILITY FUNCTIONS
+        ========================================= */
+        function formatPrice(p) {
+            return '₹' + p.toLocaleString('en-IN');
+        }
+
+        function formatDate(d) {
+            const date = new Date(d);
+            return date.toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+        }
+
+        /* =========================================
+           TABLE ACTIONS
+        ========================================= */
+        function viewNumber(idx) {
+            const n = numbersData[idx];
+            if (!n) return;
+            const dotColor = n.status === 'Available' ? '#4ADE80' :
+                             n.status === 'Sold' ? '#F87171' :
+                             n.status === 'Premium' ? '#E8CC6E' : '#60B5FF';
+            document.getElementById('viewModalContent').innerHTML = `
+                <div class="text-center py-4">
+                    <p class="text-4xl font-display font-bold text-gold tracking-widest mb-4">${n.number}</p>
+                    <div class="flex items-center justify-center gap-2 mb-6">
+                        <span class="w-2 h-2 rounded-full" style="background:${dotColor}"></span>
+                        <span class="text-sm font-medium" style="color:${dotColor}">${n.status}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 text-left">
+                        <div class="sys-card">
+                            <p class="text-[11px] text-white/35 uppercase tracking-wider mb-1">Category</p>
+                            <p class="text-sm font-semibold text-white">${n.category}</p>
+                        </div>
+                        <div class="sys-card">
+                            <p class="text-[11px] text-white/35 uppercase tracking-wider mb-1">Price</p>
+                            <p class="text-sm font-semibold text-gold">${formatPrice(n.price)}</p>
+                        </div>
+                        <div class="sys-card col-span-2">
+                            <p class="text-[11px] text-white/35 uppercase tracking-wider mb-1">Date Added</p>
+                            <p class="text-sm font-semibold text-white">${formatDate(n.date)}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            openModal('viewModal');
+        }
+
+        function editNumber(idx) {
+            const n = numbersData[idx];
+            if (!n) return;
+            document.getElementById('viewModalContent').innerHTML = `
+                <form onsubmit="handleEditNumber(event, ${idx})" class="space-y-4">
+                    <div>
+                        <label class="text-xs font-medium text-white/50 mb-1.5 block">VIP Number</label>
+                        <input type="text" class="input-field" value="${n.number}" required id="editNumber">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs font-medium text-white/50 mb-1.5 block">Category</label>
+                            <select class="input-field" required id="editCategory">
+                                ${['Fancy','Premium','Business','Lucky','VIP'].map(c => `<option value="${c}" ${c===n.category?'selected':''}>${c}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-white/50 mb-1.5 block">Status</label>
+                            <select class="input-field" required id="editStatus">
+                                ${['Available','Sold','Premium','Reserved'].map(s => `<option value="${s}" ${s===n.status?'selected':''}>${s}</option>`).join('')}
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs font-medium text-white/50 mb-1.5 block">Price (INR)</label>
+                        <input type="number" class="input-field" value="${n.price}" required id="editPrice" min="0">
+                    </div>
+                    <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-gold-dark to-gold text-charcoal-900 font-semibold text-sm hover:shadow-lg hover:shadow-gold/20 transition-all active:scale-[0.98]">
+                        Save Changes
+                    </button>
+                </form>
+            `;
+            openModal('viewModal');
+        }
+
+        function handleEditNumber(e, idx) {
+            e.preventDefault();
+            numbersData[idx].number = document.getElementById('editNumber').value;
+            numbersData[idx].category = document.getElementById('editCategory').value;
+            numbersData[idx].status = document.getElementById('editStatus').value;
+            numbersData[idx].price = parseInt(document.getElementById('editPrice').value);
+            renderTable(getFilteredData());
+            closeModal('viewModal');
+            showToast('Number updated successfully', 'success');
+        }
+
+        function deleteNumber(idx) {
+            const n = numbersData[idx];
+            if (!n) return;
+            numbersData.splice(idx, 1);
+            renderTable(getFilteredData());
+            showToast(`${n.number} has been removed`, 'error');
+        }
+
+        function handleAddNumber(e) {
+            e.preventDefault();
+            const newNum = {
+                number: document.getElementById('newNumber').value,
+                category: document.getElementById('newCategory').value,
+                status: document.getElementById('newStatus').value,
+                price: parseInt(document.getElementById('newPrice').value),
+                date: new Date().toISOString().split('T')[0],
+            };
+            numbersData.unshift(newNum);
+            renderTable(getFilteredData());
+            closeModal('addModal');
+            document.getElementById('newNumber').value = '';
+            document.getElementById('newCategory').value = '';
+            document.getElementById('newPrice').value = '';
+            showToast(`${newNum.number} added successfully`, 'success');
+        }
+
+        /* =========================================
+           FILTER & SEARCH
+        ========================================= */
+        let currentStatusFilter = 'all';
+        let currentSearchTerm = '';
+
+        function getFilteredData() {
+            return numbersData.filter(n => {
+                const matchStatus = currentStatusFilter === 'all' || n.status === currentStatusFilter;
+                const matchSearch = !currentSearchTerm ||
+                    n.number.includes(currentSearchTerm) ||
+                    n.category.toLowerCase().includes(currentSearchTerm.toLowerCase()) ||
+                    n.status.toLowerCase().includes(currentSearchTerm.toLowerCase());
+                return matchStatus && matchSearch;
+            });
+        }
+
+        function filterTable(term) {
+            currentSearchTerm = term;
+            // Sync both search inputs
+            document.querySelectorAll('input[type="text"][oninput*="filterTable"]').forEach(el => {
+                if (el.value !== term) el.value = term;
+            });
+            renderTable(getFilteredData());
+        }
+
+        function filterByStatus(status) {
+            currentStatusFilter = status;
+            renderTable(getFilteredData());
+        }
+
+        /* =========================================
+           MODAL
+        ========================================= */
+        function openModal(id) {
+            document.getElementById(id).classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        // Close modal on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('show');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+
+        /* =========================================
+           DROPDOWN
+        ========================================= */
+        function toggleDropdown(id) {
+            const dd = document.getElementById(id);
+            const isShown = dd.classList.contains('show');
+            // Close all dropdowns first
+            document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
+            if (!isShown) dd.classList.add('show');
+        }
+
+        // Close dropdowns on outside click
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.relative')) {
+                document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
+            }
+        });
+
+        /* =========================================
+           SIDEBAR
+        ========================================= */
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('show');
+        }
+
+        // Sidebar link active state + scroll
+        document.querySelectorAll('.sidebar-link[data-section]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                // Close mobile sidebar
+                if (window.innerWidth < 1024) toggleSidebar();
+            });
+        });
+
+        /* =========================================
+           TOAST
+        ========================================= */
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+
+            const iconColor = type === 'success' ? '#4ADE80' : type === 'error' ? '#F87171' : '#60B5FF';
+            const iconName = type === 'success' ? 'check-circle' : type === 'error' ? 'x-circle' : 'info';
+            toast.innerHTML = `<i data-lucide="${iconName}" style="color:${iconColor}; width:18px; height:18px; flex-shrink:0;"></i><span>${message}</span>`;
+
+            container.appendChild(toast);
+            lucide.createIcons({ nodes: [toast] });
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => toast.classList.add('show'));
+            });
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 3500);
+        }
+
+        /* =========================================
+           CHARTS
+        ========================================= */
+        function initCharts() {
+            const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            const addedData = [820, 932, 1100, 980, 1250, 1400, 1180, 1320, 1500, 1380, 1450, 1535];
+            const soldData = [180, 220, 310, 260, 340, 380, 290, 350, 410, 370, 390, 426];
+
+            // Chart.js global defaults for dark theme
+            Chart.defaults.color = '#666';
+            Chart.defaults.font.family = "'DM Sans', sans-serif";
+            Chart.defaults.font.size = 11;
+
+            // Monthly Numbers Added — Line Chart
+            const addedCtx = document.getElementById('monthlyAddedChart').getContext('2d');
+            const addedGradient = addedCtx.createLinearGradient(0, 0, 0, 260);
+            addedGradient.addColorStop(0, 'rgba(212,175,55,0.25)');
+            addedGradient.addColorStop(1, 'rgba(212,175,55,0.0)');
+
+            new Chart(addedCtx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Numbers Added',
+                        data: addedData,
+                        borderColor: '#D4AF37',
+                        backgroundColor: addedGradient,
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 2.5,
+                        pointBackgroundColor: '#D4AF37',
+                        pointBorderColor: '#0D0D0D',
+                        pointBorderWidth: 2,
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color:'rgba(255,255,255,0.03)', drawBorder:false }, ticks: { color:'#555' } },
+                        y: { grid: { color:'rgba(255,255,255,0.03)', drawBorder:false }, ticks: { color:'#555' }, beginAtZero: true }
+                    },
+                    interaction: { intersect: false, mode: 'index' }
+                }
+            });
+
+            // Monthly Sold — Bar Chart
+            const soldCtx = document.getElementById('monthlySoldChart').getContext('2d');
+            new Chart(soldCtx, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Numbers Sold',
+                        data: soldData,
+                        backgroundColor: 'rgba(74,157,255,0.6)',
+                        hoverBackgroundColor: 'rgba(74,157,255,0.85)',
+                        borderRadius: 6,
+                        borderSkipped: false,
+                        barPercentage: 0.6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display:false }, ticks: { color:'#555' } },
+                        y: { grid: { color:'rgba(255,255,255,0.03)', drawBorder:false }, ticks: { color:'#555' }, beginAtZero: true }
+                    }
+                }
+            });
+
+            // Status Donut
+            new Chart(document.getElementById('statusDonutChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Available','Sold','Premium','Reserved'],
+                    datasets: [{
+                        data: [8432, 3156, 3156, 1259],
+                        backgroundColor: ['#4ADE80','#F87171','#D4AF37','#4A9DFF'],
+                        borderColor: '#121212',
+                        borderWidth: 3,
+                        hoverOffset: 6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '72%',
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // Category Donut
+            new Chart(document.getElementById('categoryDonutChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Fancy','Premium','Business','Lucky','VIP'],
+                    datasets: [{
+                        data: [3420, 3156, 2890, 1950, 1431],
+                        backgroundColor: ['#E8CC6E','#D4AF37','#4A9DFF','#A78BFA','#F472B6'],
+                        borderColor: '#121212',
+                        borderWidth: 3,
+                        hoverOffset: 6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '72%',
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // Available vs Sold comparison
+            new Chart(document.getElementById('comparisonChart'), {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [
+                        {
+                            label: 'Available',
+                            data: [640, 712, 790, 720, 910, 1020, 890, 970, 1090, 1010, 1060, 1109],
+                            backgroundColor: 'rgba(74,222,128,0.5)',
+                            hoverBackgroundColor: 'rgba(74,222,128,0.8)',
+                            borderRadius: 4,
+                            borderSkipped: false,
+                            barPercentage: 0.7,
+                            categoryPercentage: 0.7,
+                        },
+                        {
+                            label: 'Sold',
+                            data: [180, 220, 310, 260, 340, 380, 290, 350, 410, 370, 390, 426],
+                            backgroundColor: 'rgba(212,175,55,0.5)',
+                            hoverBackgroundColor: 'rgba(212,175,55,0.8)',
+                            borderRadius: 4,
+                            borderSkipped: false,
+                            barPercentage: 0.7,
+                            categoryPercentage: 0.7,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color:'#888', usePointStyle:true, pointStyle:'circle', padding:16, font:{ size:11 } }
+                        }
+                    },
+                    scales: {
+                        x: { grid: { display:false }, ticks: { color:'#555' } },
+                        y: { grid: { color:'rgba(255,255,255,0.03)', drawBorder:false }, ticks: { color:'#555' }, beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        /* =========================================
+           SCROLL REVEAL + PROGRESS BAR ANIMATION
+        ========================================= */
+        function initScrollReveal() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        // Animate progress bars inside this element
+                        entry.target.querySelectorAll('.progress-fill[data-width]').forEach(bar => {
+                            setTimeout(() => {
+                                bar.style.width = bar.dataset.width + '%';
+                            }, 200);
+                        });
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        }
+
+        /* =========================================
+           INITIALIZE
+        ========================================= */
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTable(numbersData);
+            renderInventory();
+            renderActivity();
+            renderQuickActions();
+            renderSystem();
+            initCharts();
+            initScrollReveal();
+            lucide.createIcons();
+        });
+
+        // Keyboard: Escape closes modals/dropdowns
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.show').forEach(m => {
+                    m.classList.remove('show');
+                    document.body.style.overflow = '';
+                });
+                document.querySelectorAll('.dropdown.show').forEach(d => d.classList.remove('show'));
+            }
+        });
+    </script>
+</body>
+</html>
