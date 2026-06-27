@@ -1,0 +1,2582 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIP Numbers — Premium Mobile Number Marketplace</title>
+<meta name="description" content="Discover exclusive VIP mobile numbers. Verified ownership, instant transfer, lifetime prestige. Browse over 10,000 curated numbers.">
+<meta name="keywords" content="VIP numbers, fancy numbers, premium mobile numbers, business numbers, lucky numbers">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500&family=Poppins:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+/* ============================================
+   THEME TOKENS
+   ============================================ */
+:root {
+  --bg: #0a1628;
+  --bg-soft: #0f1e3a;
+  --surface: #142849;
+  --surface-hover: #1a3057;
+  --text: #ffffff;
+  --text-soft: #b8c5d6;
+  --text-mute: #6b7a92;
+  --gold: #c5a572;
+  --gold-bright: #d4b88a;
+  --gold-soft: rgba(197, 165, 114, 0.15);
+  --line: rgba(255, 255, 255, 0.08);
+  --line-soft: rgba(255, 255, 255, 0.04);
+  --line-gold: rgba(197, 165, 114, 0.3);
+  --shadow-luxe: 0 30px 60px -20px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(197, 165, 114, 0.08);
+  --shadow-card: 0 20px 40px -16px rgba(0, 0, 0, 0.4);
+  --ease-quiet: cubic-bezier(.22, 1, .36, 1);
+  --ease-precise: cubic-bezier(.4, 0, .2, 1);
+  --ease-emphasis: cubic-bezier(.16, 1, .3, 1);
+}
+
+[data-theme="light"] {
+  --bg: #f2ede7;
+  --bg-soft: #ebe5dc;
+  --surface: #ffffff;
+  --surface-hover: #faf6f0;
+  --text: #0a1628;
+  --text-soft: #2a3a55;
+  --text-mute: #6b7a92;
+  --gold: #a08550;
+  --gold-bright: #c5a572;
+  --gold-soft: rgba(160, 133, 80, 0.12);
+  --line: rgba(10, 22, 40, 0.1);
+  --line-soft: rgba(10, 22, 40, 0.05);
+  --line-gold: rgba(160, 133, 80, 0.3);
+  --shadow-luxe: 0 30px 60px -20px rgba(10, 22, 40, 0.15), 0 0 0 1px rgba(160, 133, 80, 0.08);
+  --shadow-card: 0 20px 40px -16px rgba(10, 22, 40, 0.12);
+}
+
+/* ============================================
+   RESET & BASE
+   ============================================ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  font-weight: 300;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background 600ms var(--ease-quiet), color 600ms var(--ease-quiet);
+}
+img { max-width: 100%; display: block; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, select { font-family: inherit; }
+a { color: inherit; text-decoration: none; }
+
+::selection { background: var(--gold); color: var(--bg); }
+
+/* ============================================
+   TYPOGRAPHY PRIMITIVES
+   ============================================ */
+h1, h2, h3, h4 {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 300;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+.italic { font-style: italic; font-weight: 200; }
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 700ms var(--ease-quiet), transform 700ms var(--ease-quiet);
+}
+.eyebrow::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--gold);
+  display: inline-block;
+}
+.is-in .eyebrow { opacity: 1; transform: none; transition-delay: 100ms; }
+
+.headline {
+  font-size: clamp(2.4rem, 5.5vw, 4.5rem);
+  font-weight: 200;
+  letter-spacing: -0.02em;
+  margin: 1.5rem 0;
+}
+.headline .italic { color: var(--gold); }
+
+.section-lede {
+  font-size: 1rem;
+  color: var(--text-soft);
+  max-width: 540px;
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+/* ============================================
+   LAYOUT
+   ============================================ */
+.container { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
+.section { padding: 8rem 0; position: relative; }
+.section-header { margin-bottom: 4rem; max-width: 720px; }
+
+/* ============================================
+   LINE MASK REVEAL
+   ============================================ */
+.line-mask { overflow: hidden; display: block; }
+.line {
+  display: block;
+  transform: translateY(110%);
+  will-change: transform;
+}
+.is-in .line { transform: translateY(0); transition: transform 1.1s var(--ease-emphasis); }
+.is-in .line.delay-1 { transition-delay: 0.13s; }
+.is-in .line.delay-2 { transition-delay: 0.26s; }
+
+/* ============================================
+   HEADER / NAVBAR
+   ============================================ */
+.site-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 1.5rem 2rem;
+  transition: padding 400ms var(--ease-quiet), background 400ms var(--ease-quiet), border-color 400ms var(--ease-quiet);
+  border-bottom: 1px solid transparent;
+}
+.site-header.scrolled {
+  padding: 1rem 2rem;
+  background: rgba(10, 22, 40, 0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--line);
+}
+[data-theme="light"] .site-header.scrolled {
+  background: rgba(242, 237, 231, 0.85);
+}
+
+.nav-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+.logo {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.logo-mark {
+  width: 32px; height: 32px;
+  border: 1px solid var(--gold);
+  display: grid; place-items: center;
+  color: var(--gold);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+}
+.logo-text { color: var(--text); }
+.logo-text span { color: var(--gold); font-style: italic; font-weight: 300; }
+
+.nav-links {
+  display: flex;
+  gap: 2.5rem;
+  list-style: none;
+}
+.nav-links a {
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: var(--text-soft);
+  position: relative;
+  padding: 0.25rem 0;
+  transition: color 300ms var(--ease-quiet);
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0;
+  width: 0; height: 1px;
+  background: var(--gold);
+  transition: width 400ms var(--ease-quiet);
+}
+.nav-links a:hover { color: var(--text); }
+.nav-links a:hover::after { width: 100%; }
+
+.nav-actions { display: flex; align-items: center; gap: 1rem; }
+.theme-toggle {
+  width: 38px; height: 38px;
+  border: 1px solid var(--line);
+  display: grid; place-items: center;
+  color: var(--text-soft);
+  transition: all 300ms var(--ease-quiet);
+  border-radius: 50%;
+}
+.theme-toggle:hover { border-color: var(--gold); color: var(--gold); }
+
+.btn-login {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.7rem 1.4rem;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  transition: all 300ms var(--ease-quiet);
+  background: transparent;
+}
+.btn-login:hover {
+  background: var(--gold);
+  color: var(--bg);
+}
+
+.menu-toggle {
+  display: none;
+  width: 38px; height: 38px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+.menu-toggle span {
+  width: 20px; height: 1px;
+  background: var(--text);
+  transition: all 300ms var(--ease-quiet);
+}
+.menu-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(4px, 4px); }
+.menu-toggle.active span:nth-child(2) { opacity: 0; }
+.menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(4px, -4px); }
+
+/* Mobile menu overlay */
+.mobile-menu {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 99;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 400ms var(--ease-quiet);
+}
+.mobile-menu.active { opacity: 1; pointer-events: auto; }
+.mobile-menu a {
+  font-family: 'Oswald', sans-serif;
+  font-size: 2rem;
+  font-weight: 200;
+  color: var(--text);
+}
+.mobile-menu a:hover { color: var(--gold); }
+
+/* ============================================
+   HERO
+   ============================================ */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: 8rem 2rem 4rem;
+  overflow: hidden;
+}
+.hero-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--line-gold) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-gold) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
+  opacity: 0.5;
+}
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.35;
+  animation: orb-drift 20s ease-in-out infinite;
+}
+.hero-orb.gold {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, var(--gold) 0%, transparent 70%);
+  top: -150px; right: -100px;
+}
+.hero-orb.navy {
+  width: 450px; height: 450px;
+  background: radial-gradient(circle, #1e3a5f 0%, transparent 70%);
+  bottom: -100px; left: -100px;
+  animation-delay: -10s;
+}
+@keyframes orb-drift {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(40px, -30px); }
+}
+.floating-digit {
+  position: absolute;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 200;
+  color: var(--gold);
+  opacity: 0.06;
+  pointer-events: none;
+  user-select: none;
+}
+.floating-digit.d1 { top: 15%; left: 8%; font-size: 200px; animation: float 18s ease-in-out infinite; }
+.floating-digit.d2 { bottom: 18%; right: 10%; font-size: 240px; animation: float 22s ease-in-out infinite -5s; }
+.floating-digit.d3 { top: 50%; left: 45%; font-size: 180px; animation: float 16s ease-in-out infinite -8s; }
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(20px, -20px) rotate(2deg); }
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+.hero-content { max-width: 900px; }
+.hero-title {
+  font-size: clamp(2.8rem, 7.5vw, 6.5rem);
+  font-weight: 200;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin: 1.5rem 0 2rem;
+}
+.hero-title .italic { color: var(--gold); font-weight: 200; }
+
+.hero-sub {
+  font-size: 1.05rem;
+  color: var(--text-soft);
+  max-width: 560px;
+  line-height: 1.7;
+  margin-bottom: 3rem;
+  font-weight: 300;
+}
+
+.hero-search {
+  display: flex;
+  align-items: stretch;
+  max-width: 580px;
+  background: rgba(20, 40, 73, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--line);
+  border-radius: 0;
+  overflow: hidden;
+  margin-bottom: 2rem;
+  transition: border-color 300ms var(--ease-quiet);
+}
+[data-theme="light"] .hero-search { background: rgba(255,255,255,0.7); }
+.hero-search:focus-within { border-color: var(--gold); }
+.hero-search i {
+  padding: 0 1.2rem;
+  display: grid; place-items: center;
+  color: var(--gold);
+  font-size: 14px;
+}
+.hero-search input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-size: 15px;
+  padding: 1.1rem 0;
+  letter-spacing: 0.02em;
+}
+.hero-search input::placeholder { color: var(--text-mute); }
+.hero-search button {
+  background: var(--gold);
+  color: var(--bg);
+  padding: 0 1.8rem;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  transition: background 300ms var(--ease-quiet);
+}
+.hero-search button:hover { background: var(--gold-bright); }
+
+.hero-ctas {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 3.5rem;
+}
+.btn {
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 1rem 1.8rem;
+  transition: all 300ms var(--ease-quiet);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.btn-primary {
+  background: var(--gold);
+  color: var(--bg);
+}
+.btn-primary:hover {
+  background: var(--gold-bright);
+  transform: translateY(-2px);
+}
+.btn-outline {
+  background: transparent;
+  border-color: var(--line);
+  color: var(--text);
+}
+.btn-outline:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.btn i { font-size: 11px; transition: transform 300ms var(--ease-quiet); }
+.btn:hover i { transform: translateX(3px); }
+
+.hero-trust {
+  display: flex;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+  padding-top: 2rem;
+  border-top: 1px solid var(--line);
+}
+.trust-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.trust-num {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 300;
+  color: var(--gold);
+  line-height: 1;
+}
+.trust-label {
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+}
+
+/* ============================================
+   MARQUEE TRUST STRIP
+   ============================================ */
+.trust-strip {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 1.5rem 0;
+  overflow: hidden;
+  background: var(--bg-soft);
+}
+.marquee {
+  display: flex;
+  gap: 4rem;
+  animation: scroll-marquee 40s linear infinite;
+  white-space: nowrap;
+  width: max-content;
+}
+.marquee-item {
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.marquee-item::before {
+  content: '✦';
+  color: var(--gold);
+  font-size: 10px;
+}
+@keyframes scroll-marquee {
+  to { transform: translateX(-50%); }
+}
+
+/* ============================================
+   MARKETPLACE / FILTERS + GRID
+   ============================================ */
+.marketplace { background: var(--bg-soft); }
+
+.filters-bar {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 1.75rem;
+  margin-bottom: 2.5rem;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr;
+  gap: 1.5rem;
+  align-items: end;
+}
+.filter-group { display: flex; flex-direction: column; gap: 0.5rem; }
+.filter-group label {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  font-weight: 500;
+}
+.filter-group label span { color: var(--gold); }
+.search-input-wrap {
+  position: relative;
+  display: flex; align-items: center;
+}
+.search-input-wrap i {
+  position: absolute;
+  left: 0.75rem;
+  color: var(--gold);
+  font-size: 12px;
+  pointer-events: none;
+}
+.filter-group input[type="text"],
+.filter-group select {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 0.7rem 0.9rem 0.7rem 2rem;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 300ms var(--ease-quiet);
+  width: 100%;
+  font-weight: 300;
+}
+.filter-group select { padding-left: 0.9rem; cursor: pointer; }
+.filter-group input[type="text"]:focus,
+.filter-group select:focus { border-color: var(--gold); }
+
+.filter-group input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 2px;
+  background: var(--line);
+  outline: none;
+  margin-top: 0.5rem;
+}
+.filter-group input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  background: var(--gold);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 0 1px var(--gold);
+}
+.filter-group input[type="range"]::-moz-range-thumb {
+  width: 14px; height: 14px;
+  background: var(--gold);
+  border: 2px solid var(--bg);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.chip-group { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.chip {
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--line);
+  color: var(--text-soft);
+  transition: all 250ms var(--ease-quiet);
+  background: transparent;
+  font-weight: 400;
+}
+.chip:hover { border-color: var(--gold); color: var(--gold); }
+.chip.active { background: var(--gold); color: var(--bg); border-color: var(--gold); }
+
+.results-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  font-size: 12px;
+  color: var(--text-mute);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.results-meta span { color: var(--gold); font-weight: 500; }
+
+.numbers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/* ============================================
+   NUMBER CARD
+   ============================================ */
+.number-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 1.75rem;
+  position: relative;
+  transition: all 400ms var(--ease-quiet);
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: card-in 700ms var(--ease-quiet) forwards;
+}
+@keyframes card-in {
+  to { opacity: 1; transform: none; }
+}
+.number-card:hover {
+  border-color: var(--line-gold);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card);
+}
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.fav-btn {
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  border: 1px solid var(--line);
+  color: var(--text-mute);
+  font-size: 12px;
+  transition: all 250ms var(--ease-quiet);
+  border-radius: 50%;
+}
+.fav-btn:hover { border-color: var(--gold); color: var(--gold); }
+.fav-btn.active { color: var(--gold); border-color: var(--gold); background: var(--gold-soft); }
+
+.badge {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--line-gold);
+  background: var(--gold-soft);
+}
+
+.card-number {
+  font-family: 'Oswald', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 300;
+  letter-spacing: 0.05em;
+  margin-bottom: 1.5rem;
+  line-height: 1;
+  color: var(--text);
+  transition: color 300ms var(--ease-quiet);
+}
+.number-card:hover .card-number { color: var(--gold); }
+.card-number .space { display: inline-block; width: 0.4em; }
+
+.card-divider {
+  height: 1px;
+  background: var(--line);
+  margin-bottom: 1rem;
+}
+
+.card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.5rem;
+}
+.card-price {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--text);
+}
+.card-rating {
+  font-size: 12px;
+  color: var(--text-soft);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.card-rating i { color: var(--gold); font-size: 10px; }
+
+.card-extra {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-mute);
+  letter-spacing: 0.05em;
+  margin-bottom: 1.25rem;
+  min-height: 16px;
+}
+.tag-trending { color: var(--gold); }
+.tag-new { color: #88c5a0; }
+
+.card-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+.card-actions button {
+  flex: 1;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.75rem 0.5rem;
+  transition: all 250ms var(--ease-quiet);
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--text-soft);
+}
+.card-actions .btn-quick:hover { border-color: var(--gold); color: var(--gold); }
+.card-actions .btn-buy {
+  background: var(--gold);
+  color: var(--bg);
+  border-color: var(--gold);
+}
+.card-actions .btn-buy:hover { background: var(--gold-bright); border-color: var(--gold-bright); }
+
+.empty-state {
+  grid-column: 1 / -1;
+  padding: 4rem 2rem;
+  text-align: center;
+  border: 1px dashed var(--line);
+  color: var(--text-mute);
+}
+.empty-state i { font-size: 2rem; color: var(--gold); margin-bottom: 1rem; }
+
+/* ============================================
+   POPULAR CATEGORIES
+   ============================================ */
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+.category-card {
+  position: relative;
+  padding: 2.5rem 2rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  transition: all 400ms var(--ease-quiet);
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.category-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--gold-soft) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 400ms var(--ease-quiet);
+}
+.category-card:hover { border-color: var(--line-gold); transform: translateY(-4px); }
+.category-card:hover::before { opacity: 1; }
+
+.category-icon {
+  width: 48px; height: 48px;
+  display: grid; place-items: center;
+  border: 1px solid var(--line-gold);
+  color: var(--gold);
+  font-size: 18px;
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 1;
+  transition: all 400ms var(--ease-quiet);
+}
+.category-card:hover .category-icon {
+  background: var(--gold);
+  color: var(--bg);
+  transform: rotate(-8deg);
+}
+.category-name {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 300;
+  margin-bottom: 0.5rem;
+  position: relative; z-index: 1;
+}
+.category-desc {
+  font-size: 13px;
+  color: var(--text-soft);
+  line-height: 1.6;
+  position: relative; z-index: 1;
+}
+.category-count {
+  position: absolute;
+  top: 1.5rem; right: 1.5rem;
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  color: var(--text-mute);
+  letter-spacing: 0.1em;
+  z-index: 1;
+}
+.category-arrow {
+  position: relative; z-index: 1;
+  margin-top: 1.5rem;
+  font-size: 12px;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 300ms var(--ease-quiet);
+}
+.category-card:hover .category-arrow { opacity: 1; transform: none; }
+
+/* ============================================
+   3D WORD RING — TRENDING PATTERNS
+   ============================================ */
+.patterns-section {
+  position: relative;
+  padding: 0;
+  background: var(--bg);
+}
+.patterns-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+.patterns-left {
+  padding: 8rem 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+.patterns-left .eyebrow { margin-bottom: 1rem; }
+.patterns-left h2 {
+  font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+  font-weight: 200;
+  margin-bottom: 2rem;
+  letter-spacing: -0.02em;
+}
+.patterns-left h2 .italic { color: var(--gold); }
+.patterns-left p {
+  color: var(--text-soft);
+  line-height: 1.7;
+  margin-bottom: 2rem;
+  max-width: 460px;
+}
+.pattern-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.pattern-list li {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 13px;
+  color: var(--text-soft);
+  letter-spacing: 0.02em;
+}
+.pattern-list li::before {
+  content: '';
+  width: 24px; height: 1px;
+  background: var(--gold);
+}
+
+.ring-stage {
+  perspective: 1000px;
+  perspective-origin: 50% 55%;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  border-left: 1px solid var(--line);
+}
+.ring {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.ring-item {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 400px;
+  text-align: center;
+  font-family: 'Oswald', sans-serif;
+  font-size: 3rem;
+  font-weight: 200;
+  color: var(--text);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  transform-origin: center;
+}
+.ring-item .digit { color: var(--gold); }
+.ring-item .label { color: var(--text-soft); font-size: 1.8rem; }
+
+/* ============================================
+   WHY CHOOSE US
+   ============================================ */
+.features-section { background: var(--bg-soft); }
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0;
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+.feature-card {
+  padding: 3rem 2.5rem;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  transition: background 400ms var(--ease-quiet);
+  position: relative;
+}
+.feature-card:hover { background: var(--surface-hover); }
+.feature-num {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  color: var(--gold);
+  letter-spacing: 0.2em;
+  margin-bottom: 2rem;
+}
+.feature-icon {
+  font-size: 1.8rem;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+  opacity: 0.9;
+}
+.feature-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 300;
+  margin-bottom: 0.75rem;
+}
+.feature-desc {
+  font-size: 13px;
+  color: var(--text-soft);
+  line-height: 1.7;
+}
+
+/* ============================================
+   STATS COUNTER
+   ============================================ */
+.stats-section {
+  padding: 6rem 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  text-align: center;
+}
+.stat-item {
+  padding: 1rem;
+  position: relative;
+}
+.stat-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 25%;
+  width: 1px; height: 50%;
+  background: var(--line);
+}
+.stat-num {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 200;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 0.75rem;
+}
+.stat-suffix {
+  font-size: 0.6em;
+  color: var(--text-soft);
+  margin-left: 0.1em;
+}
+.stat-label {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+
+/* ============================================
+   TESTIMONIALS
+   ============================================ */
+.testimonials-section { background: var(--bg-soft); }
+.testimonials-wrap {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.testimonial-stage {
+  min-height: 320px;
+  position: relative;
+}
+.testimonial-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 3.5rem 3rem;
+  text-align: center;
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 600ms var(--ease-quiet), transform 600ms var(--ease-quiet);
+  pointer-events: none;
+}
+.testimonial-card.active {
+  opacity: 1;
+  transform: none;
+  position: relative;
+  pointer-events: auto;
+}
+.testimonial-quote {
+  font-family: 'Oswald', sans-serif;
+  font-size: 4rem;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+.testimonial-text {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--text);
+  margin-bottom: 2rem;
+  font-weight: 300;
+  font-style: italic;
+}
+.testimonial-stars {
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+  font-size: 13px;
+  letter-spacing: 0.2em;
+}
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.testimonial-photo {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--line-gold);
+  filter: grayscale(20%);
+}
+.testimonial-name {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  text-align: left;
+}
+.testimonial-role {
+  font-size: 11px;
+  color: var(--text-mute);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: left;
+}
+
+.testimonial-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+}
+.testimonial-btn {
+  width: 44px; height: 44px;
+  border: 1px solid var(--line);
+  display: grid; place-items: center;
+  color: var(--text-soft);
+  transition: all 300ms var(--ease-quiet);
+  border-radius: 50%;
+}
+.testimonial-btn:hover { border-color: var(--gold); color: var(--gold); }
+.testimonial-dots {
+  display: flex;
+  gap: 0.5rem;
+}
+.testimonial-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--line);
+  transition: all 300ms var(--ease-quiet);
+  cursor: pointer;
+}
+.testimonial-dot.active { background: var(--gold); width: 24px; border-radius: 4px; }
+
+/* ============================================
+   FAQ
+   ============================================ */
+.faq-section { background: var(--bg); }
+.faq-list {
+  max-width: 860px;
+  margin: 0 auto;
+  border-top: 1px solid var(--line);
+}
+.faq-item {
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+.faq-item::before {
+  content: '';
+  position: absolute;
+  left: -1rem; top: 0;
+  width: 2px; height: 0;
+  background: var(--gold);
+  transition: height 600ms var(--ease-quiet);
+}
+.faq-item.active::before { height: 100%; }
+.faq-question {
+  width: 100%;
+  text-align: left;
+  padding: 2rem 4rem 2rem 0;
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 300;
+  color: var(--text);
+  position: relative;
+  transition: color 300ms var(--ease-quiet);
+  letter-spacing: -0.005em;
+}
+.faq-item:hover .faq-question,
+.faq-item.active .faq-question { color: var(--gold); }
+.faq-question::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 50%;
+  width: 20px; height: 1px;
+  background: var(--gold);
+  transform: translateY(-50%);
+}
+.faq-question::before {
+  content: '';
+  position: absolute;
+  right: 9.5px; top: 50%;
+  width: 1px; height: 20px;
+  background: var(--gold);
+  transform: translateY(-50%);
+  transition: transform 300ms var(--ease-quiet);
+}
+.faq-item.active .faq-question::before { transform: translateY(-50%) rotate(90deg); opacity: 0; }
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 500ms var(--ease-quiet), padding 500ms var(--ease-quiet);
+  padding: 0 4rem 0 0;
+}
+.faq-item.active .faq-answer { max-height: 300px; padding-bottom: 2rem; }
+.faq-answer p {
+  color: var(--text-soft);
+  font-size: 14px;
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+/* ============================================
+   NEWSLETTER
+   ============================================ */
+.newsletter-section {
+  background: var(--bg-soft);
+  padding: 6rem 0;
+  border-top: 1px solid var(--line);
+}
+.newsletter-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 0 2rem;
+}
+.newsletter-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 200;
+  margin: 1.5rem 0 1rem;
+  letter-spacing: -0.02em;
+}
+.newsletter-title .italic { color: var(--gold); }
+.newsletter-sub {
+  color: var(--text-soft);
+  margin-bottom: 2.5rem;
+  font-size: 15px;
+}
+.newsletter-form {
+  display: flex;
+  gap: 0.5rem;
+  max-width: 500px;
+  margin: 0 auto;
+  position: relative;
+}
+.newsletter-form input {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 1rem 1.2rem;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 300ms var(--ease-quiet);
+  font-weight: 300;
+}
+.newsletter-form input:focus { border-color: var(--gold); }
+.newsletter-form button {
+  background: var(--gold);
+  color: var(--bg);
+  padding: 0 1.8rem;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  transition: background 300ms var(--ease-quiet);
+}
+.newsletter-form button:hover { background: var(--gold-bright); }
+.newsletter-error {
+  color: #e57373;
+  font-size: 12px;
+  margin-top: 0.5rem;
+  opacity: 0;
+  transition: opacity 300ms var(--ease-quiet);
+  letter-spacing: 0.02em;
+}
+.newsletter-error.show { opacity: 1; }
+.newsletter-success {
+  color: var(--gold);
+  font-size: 13px;
+  margin-top: 0.75rem;
+  opacity: 0;
+  transition: opacity 400ms var(--ease-quiet);
+  letter-spacing: 0.05em;
+}
+.newsletter-success.show { opacity: 1; }
+
+/* ============================================
+   FOOTER
+   ============================================ */
+.site-footer {
+  background: var(--bg);
+  padding: 5rem 0 2rem;
+  border-top: 1px solid var(--line);
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 4rem;
+}
+.footer-brand .logo { margin-bottom: 1.5rem; }
+.footer-brand p {
+  color: var(--text-soft);
+  font-size: 13px;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+  max-width: 280px;
+}
+.social-links {
+  display: flex;
+  gap: 0.75rem;
+}
+.social-links a {
+  width: 36px; height: 36px;
+  border: 1px solid var(--line);
+  display: grid; place-items: center;
+  color: var(--text-soft);
+  font-size: 13px;
+  transition: all 300ms var(--ease-quiet);
+}
+.social-links a:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  transform: translateY(-2px);
+}
+.footer-col h4 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+}
+.footer-col ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.footer-col a {
+  font-size: 13px;
+  color: var(--text-soft);
+  transition: color 250ms var(--ease-quiet), padding 250ms var(--ease-quiet);
+}
+.footer-col a:hover { color: var(--gold); padding-left: 5px; }
+.footer-contact li {
+  font-size: 13px;
+  color: var(--text-soft);
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+}
+.footer-contact i { color: var(--gold); margin-top: 4px; font-size: 11px; }
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 2rem;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  color: var(--text-mute);
+  letter-spacing: 0.05em;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.footer-bottom a:hover { color: var(--gold); }
+
+/* ============================================
+   SCROLL TO TOP
+   ============================================ */
+.scroll-top {
+  position: fixed;
+  bottom: 2rem; right: 2rem;
+  width: 48px; height: 48px;
+  background: var(--gold);
+  color: var(--bg);
+  display: grid; place-items: center;
+  font-size: 14px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(20px);
+  transition: all 400ms var(--ease-quiet);
+  z-index: 50;
+  border-radius: 50%;
+}
+.scroll-top.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+}
+.scroll-top:hover { background: var(--gold-bright); }
+
+/* ============================================
+   REVEAL ANIMATIONS
+   ============================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1000ms var(--ease-quiet), transform 1000ms var(--ease-quiet);
+}
+.reveal.is-in { opacity: 1; transform: none; }
+.reveal.delay-1 { transition-delay: 100ms; }
+.reveal.delay-2 { transition-delay: 200ms; }
+.reveal.delay-3 { transition-delay: 300ms; }
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 1024px) {
+  .filters-bar { grid-template-columns: 1fr 1fr 1fr; }
+  .patterns-inner { grid-template-columns: 1fr; }
+  .patterns-left { position: static; height: auto; padding: 5rem 2rem; }
+  .ring-stage { height: 80vh; border-left: none; border-top: 1px solid var(--line); }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 3rem 2rem; }
+  .stat-item:nth-child(2)::after { display: none; }
+}
+@media (max-width: 768px) {
+  .section { padding: 5rem 0; }
+  .container { padding: 0 1.5rem; }
+  .nav-links { display: none; }
+  .btn-login { display: none; }
+  .menu-toggle { display: flex; }
+  .hero { padding: 7rem 1.5rem 3rem; }
+  .hero-ctas { flex-direction: column; align-items: stretch; }
+  .hero-ctas .btn { justify-content: center; }
+  .hero-trust { gap: 1.5rem; }
+  .filters-bar { grid-template-columns: 1fr; }
+  .numbers-grid { grid-template-columns: 1fr; }
+  .testimonial-card { padding: 2.5rem 1.5rem; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+  .ring-item { font-size: 2rem; width: 300px; }
+  .ring-item .label { font-size: 1.3rem; }
+  .faq-question { font-size: 1.1rem; padding: 1.5rem 3rem 1.5rem 0; }
+  .faq-answer { padding-right: 0; }
+  .newsletter-form { flex-direction: column; }
+  .newsletter-form button { padding: 1rem; }
+}
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr; }
+  .stat-item::after { display: none; }
+  .stat-item { border-bottom: 1px solid var(--line); padding-bottom: 2rem; }
+  .hero-search { flex-direction: column; }
+  .hero-search i { display: none; }
+  .hero-search input { padding: 1rem; text-align: center; }
+  .hero-search button { padding: 1rem; }
+}
+
+/* ============================================
+   REDUCED MOTION
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .hero-orb, .floating-digit, .marquee { animation: none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================
+     HEADER / NAVBAR
+     ============================================ -->
+<header class="site-header" id="siteHeader">
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <span class="logo-mark">VN</span>
+      <span class="logo-text">VIP <span>Numbers</span></span>
+    </a>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#marketplace">VIP Numbers</a></li>
+        <li><a href="#categories">Categories</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <i class="fas fa-moon"></i>
+      </button>
+      <button class="btn-login">Login / Register</button>
+      <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#hero">Home</a>
+  <a href="#marketplace">VIP Numbers</a>
+  <a href="#categories">Categories</a>
+  <a href="#about">About</a>
+  <a href="#contact">Contact</a>
+  <button class="btn-login" style="margin-top: 2rem;">Login / Register</button>
+</div>
+
+<!-- ============================================
+     HERO
+     ============================================ -->
+<section class="hero" id="hero">
+  <div class="hero-bg">
+    <div class="hero-grid"></div>
+    <div class="hero-orb gold"></div>
+    <div class="hero-orb navy"></div>
+    <div class="floating-digit d1">9</div>
+    <div class="floating-digit d2">8</div>
+    <div class="floating-digit d3">7</div>
+  </div>
+  <div class="hero-inner reveal" id="heroContent">
+    <div class="hero-content">
+      <span class="eyebrow">Est. 2018 — Premium Number Marketplace</span>
+      <h1 class="hero-title">
+        <span class="line-mask"><span class="line">Find Your Perfect</span></span>
+        <span class="line-mask"><span class="line delay-1 italic">VIP Mobile Number</span></span>
+      </h1>
+      <p class="hero-sub line-mask"><span class="line delay-2">Curated collection of exclusive mobile numbers. Verified ownership, instant transfer, lifetime prestige. The number you carry is the signature you leave on every conversation.</span></p>
+      
+      <div class="hero-search line-mask">
+        <span class="line delay-2">
+          <i class="fas fa-search"></i>
+        </span>
+      </div>
+      <div class="hero-search" style="margin-top: -2rem; margin-bottom: 2rem;">
+        <i class="fas fa-search"></i>
+        <input type="text" id="heroSearch" placeholder="Search any number — try 99999, 88888, 77777...">
+        <button id="heroSearchBtn">Search</button>
+      </div>
+      
+      <div class="hero-ctas">
+        <a href="#marketplace" class="btn btn-primary">
+          Browse Numbers <i class="fas fa-arrow-right"></i>
+        </a>
+        <a href="#contact" class="btn btn-outline">
+          Sell Your Number <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+      
+      <div class="hero-trust">
+        <div class="trust-item">
+          <div class="trust-num">10,000+</div>
+          <div class="trust-label">Numbers Available</div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-num">5,000+</div>
+          <div class="trust-label">Happy Customers</div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-num">99%</div>
+          <div class="trust-label">Satisfaction Rate</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     TRUST STRIP MARQUEE
+     ============================================ -->
+<div class="trust-strip">
+  <div class="marquee">
+    <span class="marquee-item">Verified Ownership</span>
+    <span class="marquee-item">Instant Transfer</span>
+    <span class="marquee-item">Secure Payments</span>
+    <span class="marquee-item">24/7 Support</span>
+    <span class="marquee-item">Trusted Marketplace</span>
+    <span class="marquee-item">Premium Numbers</span>
+    <span class="marquee-item">Verified Ownership</span>
+    <span class="marquee-item">Instant Transfer</span>
+    <span class="marquee-item">Secure Payments</span>
+    <span class="marquee-item">24/7 Support</span>
+    <span class="marquee-item">Trusted Marketplace</span>
+    <span class="marquee-item">Premium Numbers</span>
+  </div>
+</div>
+
+<!-- ============================================
+     MARKETPLACE — FILTERS + GRID
+     ============================================ -->
+<section class="section marketplace" id="marketplace">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="eyebrow">The Collection</span>
+      <h2 class="headline">
+        <span class="line-mask"><span class="line">The Number</span></span>
+        <span class="line-mask"><span class="line delay-1 italic">Vault</span></span>
+      </h2>
+      <p class="section-lede">Filter through thousands of premium numbers. Each listing is verified, ownership-transferable, and ready for activation within 24 hours.</p>
+    </div>
+    
+    <div class="filters-bar reveal">
+      <div class="filter-group">
+        <label>Search by Number</label>
+        <div class="search-input-wrap">
+          <i class="fas fa-search"></i>
+          <input type="text" id="searchInput" placeholder="e.g. 99999, 88888...">
+        </div>
+      </div>
+      
+      <div class="filter-group">
+        <label>Max Price: ₹<span id="priceValue">2,00,000</span></label>
+        <input type="range" id="priceRange" min="10000" max="200000" step="5000" value="200000">
+      </div>
+      
+      <div class="filter-group">
+        <label>Series</label>
+        <div class="chip-group" id="seriesFilter">
+          <button class="chip active" data-series="all">All</button>
+          <button class="chip" data-series="99">99XX</button>
+          <button class="chip" data-series="88">88XX</button>
+          <button class="chip" data-series="77">77XX</button>
+          <button class="chip" data-series="66">66XX</button>
+        </div>
+      </div>
+      
+      <div class="filter-group">
+        <label>Category</label>
+        <select id="categoryFilter">
+          <option value="all">All Categories</option>
+          <option value="fancy">Fancy Numbers</option>
+          <option value="vip">VIP Numbers</option>
+          <option value="business">Business Numbers</option>
+          <option value="premium">Premium Numbers</option>
+          <option value="mirror">Mirror Numbers</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label>Sort By</label>
+        <select id="sortFilter">
+          <option value="popular">Most Popular</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+          <option value="new">New Arrivals</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="results-meta">
+      <span><span id="resultsCount">12</span> Numbers Found</span>
+      <span>Showing Premium Selection</span>
+    </div>
+    
+    <div class="numbers-grid" id="numbersGrid">
+      <!-- Cards injected by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     POPULAR CATEGORIES
+     ============================================ -->
+<section class="section" id="categories">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="eyebrow">Browse by Type</span>
+      <h2 class="headline">
+        <span class="line-mask"><span class="line">Popular</span></span>
+        <span class="line-mask"><span class="line delay-1 italic">Categories</span></span>
+      </h2>
+      <p class="section-lede">Six curated collections, each defined by its own pattern logic. Find the format that resonates with your identity.</p>
+    </div>
+    
+    <div class="categories-grid">
+      <a href="#marketplace" class="category-card reveal">
+        <div>
+          <div class="category-count">1,240 items</div>
+          <div class="category-icon"><i class="fas fa-star"></i></div>
+          <h3 class="category-name">Fancy Numbers</h3>
+          <p class="category-desc">Patterns that please the eye — sequential, repeating, and aesthetically arranged digits.</p>
+        </div>
+        <div class="category-arrow">Explore Collection <i class="fas fa-arrow-right"></i></div>
+      </a>
+      
+      <a href="#marketplace" class="category-card reveal delay-1">
+        <div>
+          <div class="category-count">860 items</div>
+          <div class="category-icon"><i class="fas fa-briefcase"></i></div>
+          <h3 class="category-name">Business Numbers</h3>
+          <p class="category-desc">Professional, memorable digits crafted for brands, founders, and customer-facing lines.</p>
+        </div>
+        <div class="category-arrow">Explore Collection <i class="fas fa-arrow-right"></i></div>
+      </a>
+      
+      <a href="#marketplace" class="category-card reveal delay-2">
+        <div>
+          <div class="category-count">540 items</div>
+          <div class="category-icon"><i class="fas fa-clover"></i></div>
+          <h3 class="category-name">Lucky Numbers</h3>
+          <p class="category-desc">Numbers rooted in tradition and numerology — chosen for prosperity, harmony, and fortune.</p>
+        </div>
+        <div class="category-arrow">Explore Collection <i class="fas fa-arrow-right"></i></div>
+      </a>
+      
+      <a href="#marketplace" class="category-card reveal">
+        <div>
+          <div class="category-count">320 items</div>
+          <div class="category-icon"><i class="fas fa-crown"></i></div>
+          <h3 class="category-name">Premium Numbers</h3>
+          <p class="category-desc">The rarest configurations — five-of-a-kind, perfect mirrors, and once-in-a-decade sequences.</p>
+        </div>
+        <div class="category-arrow">Explore Collection <i class="fas fa-arrow-right"></i></div>
+      </a>
+      
+      <a href="#marketplace" class="category-card reveal delay-1">
+        <div>
+          <div class="category-count">720 items</div>
+          <div class="category-icon"><i class="fas fa-repeat"></i></div>
+          <h3 class="category-name">Repeating Numbers</h3>
+          <p class="category-desc">Hypnotic repetitions — 99999, 88888, 77777. Digits that imprint themselves on memory.</p>
+        </div>
+        <div class="category-arrow">Explore Collection <i class="fas fa-arrow-right"></i></div>
+      </a>
+      
+      <a href="#marketplace" class="category-card reveal delay-2">
+        <div>
+          <div class="category-count">410 items</div>
+          <div class="category-icon"><i class="fas fa-clone"></i></div>
+          <h3 class="category-name">Mirror Numbers</h3>
+          <p class="category-desc">Palindromic symmetry — read the same forwards and backwards. A statement of balance.</p>
+        </div>
+        <div class="category-arrow">Explore Collection <i class="fas fa-arrow-right"></i></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     3D WORD RING — TRENDING PATTERNS
+     ============================================ -->
+<section class="patterns-section" id="patterns">
+  <div class="patterns-inner">
+    <div class="patterns-left">
+      <span class="eyebrow">Signature Patterns</span>
+      <h2>
+        <span class="line-mask"><span class="line">Patterns that</span></span>
+        <span class="line-mask"><span class="line delay-1 italic">command attention.</span></span>
+      </h2>
+      <p>From five-of-a-kind repetitions to mirror symmetries, each pattern carries its own prestige. Below — the configurations trending this season, scrolling in three dimensions as you move through the page.</p>
+      <ul class="pattern-list">
+        <li>Five-of-a-kind (99999, 88888)</li>
+        <li>Mirror symmetry (12321, 88188)</li>
+        <li>Sequential runs (12345, 54321)</li>
+        <li>Double pairs (998899, 776677)</li>
+      </ul>
+    </div>
+    <div class="ring-stage" id="ringStage">
+      <div class="ring" id="patternRing"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     WHY CHOOSE US
+     ============================================ -->
+<section class="section features-section" id="about">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="eyebrow">The Difference</span>
+      <h2 class="headline">
+        <span class="line-mask"><span class="line">Why Choose</span></span>
+        <span class="line-mask"><span class="line delay-1 italic">VIP Numbers</span></span>
+      </h2>
+      <p class="section-lede">Six pillars that define our marketplace. Every transaction is built on verification, security, and a relentless standard of service.</p>
+    </div>
+    
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="feature-num">01</div>
+        <div class="feature-icon"><i class="fas fa-shield-halved"></i></div>
+        <h3 class="feature-title">Verified Numbers</h3>
+        <p class="feature-desc">Every listing passes a 12-point verification protocol. Ownership history, network compatibility, and legal status — all confirmed before activation.</p>
+      </div>
+      <div class="feature-card reveal delay-1">
+        <div class="feature-num">02</div>
+        <div class="feature-icon"><i class="fas fa-lock"></i></div>
+        <h3 class="feature-title">Secure Transactions</h3>
+        <p class="feature-desc">Bank-grade escrow protects every payment. Funds release only after you confirm successful number activation on your network.</p>
+      </div>
+      <div class="feature-card reveal delay-2">
+        <div class="feature-num">03</div>
+        <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+        <h3 class="feature-title">Instant Transfer</h3>
+        <p class="feature-desc">Most numbers activate within 24 hours. Our partnered telecom specialists handle the paperwork, porting, and SIM activation end-to-end.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-num">04</div>
+        <div class="feature-icon"><i class="fas fa-headset"></i></div>
+        <h3 class="feature-title">Customer Support</h3>
+        <p class="feature-desc">Dedicated relationship managers available 24/7. From selection to activation, you have a single point of contact throughout your journey.</p>
+      </div>
+      <div class="feature-card reveal delay-1">
+        <div class="feature-num">05</div>
+        <div class="feature-icon"><i class="fas fa-tags"></i></div>
+        <h3 class="feature-title">Best Pricing</h3>
+        <p class="feature-desc">Direct-from-source acquisition means no middleman markup. Our price-match guarantee ensures you never overpay for a premium configuration.</p>
+      </div>
+      <div class="feature-card reveal delay-2">
+        <div class="feature-num">06</div>
+        <div class="feature-icon"><i class="fas fa-handshake"></i></div>
+        <h3 class="feature-title">Trusted Marketplace</h3>
+        <p class="feature-desc">Five thousand completed transfers. A 99% satisfaction rate. A reputation built one number at a time — and protected with every transaction.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     STATS COUNTER
+     ============================================ -->
+<section class="stats-section">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item reveal">
+        <div class="stat-num"><span class="counter" data-target="10000">0</span><span class="stat-suffix">+</span></div>
+        <div class="stat-label">Numbers Available</div>
+      </div>
+      <div class="stat-item reveal delay-1">
+        <div class="stat-num"><span class="counter" data-target="5000">0</span><span class="stat-suffix">+</span></div>
+        <div class="stat-label">Happy Customers</div>
+      </div>
+      <div class="stat-item reveal delay-2">
+        <div class="stat-num"><span class="counter" data-target="2000">0</span><span class="stat-suffix">+</span></div>
+        <div class="stat-label">Numbers Sold</div>
+      </div>
+      <div class="stat-item reveal delay-3">
+        <div class="stat-num"><span class="counter" data-target="99">0</span><span class="stat-suffix">%</span></div>
+        <div class="stat-label">Customer Satisfaction</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     TESTIMONIALS
+     ============================================ -->
+<section class="section testimonials-section">
+  <div class="container">
+    <div class="section-header reveal" style="text-align: center; margin: 0 auto 4rem;">
+      <span class="eyebrow" style="justify-content: center;">Client Voices</span>
+      <h2 class="headline">
+        <span class="line-mask"><span class="line">What Our</span></span>
+        <span class="line-mask"><span class="line delay-1 italic">Customers Say</span></span>
+      </h2>
+    </div>
+    
+    <div class="testimonials-wrap reveal">
+      <div class="testimonial-stage" id="testimonialStage">
+        <!-- Testimonials injected by JS -->
+      </div>
+      
+      <div class="testimonial-controls">
+        <button class="testimonial-btn" id="prevTestimonial" aria-label="Previous">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <div class="testimonial-dots" id="testimonialDots"></div>
+        <button class="testimonial-btn" id="nextTestimonial" aria-label="Next">
+          <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     FAQ
+     ============================================ -->
+<section class="section faq-section">
+  <div class="container">
+    <div class="section-header reveal" style="text-align: center; margin: 0 auto 4rem;">
+      <span class="eyebrow" style="justify-content: center;">Common Questions</span>
+      <h2 class="headline">
+        <span class="line-mask"><span class="line">Frequently</span></span>
+        <span class="line-mask"><span class="line delay-1 italic">Asked</span></span>
+      </h2>
+    </div>
+    
+    <div class="faq-list reveal">
+      <div class="faq-item">
+        <button class="faq-question">How do I buy a VIP number?</button>
+        <div class="faq-answer">
+          <p>Browse the collection, filter by your preferences, and click "Buy Now" on any number. You'll be guided through a simple three-step checkout: verify your identity, complete payment via escrow, and confirm your telecom circle. Most numbers activate within 24 hours of payment confirmation.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">Is ownership transfer secure?</button>
+        <div class="faq-answer">
+          <p>Absolutely. Every transfer uses bank-grade escrow — your payment is held securely until you confirm the number is active on your SIM. We verify ownership history on every listing through a 12-point protocol, ensuring clean title and no disputed claims.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">What payment methods are accepted?</button>
+        <div class="faq-answer">
+          <p>We accept all major credit and debit cards, UPI, net banking, and bank transfers. For premium numbers above ₹5,00,000, we offer EMI options through partnered financial institutions. All payments are processed through PCI-DSS compliant gateways.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">How long does activation take?</button>
+        <div class="faq-answer">
+          <p>Standard activation completes within 24 hours of payment confirmation. Same-day activation is available for an additional fee in major metro areas. The exact timeline depends on your telecom provider's porting process, which our specialists handle end-to-end.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">Can I sell my existing VIP number?</button>
+        <div class="faq-answer">
+          <p>Yes. Click "Sell Your Number" to submit your listing for review. Our team verifies ownership, assesses market value, and lists your number within 48 hours. You set the price; we handle marketing, buyer verification, and secure transfer. A 5% commission applies only on successful sale.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     NEWSLETTER
+     ============================================ -->
+<section class="newsletter-section" id="contact">
+  <div class="newsletter-inner reveal">
+    <span class="eyebrow" style="justify-content: center;">Stay Informed</span>
+    <h2 class="newsletter-title">
+      <span class="line-mask"><span class="line">Receive new arrivals</span></span>
+      <span class="line-mask"><span class="line delay-1 italic">before anyone else.</span></span>
+    </h2>
+    <p class="newsletter-sub">Weekly digest of the rarest numbers entering our marketplace. No spam — only the patterns worth your attention.</p>
+    
+    <form class="newsletter-form" id="newsletterForm" novalidate>
+      <input type="email" id="newsletterEmail" placeholder="Your email address" required>
+      <button type="submit">Subscribe</button>
+    </form>
+    <div class="newsletter-error" id="newsletterError">Please enter a valid email address.</div>
+    <div class="newsletter-success" id="newsletterSuccess">✦ Thank you. Check your inbox for confirmation.</div>
+  </div>
+</section>
+
+<!-- ============================================
+     FOOTER
+     ============================================ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="logo">
+          <span class="logo-mark">VN</span>
+          <span class="logo-text">VIP <span>Numbers</span></span>
+        </a>
+        <p>India's premier marketplace for exclusive mobile numbers. Verified, secure, and curated for those who understand that a number is never just a number.</p>
+        <div class="social-links">
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+          <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+      </div>
+      
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#hero">Home</a></li>
+          <li><a href="#marketplace">VIP Numbers</a></li>
+          <li><a href="#categories">Categories</a></li>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-col">
+        <h4>Categories</h4>
+        <ul>
+          <li><a href="#marketplace">Fancy Numbers</a></li>
+          <li><a href="#marketplace">VIP Numbers</a></li>
+          <li><a href="#marketplace">Business Numbers</a></li>
+          <li><a href="#marketplace">Premium Numbers</a></li>
+          <li><a href="#marketplace">Mirror Numbers</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul class="footer-contact">
+          <li><i class="fas fa-location-dot"></i> <span>Connaught Place, New Delhi 110001</span></li>
+          <li><i class="fas fa-phone"></i> <span>+91 99999 11111</span></li>
+          <li><i class="fas fa-envelope"></i> <span>care@vipnumbers.in</span></li>
+          <li><i class="fas fa-clock"></i> <span>Mon–Sat, 10AM–8PM IST</span></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <div>© 2024 VIP Numbers. All rights reserved.</div>
+      <div style="display: flex; gap: 1.5rem;">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Refund Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Scroll to top -->
+<button class="scroll-top" id="scrollTop" aria-label="Scroll to top">
+  <i class="fas fa-arrow-up"></i>
+</button>
+
+<!-- ============================================
+     SCRIPTS
+     ============================================ -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.13/dist/lenis.min.js"></script>
+
+<script>
+/* ============================================
+   DATA
+   ============================================ */
+const numbersData = [
+  { id: 1, number: '99999 11111', series: '99', category: 'vip', price: 99999, popular: 95, isNew: false, rating: 4.9, sold: 12, tag: 'Trending' },
+  { id: 2, number: '88888 77777', series: '88', category: 'premium', price: 79999, popular: 92, isNew: false, rating: 4.8, sold: 8, tag: 'Trending' },
+  { id: 3, number: '77777 12345', series: '77', category: 'fancy', price: 49999, popular: 88, isNew: true, rating: 4.7, sold: 3, tag: 'New Arrival' },
+  { id: 4, number: '99900 99900', series: '99', category: 'business', price: 149999, popular: 96, isNew: true, rating: 5.0, sold: 2, tag: 'New Arrival' },
+  { id: 5, number: '66666 88888', series: '66', category: 'premium', price: 89999, popular: 85, isNew: false, rating: 4.9, sold: 15, tag: 'Trending' },
+  { id: 6, number: '88188 88188', series: '88', category: 'mirror', price: 59999, popular: 78, isNew: true, rating: 4.6, sold: 5, tag: 'New Arrival' },
+  { id: 7, number: '70000 70000', series: '77', category: 'fancy', price: 129999, popular: 90, isNew: false, rating: 4.8, sold: 7, tag: 'Trending' },
+  { id: 8, number: '99990 99990', series: '99', category: 'vip', price: 179999, popular: 98, isNew: false, rating: 5.0, sold: 4, tag: 'Trending' },
+  { id: 9, number: '66660 66660', series: '66', category: 'business', price: 69999, popular: 75, isNew: true, rating: 4.5, sold: 9, tag: 'New Arrival' },
+  { id: 10, number: '77717 77717', series: '77', category: 'mirror', price: 54999, popular: 82, isNew: false, rating: 4.7, sold: 6, tag: 'Trending' },
+  { id: 11, number: '88881 11111', series: '88', category: 'fancy', price: 109999, popular: 89, isNew: true, rating: 4.8, sold: 4, tag: 'New Arrival' },
+  { id: 12, number: '99009 99009', series: '99', category: 'premium', price: 119999, popular: 87, isNew: false, rating: 4.9, sold: 11, tag: 'Trending' }
+];
+
+const testimonialsData = [
+  {
+    name: 'Arjun Mehta',
+    role: 'Business Owner, Mumbai',
+    photo: 'https://picsum.photos/seed/testimonial-arjun-mehta/200/200',
+    rating: 5,
+    text: 'Purchased a premium number for my business line. The entire process — from selection to activation — took less than 18 hours. The number has become part of my brand identity. People remember it the first time they hear it.'
+  },
+  {
+    name: 'Priya Sharma',
+    role: 'Entrepreneur, Delhi',
+    photo: 'https://picsum.photos/seed/testimonial-priya-sharma/200/200',
+    rating: 5,
+    text: 'The mirror number I bought has become my personal signature. Friends and clients both comment on it constantly. The team walked me through every step, and the escrow system made me feel completely secure.'
+  },
+  {
+    name: 'Rajesh Khanna',
+    role: 'Doctor, Bengaluru',
+    photo: 'https://picsum.photos/seed/testimonial-rajesh-khanna/200/200',
+    rating: 5,
+    text: 'I was skeptical about buying a number online. But the verification process, the documentation, the transparency — it felt more rigorous than opening a bank account. My clinic number is now 88888 12345. Worth every rupee.'
+  },
+  {
+    name: 'Sneha Reddy',
+    role: 'Real Estate, Hyderabad',
+    photo: 'https://picsum.photos/seed/testimonial-sneha-reddy/200/200',
+    rating: 5,
+    text: 'I needed a memorable number for my real estate business. Found exactly what I wanted, negotiated the price, and had it active on my SIM in under 24 hours. The relationship manager was exceptional throughout.'
+  }
+];
+
+/* ============================================
+   LENIS SMOOTH SCROLL
+   ============================================ */
+let lenis;
+if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  lenis = new Lenis({
+    duration: 1.2,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    smoothWheel: true
+  });
+  function raf(time) {
+    lenis.raf(time);
+    requestAnimationFrame(raf);
+  }
+  requestAnimationFrame(raf);
+  
+  // GSAP ScrollTrigger sync
+  if (window.gsap && window.ScrollTrigger) {
+    gsap.registerPlugin(ScrollTrigger);
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => lenis.raf(time * 1000));
+    gsap.ticker.lagSmoothing(0);
+  }
+}
+
+/* ============================================
+   HEADER SCROLL EFFECT
+   ============================================ */
+const siteHeader = document.getElementById('siteHeader');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 50) {
+    siteHeader.classList.add('scrolled');
+  } else {
+    siteHeader.classList.remove('scrolled');
+  }
+}, { passive: true });
+
+/* ============================================
+   MOBILE MENU
+   ============================================ */
+const menuToggle = document.getElementById('menuToggle');
+const mobileMenu = document.getElementById('mobileMenu');
+menuToggle.addEventListener('click', () => {
+  menuToggle.classList.toggle('active');
+  mobileMenu.classList.toggle('active');
+  document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+});
+mobileMenu.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    menuToggle.classList.remove('active');
+    mobileMenu.classList.remove('active');
+    document.body.style.overflow = '';
+  });
+});
+
+/* ============================================
+   THEME TOGGLE
+   ============================================ */
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = themeToggle.querySelector('i');
+const savedTheme = localStorage.getItem('vip-theme') || 'dark';
+document.documentElement.setAttribute('data-theme', savedTheme);
+themeIcon.className = savedTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+
+themeToggle.addEventListener('click', () => {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('vip-theme', next);
+  themeIcon.className = next === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+});
+
+/* ============================================
+   REVEAL ON SCROLL
+   ============================================ */
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('is-in');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+
+document.querySelectorAll('.reveal, .hero-inner').forEach(el => revealObserver.observe(el));
+
+// Hero content reveals immediately
+setTimeout(() => {
+  document.getElementById('heroContent').classList.add('is-in');
+}, 100);
+
+/* ============================================
+   NUMBER CARDS — RENDER & FILTER
+   ============================================ */
+const numbersGrid = document.getElementById('numbersGrid');
+const resultsCount = document.getElementById('resultsCount');
+const searchInput = document.getElementById('searchInput');
+const priceRange = document.getElementById('priceRange');
+const priceValue = document.getElementById('priceValue');
+const seriesFilter = document.getElementById('seriesFilter');
+const categoryFilter = document.getElementById('categoryFilter');
+const sortFilter = document.getElementById('sortFilter');
+
+let currentSeries = 'all';
+let favorites = new Set();
+
+function formatPrice(num) {
+  return '₹' + num.toLocaleString('en-IN');
+}
+
+function formatNumberDisplay(numStr) {
+  // Add subtle space styling — already in the string
+  return numStr;
+}
+
+function renderNumbers(data) {
+  if (data.length === 0) {
+    numbersGrid.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-search"></i>
+        <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text);">No numbers match your filters</h3>
+        <p>Try widening your price range or clearing your search query.</p>
+      </div>
+    `;
+    resultsCount.textContent = '0';
+    return;
+  }
+  
+  numbersGrid.innerHTML = data.map((item, index) => {
+    const isFav = favorites.has(item.id);
+    const tagClass = item.isNew ? 'tag-new' : 'tag-trending';
+    return `
+      <article class="number-card" data-id="${item.id}" style="animation-delay: ${index * 60}ms">
+        <div class="card-top">
+          <button class="fav-btn ${isFav ? 'active' : ''}" data-id="${item.id}" aria-label="Toggle favorite">
+            <i class="${isFav ? 'fas' : 'far'} fa-heart"></i>
+          </button>
+          <span class="badge">${item.category}</span>
+        </div>
+        <div class="card-number">${item.number}</div>
+        <div class="card-divider"></div>
+        <div class="card-meta">
+          <div class="card-price">${formatPrice(item.price)}</div>
+          <div class="card-rating"><i class="fas fa-star"></i> ${item.rating}</div>
+        </div>
+        <div class="card-extra">
+          <span class="${tagClass}">${item.tag}</span>
+          <span>${item.sold} sold this month</span>
+        </div>
+        <div class="card-actions">
+          <button class="btn-quick">Quick View</button>
+          <button class="btn-buy">Buy Now</button>
+        </div>
+      </article>
+    `;
+  }).join('');
+  
+  resultsCount.textContent = data.length;
+  
+  // Bind favorite buttons
+  document.querySelectorAll('.fav-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = parseInt(btn.dataset.id);
+      const icon = btn.querySelector('i');
+      if (favorites.has(id)) {
+        favorites.delete(id);
+        btn.classList.remove('active');
+        icon.className = 'far fa-heart';
+      } else {
+        favorites.add(id);
+        btn.classList.add('active');
+        icon.className = 'fas fa-heart';
+      }
+    });
+  });
+}
+
+function applyFilters() {
+  const searchTerm = searchInput.value.toLowerCase().replace(/\s/g, '');
+  const maxPrice = parseInt(priceRange.value);
+  const category = categoryFilter.value;
+  const sort = sortFilter.value;
+  
+  let filtered = numbersData.filter(item => {
+    const numMatch = item.number.replace(/\s/g, '').toLowerCase().includes(searchTerm);
+    const priceMatch = item.price <= maxPrice;
+    const seriesMatch = currentSeries === 'all' || item.series === currentSeries;
+    const catMatch = category === 'all' || item.category === category;
+    return numMatch && priceMatch && seriesMatch && catMatch;
+  });
+  
+  // Sort
+  switch (sort) {
+    case 'price-low': filtered.sort((a, b) => a.price - b.price); break;
+    case 'price-high': filtered.sort((a, b) => b.price - a.price); break;
+    case 'new': filtered.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0)); break;
+    case 'popular': filtered.sort((a, b) => b.popular - a.popular); break;
+  }
+  
+  renderNumbers(filtered);
+}
+
+// Filter event listeners
+let searchDebounce;
+searchInput.addEventListener('input', () => {
+  clearTimeout(searchDebounce);
+  searchDebounce = setTimeout(applyFilters, 200);
+});
+
+priceRange.addEventListener('input', () => {
+  priceValue.textContent = parseInt(priceRange.value).toLocaleString('en-IN');
+  applyFilters();
+});
+
+seriesFilter.addEventListener('click', (e) => {
+  if (e.target.classList.contains('chip')) {
+    seriesFilter.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    e.target.classList.add('active');
+    currentSeries = e.target.dataset.series;
+    applyFilters();
+  }
+});
+
+categoryFilter.addEventListener('change', applyFilters);
+sortFilter.addEventListener('change', applyFilters);
+
+// Hero search sync
+document.getElementById('heroSearch').addEventListener('input', (e) => {
+  searchInput.value = e.target.value;
+  applyFilters();
+});
+document.getElementById('heroSearchBtn').addEventListener('click', () => {
+  document.getElementById('marketplace').scrollIntoView({ behavior: 'smooth' });
+});
+
+// Initial render
+renderNumbers(numbersData);
+
+/* ============================================
+   ANIMATED COUNTERS
+   ============================================ */
+function animateCounter(el, target, duration = 2000) {
+  const start = 0;
+  const startTime = performance.now();
+  function update(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    const value = Math.floor(start + (target - start) * ease);
+    el.textContent = value.toLocaleString('en-IN');
+    if (progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const target = parseInt(entry.target.dataset.target);
+      animateCounter(entry.target, target);
+      counterObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.counter').forEach(c => counterObserver.observe(c));
+
+/* ============================================
+   TESTIMONIALS CAROUSEL
+   ============================================ */
+const testimonialStage = document.getElementById('testimonialStage');
+const testimonialDots = document.getElementById('testimonialDots');
+let currentTestimonial = 0;
+let testimonialInterval;
+
+function renderTestimonials() {
+  testimonialStage.innerHTML = testimonialsData.map((t, i) => `
+    <div class="testimonial-card ${i === 0 ? 'active' : ''}" data-index="${i}">
+      <div class="testimonial-quote">"</div>
+      <div class="testimonial-stars">${'★'.repeat(t.rating)}${'☆'.repeat(5 - t.rating)}</div>
+      <p class="testimonial-text">${t.text}</p>
+      <div class="testimonial-author">
+        <img src="${t.photo}" alt="${t.name}" class="testimonial-photo" loading="lazy">
+        <div>
+          <div class="testimonial-name">${t.name}</div>
+          <div class="testimonial-role">${t.role}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  
+  testimonialDots.innerHTML = testimonialsData.map((_, i) => 
+    `<div class="testimonial-dot ${i === 0 ? 'active' : ''}" data-index="${i}"></div>`
+  ).join('');
+  
+  testimonialDots.querySelectorAll('.testimonial-dot').forEach(dot => {
+    dot.addEventListener('click', () => {
+      showTestimonial(parseInt(dot.dataset.index));
+      resetTestimonialInterval();
+    });
+  });
+}
+
+function showTestimonial(index) {
+  testimonialStage.querySelectorAll('.testimonial-card').forEach((card, i) => {
+    card.classList.toggle('active', i === index);
+  });
+  testimonialDots.querySelectorAll('.testimonial-dot').forEach((dot, i) => {
+    dot.classList.toggle('active', i === index);
+  });
+  currentTestimonial = index;
+}
+
+function nextTestimonial() {
+  showTestimonial((currentTestimonial + 1) % testimonialsData.length);
+}
+
+function prevTestimonial() {
+  showTestimonial((currentTestimonial - 1 + testimonialsData.length) % testimonialsData.length);
+}
+
+function resetTestimonialInterval() {
+  clearInterval(testimonialInterval);
+  testimonialInterval = setInterval(nextTestimonial, 6000);
+}
+
+document.getElementById('nextTestimonial').addEventListener('click', () => {
+  nextTestimonial();
+  resetTestimonialInterval();
+});
+document.getElementById('prevTestimonial').addEventListener('click', () => {
+  prevTestimonial();
+  resetTestimonialInterval();
+});
+
+renderTestimonials();
+resetTestimonialInterval();
+
+/* ============================================
+   FAQ ACCORDION
+   ============================================ */
+document.querySelectorAll('.faq-item').forEach(item => {
+  const question = item.querySelector('.faq-question');
+  question.addEventListener('click', () => {
+    const isActive = item.classList.contains('active');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+    if (!isActive) item.classList.add('active');
+  });
+});
+
+// Open first FAQ by default
+document.querySelector('.faq-item').classList.add('active');
+
+/* ============================================
+   NEWSLETTER FORM VALIDATION
+   ============================================ */
+const newsletterForm = document.getElementById('newsletterForm');
+const newsletterEmail = document.getElementById('newsletterEmail');
+const newsletterError = document.getElementById('newsletterError');
+const newsletterSuccess = document.getElementById('newsletterSuccess');
+
+newsletterForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const email = newsletterEmail.value.trim();
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  
+  newsletterError.classList.remove('show');
+  newsletterSuccess.classList.remove('show');
+  
+  if (!emailRegex.test(email)) {
+    newsletterError.classList.add('show');
+    newsletterEmail.focus();
+    return;
+  }
+  
+  newsletterSuccess.classList.add('show');
+  newsletterEmail.value = '';
+  
+  setTimeout(() => {
+    newsletterSuccess.classList.remove('show');
+  }, 4000);
+});
+
+/* ============================================
+   3D WORD RING — TRENDING PATTERNS
+   ============================================ */
+const ringStage = document.getElementById('ringStage');
+const patternRing = document.getElementById('patternRing');
+
+const ringWords = [
+  { type: 'digit', text: '99999' },
+  { type: 'label', text: 'Premium' },
+  { type: 'digit', text: '88888' },
+  { type: 'label', text: 'Exclusive' },
+  { type: 'digit', text: '77777' },
+  { type: 'label', text: 'VIP' },
+  { type: 'digit', text: '66666' },
+  { type: 'label', text: 'Fancy' },
+  { type: 'digit', text: '55555' },
+  { type: 'label', text: 'Mirror' },
+  { type: 'digit', text: '12345' },
+  { type: 'label', text: 'Luxe' }
+];
+
+// Duplicate for density
+const allRingItems = [...ringWords, ...ringWords];
+const radius = 320;
+const step = 360 / allRingItems.length;
+
+allRingItems.forEach((item, i) => {
+  const el = document.createElement('div');
+  el.className = 'ring-item';
+  el.style.transform = `rotateX(${i * step}deg) translateZ(${radius}px) translateY(-50%)`;
+  el.innerHTML = item.type === 'digit' 
+    ? `<span class="digit">${item.text}</span>` 
+    : `<span class="label">${item.text}</span>`;
+  patternRing.appendChild(el);
+});
+
+if (window.gsap && window.ScrollTrigger && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const rot = { v: 0 };
+  const spd = { v: 0 };
+  let cr = 0;
+  let cs = 0;
+  let ringActive = false;
+  
+  gsap.to(rot, {
+    v: 360,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '#patterns',
+      start: 'top bottom',
+      end: 'bottom top',
+      scrub: 1,
+      onUpdate: (s) => { spd.v = s.getVelocity() * 0.0003; },
+      onToggle: (s) => { ringActive = s.isActive; }
+    }
+  });
+  
+  (function tick() {
+    requestAnimationFrame(tick);
+    cr += (rot.v - cr) * 0.08;
+    cs += (spd.v - cs) * 0.1;
+    spd.v *= 0.95;
+    const abs = Math.abs(cs);
+    const skew = Math.min(abs * 12, 10);
+    const sx = 1 + Math.min(abs * 0.2, 0.12);
+    patternRing.style.transform = `rotateX(${cr}deg)`;
+    patternRing.querySelectorAll('.ring-item').forEach(it => {
+      const bl = Math.min(abs * 1.5, 2);
+      it.style.filter = bl > 0.1 ? `blur(${bl}px)` : 'none';
+      const span = it.querySelector('span');
+      if (span) {
+        span.style.transform = `skewX(${cs > 0 ? skew : -skew}deg) scaleX(${sx})`;
+      }
+    });
+  })();
+}
+
+/* ============================================
+   SCROLL TO TOP
+   ============================================ */
+const scrollTopBtn = document.getElementById('scrollTop');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 600) {
+    scrollTopBtn.classList.add('show');
+  } else {
+    scrollTopBtn.classList.remove('show');
+  }
+}, { passive: true });
+
+scrollTopBtn.addEventListener('click', () => {
+  if (lenis) {
+    lenis.scrollTo(0, { duration: 1.5 });
+  } else {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+});
+
+/* ============================================
+   SMOOTH SCROLL FOR ANCHOR LINKS
+   ============================================ */
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+  link.addEventListener('click', (e) => {
+    const href = link.getAttribute('href');
+    if (href === '#' || href.length < 2) return;
+    const target = document.querySelector(href);
+    if (target) {
+      e.preventDefault();
+      if (lenis) {
+        lenis.scrollTo(target, { offset: -80, duration: 1.5 });
+      } else {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  });
+});
+
+/* ============================================
+   LAZY LOAD IMAGES
+   ============================================ */
+if ('loading' in HTMLImageElement.prototype) {
+  // Native lazy loading supported
+  document.querySelectorAll('img').forEach(img => {
+    if (!img.hasAttribute('loading')) img.setAttribute('loading', 'lazy');
+  });
+}
+</script>
+</body>
+</html>

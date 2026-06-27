@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIP Numbers | Premium Mobile Number Marketplace</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* =========================================
+           1. CSS VARIABLES & RESET
+           ========================================= */
+        :root {
+            /* Colors */
+            --bg-dark: #0a0e17;
+            --bg-card: #111625;
+            --text-light: #f0f0f0;
+            --text-gray: #a0a0a0;
+            --gold: #d4af37;
+            --gold-gradient: linear-gradient(135deg, #d4af37, #f3e5ab, #d4af37);
+            --gold-glow: 0 0 15px rgba(212, 175, 55, 0.4);
+            --glass-bg: rgba(17, 22, 37, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --blur: 12px;
+            
+            /* Spacing & Layout */
+            --container-width: 1200px;
+            --header-height: 80px;
+            --radius: 12px;
+            
+            /* Transitions */
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+        img { max-width: 100%; display: block; }
+        input, select, button { font-family: inherit; outline: none; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; }
+
+        /* Utility Classes */
+        .container {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section-padding { padding: 80px 0; }
+        
+        .text-gold { color: var(--gold); }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: var(--gold-gradient);
+            color: #000;
+            box-shadow: var(--gold-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.6);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--gold);
+            color: var(--gold);
+        }
+
+        .btn-outline:hover {
+            background: var(--gold);
+            color: #000;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-title p {
+            color: var(--text-gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Glassmorphism Card Style */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--blur));
+            -webkit-backdrop-filter: blur(var(--blur));
+            border: 1px solid var(--glass-border);
+        }
+
+        /* =========================================
+           2. HEADER & NAVBAR
+           ========================================= */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--header-height);
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        header.scrolled {
+            background: rgba(10, 14, 23, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+
+        .logo span { color: var(--gold); }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover, .nav-links a.active { color: var(--gold); }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gold);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after { width: 100%; }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text-light);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover { background: var(--glass-border); }
+
+        .mobile-toggle {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* =========================================
+           3. HERO SECTION
+           ========================================= */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            background: radial-gradient(circle at center, #1a233a 0%, var(--bg-dark) 70%);
+            overflow: hidden;
+            padding-top: var(--header-height);
+        }
+
+        /* Animated Background Elements */
+        .hero-shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            z-index: 0;
+        }
+        .shape-1 { width: 300px; height: 300px; background: var(--gold); top: 20%; left: 10%; animation: float 6s infinite ease-in-out; }
+        .shape-2 { width: 400px; height: 400px; background: #00bcd4; bottom: 10%; right: 10%; animation: float 8s infinite ease-in-out reverse; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #fff, #a0a0a0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-gray);
+            margin-bottom: 40px;
+        }
+
+        .search-container {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 18px 25px;
+            border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            color: #fff;
+            font-size: 1rem;
+            padding-right: 120px;
+        }
+
+        .search-input:focus { border-color: var(--gold); }
+
+        .search-btn {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            bottom: 5px;
+            padding: 0 25px;
+            border-radius: 40px;
+            background: var(--gold-gradient);
+            color: #000;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .hero-buttons { display: flex; gap: 20px; justify-content: center; }
+
+        /* =========================================
+           4. FILTER & GRID SECTION
+           ========================================= */
+        .marketplace-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        /* Filter Sidebar */
+        .filters {
+            padding: 25px;
+            border-radius: var(--radius);
+            position: sticky;
+            top: 100px;
+        }
+
+        .filter-group { margin-bottom: 25px; }
+        
+        .filter-title {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--gold);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .filter-search input {
+            width: 100%;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            color: #fff;
+        }
+
+        .price-inputs { display: flex; gap: 10px; }
+        .price-inputs input {
+            width: 100%;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            color: #fff;
+            text-align: center;
+        }
+
+        .checkbox-list label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            color: var(--text-gray);
+            font-size: 0.95rem;
+        }
+
+        .checkbox-list input[type="checkbox"] {
+            accent-color: var(--gold);
+            width: 16px;
+            height: 16px;
+        }
+
+        .sort-select {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            color: #fff;
+            cursor: pointer;
+        }
+        .sort-select option { background: var(--bg-card); color: #fff; }
+
+        /* Number Cards Grid */
+        .numbers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 25px;
+        }
+
+        .number-card {
+            padding: 25px;
+            border-radius: var(--radius);
+            position: relative;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .number-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--gold);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--gold);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .wishlist-btn {
+            background: none;
+            border: none;
+            color: var(--text-gray);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .wishlist-btn:hover, .wishlist-btn.active { color: #e74c3c; }
+
+        .card-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        .card-price {
+            font-size: 1.2rem;
+            color: var(--gold);
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .card-actions { display: flex; gap: 10px; }
+        
+        .card-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .btn-view { background: rgba(255,255,255,0.1); color: #fff; }
+        .btn-view:hover { background: rgba(255,255,255,0.2); }
+        
+        .btn-buy { background: var(--gold-gradient); color: #000; }
+        .btn-buy:hover { filter: brightness(1.1); }
+
+        /* =========================================
+           5. POPULAR CATEGORIES
+           ========================================= */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .category-card {
+            text-align: center;
+            padding: 30px 20px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .category-card:hover {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: var(--gold);
+        }
+
+        .cat-icon {
+            font-size: 2rem;
+            color: var(--gold);
+            margin-bottom: 15px;
+        }
+
+        .cat-title { font-weight: 600; font-size: 1.1rem; }
+
+        /* =========================================
+           6. WHY CHOOSE US & STATS
+           ========================================= */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-item {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            border-radius: var(--radius);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .stats-section {
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://picsum.photos/seed/tech/1920/600') center/cover fixed;
+            margin: 80px 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            text-align: center;
+        }
+
+        .stat-item h3 {
+            font-size: 3rem;
+            color: var(--gold);
+            margin-bottom: 5px;
+        }
+
+        /* =========================================
+           7. TESTIMONIALS
+           ========================================= */
+        .testimonial-slider {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .testimonial-track {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+        .testimonial-card {
+            min-width: 100%;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .client-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            border: 3px solid var(--gold);
+            object-fit: cover;
+        }
+
+        .stars { color: var(--gold); margin-bottom: 15px; }
+        .review-text { font-style: italic; color: var(--text-gray); margin-bottom: 20px; }
+        .client-name { font-weight: 700; color: #fff; }
+
+        .slider-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            cursor: pointer;
+        }
+        .dot.active { background: var(--gold); }
+
+        /* =========================================
+           8. FAQ & NEWSLETTER
+           ========================================= */
+        .faq-container { max-width: 800px; margin: 0 auto; }
+
+        .faq-item {
+            margin-bottom: 15px;
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .faq-question {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .faq-question i { transition: transform 0.3s; }
+        .faq-item.active .faq-question i { transform: rotate(180deg); }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            padding: 0 20px;
+            color: var(--text-gray);
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .faq-item.active .faq-answer {
+            padding-bottom: 20px;
+            max-height: 200px;
+        }
+
+        .newsletter-box {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 50px;
+            border-radius: var(--radius);
+            border: 1px solid var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .newsletter-form {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .newsletter-form input {
+            flex: 1;
+            padding: 15px;
+            border-radius: 50px;
+            border: none;
+            background: #fff;
+            min-width: 250px;
+        }
+
+        /* =========================================
+           9. FOOTER
+           ========================================= */
+        footer {
+            background: #05080f;
+            padding: 60px 0 20px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-col h4 {
+            color: var(--gold);
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .footer-links li { margin-bottom: 10px; }
+        .footer-links a { color: var(--text-gray); transition: var(--transition); }
+        .footer-links a:hover { color: #fff; padding-left: 5px; }
+
+        .social-icons { display: flex; gap: 15px; }
+        .social-icons a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        .social-icons a:hover { background: var(--gold); color: #000; }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        /* Scroll Top */
+        #scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--gold);
+            color: #000;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            z-index: 900;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+        }
+        #scroll-top.visible { opacity: 1; visibility: visible; }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #fff;
+            color: #000;
+            padding: 12px 25px;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            z-index: 2000;
+            transition: transform 0.3s ease;
+            font-weight: 500;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        /* =========================================
+           10. RESPONSIVE DESIGN
+           ========================================= */
+        @media (max-width: 992px) {
+            .marketplace-layout { grid-template-columns: 1fr; }
+            .filters { position: relative; top: 0; margin-bottom: 30px; }
+            .hero h1 { font-size: 2.5rem; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: var(--header-height);
+                left: 0;
+                width: 100%;
+                background: var(--bg-card);
+                flex-direction: column;
+                padding: 20px;
+                gap: 20px;
+                border-bottom: 1px solid var(--glass-border);
+                transform: translateY(-150%);
+                transition: transform 0.3s ease;
+            }
+            .nav-links.active { transform: translateY(0); }
+            .mobile-toggle { display: block; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .hero-buttons { flex-direction: column; }
+            .newsletter-form { flex-direction: column; }
+            .newsletter-form input { width: 100%; }
+        }
+
+        @media (max-width: 480px) {
+            .section-title h2 { font-size: 2rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .card-number { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Scroll Top Button -->
+    <div id="scroll-top" onclick="scrollToTop()">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">Action Successful!</div>
+
+    <!-- Header -->
+    <header id="header">
+        <div class="container nav-container">
+            <a href="#" class="logo">VIP <span>NUMBERS</span></a>
+            
+            <nav>
+                <ul class="nav-links" id="nav-links">
+                    <li><a href="#hero" class="active">Home</a></li>
+                    <li><a href="#numbers">VIP Numbers</a></li>
+                    <li><a href="#categories">Categories</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+
+            <div class="nav-actions">
+                <button class="theme-toggle" aria-label="Toggle Theme" onclick="toggleTheme()">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="btn btn-primary" style="padding: 8px 20px; font-size: 0.8rem;">Login</button>
+                <div class="mobile-toggle" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+        <div class="hero-shape shape-1"></div>
+        <div class="hero-shape shape-2"></div>
+        
+        <div class="hero-content">
+            <h1>Find Your Perfect <br><span class="text-gold">VIP Mobile Number</span></h1>
+            <p>Stand out with a premium, fancy, or lucky mobile number that defines your status and identity.</p>
+            
+            <div class="search-container">
+                <input type="text" class="search-input" id="hero-search" placeholder="Search for numbers (e.g., 99999...)" onkeyup="handleHeroSearch(event)">
+                <button class="search-btn" onclick="scrollToNumbers()">Search</button>
+            </div>
+
+            <div class="hero-buttons">
+                <button class="btn btn-primary" onclick="scrollToNumbers()">Browse Numbers</button>
+                <button class="btn btn-outline">Sell Your Number</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content: Filters & Grid -->
+    <section id="numbers" class="section-padding">
+        <div class="container">
+            <div class="section-title">
+                <h2>Featured VIP Numbers</h2>
+                <p>Explore our exclusive collection of premium mobile numbers.</p>
+            </div>
+
+            <div class="marketplace-layout">
+                <!-- Sidebar Filters -->
+                <aside class="filters glass">
+                    <div class="filter-group filter-search">
+                        <label class="filter-title">Search Number</label>
+                        <input type="text" id="filter-number-input" placeholder="Enter digits...">
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-title">Price Range (₹)</label>
+                        <div class="price-inputs">
+                            <input type="number" id="min-price" placeholder="Min" value="0">
+                            <input type="number" id="max-price" placeholder="Max" value="1000000">
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-title">Series</label>
+                        <div class="checkbox-list">
+                            <label><input type="checkbox" class="series-check" value="99"> 99XXXXXX</label>
+                            <label><input type="checkbox" class="series-check" value="88"> 88XXXXXX</label>
+                            <label><input type="checkbox" class="series-check" value="77"> 77XXXXXX</label>
+                            <label><input type="checkbox" class="series-check" value="66"> 66XXXXXX</label>
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-title">Category</label>
+                        <div class="checkbox-list">
+                            <label><input type="checkbox" class="cat-check" value="VIP"> VIP Numbers</label>
+                            <label><input type="checkbox" class="cat-check" value="Fancy"> Fancy Numbers</label>
+                            <label><input type="checkbox" class="cat-check" value="Business"> Business Numbers</label>
+                            <label><input type="checkbox" class="cat-check" value="Premium"> Premium Numbers</label>
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-title">Sort By</label>
+                        <select id="sort-select" class="sort-select">
+                            <option value="default">Recommended</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="newest">New Arrivals</option>
+                        </select>
+                    </div>
+                </aside>
+
+                <!-- Numbers Grid -->
+                <main class="numbers-grid" id="numbers-container">
+                    <!-- Cards will be injected here by JS -->
+                </main>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section id="categories" class="section-padding" style="background: rgba(255,255,255,0.02);">
+        <div class="container">
+            <div class="section-title">
+                <h2>Popular Categories</h2>
+            </div>
+            <div class="categories-grid">
+                <div class="category-card glass">
+                    <i class="fas fa-crown cat-icon"></i>
+                    <div class="cat-title">Fancy Numbers</div>
+                </div>
+                <div class="category-card glass">
+                    <i class="fas fa-briefcase cat-icon"></i>
+                    <div class="cat-title">Business Numbers</div>
+                </div>
+                <div class="category-card glass">
+                    <i class="fas fa-clover cat-icon"></i>
+                    <div class="cat-title">Lucky Numbers</div>
+                </div>
+                <div class="category-card glass">
+                    <i class="fas fa-gem cat-icon"></i>
+                    <div class="cat-title">Premium Numbers</div>
+                </div>
+                <div class="category-card glass">
+                    <i class="fas fa-clone cat-icon"></i>
+                    <div class="cat-title">Repeating</div>
+                </div>
+                <div class="category-card glass">
+                    <i class="fas fa-random cat-icon"></i>
+                    <div class="cat-title">Mirror</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section id="about" class="section-padding">
+        <div class="container">
+            <div class="section-title">
+                <h2>Why Choose Us</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-item glass">
+                    <div class="feature-icon"><i class="fas fa-check-circle"></i></div>
+                    <div>
+                        <h4>Verified Numbers</h4>
+                        <p class="text-gray">All numbers are verified and genuine from telecom operators.</p>
+                    </div>
+                </div>
+                <div class="feature-item glass">
+                    <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                    <div>
+                        <h4>Secure Transactions</h4>
+                        <p class="text-gray">100% secure payment gateways and documentation handling.</p>
+                    </div>
+                </div>
+                <div class="feature-item glass">
+                    <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                    <div>
+                        <h4>Instant Transfer</h4>
+                        <p class="text-gray">Fast ownership transfer process within 24-48 hours.</p>
+                    </div>
+                </div>
+                <div class="feature-item glass">
+                    <div class="feature-icon"><i class="fas fa-headset"></i></div>
+                    <div>
+                        <h4>24/7 Support</h4>
+                        <p class="text-gray">Dedicated customer support to assist you at every step.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics -->
+    <section class="stats-section section-padding" id="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3 data-target="10000">0</h3>
+                    <p>Numbers Available</p>
+                </div>
+                <div class="stat-item">
+                    <h3 data-target="5000">0</h3>
+                    <p>Happy Customers</p>
+                </div>
+                <div class="stat-item">
+                    <h3 data-target="2000">0</h3>
+                    <p>Numbers Sold</p>
+                </div>
+                <div class="stat-item">
+                    <h3 data-target="99">0</h3>
+                    <p>% Satisfaction</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="section-padding">
+        <div class="container">
+            <div class="section-title">
+                <h2>Customer Reviews</h2>
+            </div>
+            <div class="testimonial-slider glass">
+                <div class="testimonial-track" id="testimonial-track">
+                    <!-- Slide 1 -->
+                    <div class="testimonial-card">
+                        <img src="https://picsum.photos/seed/user1/100/100" alt="User" class="client-img">
+                        <div class="stars">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="review-text">"Smooth process and excellent customer service. I got my VIP number activated within 2 days. Highly recommended!"</p>
+                        <h4 class="client-name">Rajesh Kumar</h4>
+                    </div>
+                    <!-- Slide 2 -->
+                    <div class="testimonial-card">
+                        <img src="https://picsum.photos/seed/user2/100/100" alt="User" class="client-img">
+                        <div class="stars">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <p class="review-text">"Found the perfect fancy number for my business. The price was competitive compared to other sites."</p>
+                        <h4 class="client-name">Amit Verma</h4>
+                    </div>
+                    <!-- Slide 3 -->
+                    <div class="testimonial-card">
+                        <img src="https://picsum.photos/seed/user3/100/100" alt="User" class="client-img">
+                        <div class="stars">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="review-text">"Premium looking website and premium service. The documentation team was very helpful."</p>
+                        <h4 class="client-name">Sarah Jenkins</h4>
+                    </div>
+                </div>
+                <div class="slider-dots" id="slider-dots">
+                    <div class="dot active" onclick="goToSlide(0)"></div>
+                    <div class="dot" onclick="goToSlide(1)"></div>
+                    <div class="dot" onclick="goToSlide(2)"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="section-padding" style="background: rgba(255,255,255,0.02);">
+        <div class="container">
+            <div class="section-title">
+                <h2>Frequently Asked Questions</h2>
+            </div>
+            <div class="faq-container">
+                <div class="faq-item glass active">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        How do I buy a VIP number?
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Simply browse our collection, select the number you like, click "Buy Now", and complete the documentation process. We will handle the SIM transfer.
+                    </div>
+                </div>
+                <div class="faq-item glass">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Is ownership transfer secure?
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Yes, we follow a legal agreement and official telecom operator process to ensure the ownership is transferred securely to your name.
+                    </div>
+                </div>
+                <div class="faq-item glass">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        What payment methods are accepted?
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        We accept all major Credit/Debit cards, UPI, Net Banking, and Wallet payments.
+                    </div>
+                </div>
+                <div class="faq-item glass">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        How long does activation take?
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Usually, the process takes 24 to 48 hours after documentation verification.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section id="contact" class="section-padding">
+        <div class="container">
+            <div class="newsletter-box">
+                <h2>Subscribe to Get Updates</h2>
+                <p>Get notified about new premium number arrivals and exclusive offers.</p>
+                <form class="newsletter-form" onsubmit="handleNewsletter(event)">
+                    <input type="email" id="email-input" placeholder="Enter your email address" required>
+                    <button type="submit" class="btn btn-primary">Subscribe Now</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4 class="logo">VIP <span>NUMBERS</span></h4>
+                    <p class="text-gray" style="margin-top: 15px;">India's most trusted marketplace for premium VIP mobile numbers. Buy or sell with confidence.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="#hero">Home</a></li>
+                        <li><a href="#numbers">Browse Numbers</a></li>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Categories</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">VIP Numbers</a></li>
+                        <li><a href="#">Fancy Numbers</a></li>
+                        <li><a href="#">Lucky Numbers</a></li>
+                        <li><a href="#">Business Numbers</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact Us</h4>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-envelope text-gold"></i> support@vipnumbers.com</li>
+                        <li><i class="fas fa-phone text-gold"></i> +91 98765 43210</li>
+                    </ul>
+                    <div class="social-icons" style="margin-top: 20px;">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2023 VIP Numbers Marketplace. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* =========================================
+           1. DATA SOURCE
+           ========================================= */
+        const vipNumbers = [
+            { id: 1, number: "99999 11111", price: 99999, category: "VIP", series: "99", date: 1698000000000 },
+            { id: 2, number: "88888 77777", price: 79999, category: "Premium", series: "88", date: 1698100000000 },
+            { id: 3, number: "77777 12345", price: 49999, category: "Fancy", series: "77", date: 1698200000000 },
+            { id: 4, number: "99900 99900", price: 149999, category: "VIP", series: "99", date: 1698300000000 },
+            { id: 5, number: "99999 88888", price: 55000, category: "Premium", series: "99", date: 1698400000000 },
+            { id: 6, number: "66666 55555", price: 35000, category: "Fancy", series: "66", date: 1698500000000 },
+            { id: 7, number: "98765 43210", price: 25000, category: "Business", series: "98", date: 1698600000000 },
+            { id: 8, number: "90909 09090", price: 45000, category: "VIP", series: "90", date: 1698700000000 },
+            { id: 9, number: "78787 87878", price: 29999, category: "Premium", series: "78", date: 1698800000000 },
+            { id: 10, number: "99999 00000", price: 189999, category: "VIP", series: "99", date: 1698900000000 },
+            { id: 11, number: "88888 00000", price: 89999, category: "Premium", series: "88", date: 1699000000000 },
+            { id: 12, number: "55555 55555", price: 120000, category: "VIP", series: "55", date: 1699100000000 },
+        ];
+
+        /* =========================================
+           2. APP INIT & RENDER
+           ========================================= */
+        document.addEventListener('DOMContentLoaded', () => {
+            renderNumbers(vipNumbers);
+            initIntersectionObserver();
+        });
+
+        const numbersContainer = document.getElementById('numbers-container');
+
+        function renderNumbers(data) {
+            numbersContainer.innerHTML = '';
+            
+            if (data.length === 0) {
+                numbersContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-gray);">No numbers found matching your criteria.</div>`;
+                return;
+            }
+
+            data.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'number-card glass';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <span class="badge">${item.category}</span>
+                        <button class="wishlist-btn" onclick="toggleWishlist(this)">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </div>
+                    <div class="card-number">${item.number}</div>
+                    <div class="card-price">₹${item.price.toLocaleString('en-IN')}</div>
+                    <div class="card-actions">
+                        <button class="card-btn btn-view" onclick="showToast('Quick View: ${item.number}')">Quick View</button>
+                        <button class="card-btn btn-buy" onclick="showToast('Added to Cart')">Buy Now</button>
+                    </div>
+                `;
+                numbersContainer.appendChild(card);
+            });
+        }
+
+        /* =========================================
+           3. FILTERING LOGIC
+           ========================================= */
+        const inputs = [
+            document.getElementById('filter-number-input'),
+            document.getElementById('min-price'),
+            document.getElementById('max-price'),
+            ...document.querySelectorAll('.series-check'),
+            ...document.querySelectorAll('.cat-check'),
+            document.getElementById('sort-select')
+        ];
+
+        inputs.forEach(input => {
+            input.addEventListener('input', filterNumbers); // Real-time update
+            input.addEventListener('change', filterNumbers);
+        });
+
+        function filterNumbers() {
+            const searchTerm = document.getElementById('filter-number-input').value.replace(/\s/g, '');
+            const minPrice = parseInt(document.getElementById('min-price').value) || 0;
+            const maxPrice = parseInt(document.getElementById('max-price').value) || 10000000;
+            
+            const selectedSeries = Array.from(document.querySelectorAll('.series-check:checked')).map(cb => cb.value);
+            const selectedCats = Array.from(document.querySelectorAll('.cat-check:checked')).map(cb => cb.value);
+            const sortValue = document.getElementById('sort-select').value;
+
+            // Filter
+            let filtered = vipNumbers.filter(item => {
+                const matchesSearch = item.number.replace(/\s/g, '').includes(searchTerm);
+                const matchesPrice = item.price >= minPrice && item.price <= maxPrice;
+                const matchesSeries = selectedSeries.length === 0 || selectedSeries.includes(item.series);
+                const matchesCat = selectedCats.length === 0 || selectedCats.includes(item.category);
+
+                return matchesSearch && matchesPrice && matchesSeries && matchesCat;
+            });
+
+            // Sort
+            if (sortValue === 'price-asc') {
+                filtered.sort((a, b) => a.price - b.price);
+            } else if (sortValue === 'price-desc') {
+                filtered.sort((a, b) => b.price - a.price);
+            } else if (sortValue === 'newest') {
+                filtered.sort((a, b) => b.date - a.date);
+            }
+
+            renderNumbers(filtered);
+        }
+
+        /* =========================================
+           4. UI INTERACTIONS
+           ========================================= */
+        
+        // Header Scroll Effect
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            const scrollTopBtn = document.getElementById('scroll-top');
+            
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+                scrollTopBtn.classList.add('visible');
+            } else {
+                header.classList.remove('scrolled');
+                scrollTopBtn.classList.remove('visible');
+            }
+        });
+
+        // Mobile Menu
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('nav-links');
+            navLinks.classList.toggle('active');
+        }
+
+        // Scroll To Top
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Hero Search Integration
+        function handleHeroSearch(e) {
+            if (e.key === 'Enter') scrollToNumbers();
+        }
+        function scrollToNumbers() {
+            const val = document.getElementById('hero-search').value;
+            document.getElementById('filter-number-input').value = val;
+            scrollToElement('numbers');
+            filterNumbers();
+        }
+        function scrollToElement(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Wishlist Toggle
+        function toggleWishlist(btn) {
+            btn.classList.toggle('active');
+            const icon = btn.querySelector('i');
+            if (btn.classList.contains('active')) {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                showToast('Added to Favorites');
+            } else {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                showToast('Removed from Favorites');
+            }
+        }
+
+        // Toast Notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Theme Toggle (Simple Light/Dark simulation)
+        function toggleTheme() {
+            // For this single-file demo, we'll just toggle a class that adjusts opacity/glass
+            // to simulate a mood shift, as a full CSS variable inversion is complex in one file
+            // without root restructuring.
+            document.body.classList.toggle('light-mode-sim');
+            showToast('Theme toggled (Visual Demo)');
+        }
+
+        /* =========================================
+           5. TESTIMONIAL SLIDER
+           ========================================= */
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.testimonial-card');
+        const track = document.getElementById('testimonial-track');
+        const dots = document.querySelectorAll('.dot');
+
+        function updateSlider() {
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+            dots.forEach(dot => dot.classList.remove('active'));
+            dots[currentSlide].classList.add('active');
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlider();
+        }
+
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % slides.length;
+            updateSlider();
+        }, 5000);
+
+        /* =========================================
+           6. FAQ ACCORDION
+           ========================================= */
+        function toggleFaq(element) {
+            const parent = element.parentElement;
+            const isActive = parent.classList.contains('active');
+            
+            // Close all
+            document.querySelectorAll('.faq-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // If wasn't active, open it
+            if (!isActive) {
+                parent.classList.add('active');
+            }
+        }
+
+        /* =========================================
+           7. STATS ANIMATION
+           ========================================= */
+        function initIntersectionObserver() {
+            const statsSection = document.getElementById('stats');
+            let animated = false;
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !animated) {
+                        animateStats();
+                        animated = true;
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            observer.observe(statsSection);
+        }
+
+        function animateStats() {
+            const counters = document.querySelectorAll('.stat-item h3');
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const speed = 200; // lower is faster
+                const increment = target / speed;
+
+                const updateCount = () => {
+                    const count = +counter.innerText.replace(/,/g, '').replace('+', ''); // clean current text
+                    if (count < target) {
+                        counter.innerText = Math.ceil(count + increment).toLocaleString() + (counter.getAttribute('data-target') === '99' ? '%' : '+');
+                        setTimeout(updateCount, 20);
+                    } else {
+                        counter.innerText = target.toLocaleString() + (counter.getAttribute('data-target') === '99' ? '%' : '+');
+                    }
+                };
+                updateCount();
+            });
+        }
+
+        /* =========================================
+           8. FORM VALIDATION
+           ========================================= */
+        function handleNewsletter(e) {
+            e.preventDefault();
+            const email = document.getElementById('email-input').value;
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (regex.test(email)) {
+                showToast('Subscribed successfully!');
+                document.getElementById('email-input').value = '';
+            } else {
+                showToast('Please enter a valid email address.');
+            }
+        }
+
+    </script>
+</body>
+</html>
