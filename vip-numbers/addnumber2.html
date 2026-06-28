@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add VIP Number — Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        charcoal: { 950:'#080808', 900:'#0D0D0D', 800:'#121212', 700:'#1A1A1A', 600:'#222222', 500:'#2A2A2A', 400:'#333333' },
+                        gold: { DEFAULT:'#D4AF37', light:'#E8CC6E', dark:'#B8962E', subtle:'rgba(212,175,55,0.1)', muted:'rgba(212,175,55,0.25)' },
+                        accent: { blue:'#4A9DFF', blueSubtle:'rgba(74,157,255,0.1)' }
+                    },
+                    fontFamily: { display:['Playfair Display','serif'], sans:['DM Sans','sans-serif'] },
+                    borderRadius: { card:'18px', xl:'24px' }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --bg: #0D0D0D;
+            --fg: #FFFFFF;
+            --muted: #999999;
+            --accent: #D4AF37;
+            --card: rgba(255,255,255,0.035);
+            --card-hover: rgba(255,255,255,0.065);
+            --border: rgba(255,255,255,0.06);
+            --border-gold: rgba(212,175,55,0.25);
+            --accent-blue: #4A9DFF;
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { background: var(--bg); color: var(--fg); font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
+
+        body::before {
+            content: '';
+            position: fixed; top: -20%; right: -10%;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(212,175,55,0.04) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
+        }
+        body::after {
+            content: '';
+            position: fixed; bottom: -15%; left: -5%;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(74,157,255,0.03) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+        .glass-card {
+            background: var(--card);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+        }
+        .glass-card.no-hover { transition: none; }
+        .glass-card.no-hover:hover { transform: none; background: var(--card); border-color: var(--border); box-shadow: none; }
+        .glass-card:hover {
+            background: var(--card-hover);
+            border-color: var(--border-gold);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(212,175,55,0.06);
+        }
+
+        .sidebar {
+            width: 260px; min-height: 100vh;
+            background: rgba(18,18,18,0.95);
+            backdrop-filter: blur(30px);
+            border-right: 1px solid var(--border);
+            transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+            z-index: 50;
+        }
+        .sidebar-link {
+            display: flex; align-items: center; gap: 12px;
+            padding: 11px 20px; border-radius: 12px;
+            color: var(--muted); font-size: 14px; font-weight: 500;
+            transition: all 0.25s ease;
+            position: relative; overflow: hidden;
+        }
+        .sidebar-link::before {
+            content: ''; position: absolute; left: 0; top: 50%;
+            transform: translateY(-50%); width: 3px; height: 0;
+            background: var(--accent); border-radius: 0 4px 4px 0;
+            transition: height 0.25s ease;
+        }
+        .sidebar-link:hover { color: #fff; background: rgba(255,255,255,0.04); }
+        .sidebar-link.active { color: var(--accent); background: rgba(212,175,55,0.08); }
+        .sidebar-link.active::before { height: 24px; }
+        .sidebar-link svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        .stat-icon {
+            width: 48px; height: 48px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 12px; border-radius: 20px;
+            font-size: 12px; font-weight: 600;
+        }
+        .badge-available { background: rgba(34,197,94,0.12); color: #4ADE80; }
+        .badge-sold { background: rgba(239,68,68,0.12); color: #F87171; }
+        .badge-premium { background: rgba(212,175,55,0.15); color: #E8CC6E; }
+        .badge-reserved { background: rgba(74,157,255,0.12); color: #60B5FF; }
+        .badge-vip { background: rgba(244,114,182,0.12); color: #F472B6; }
+        .badge-fancy { background: rgba(232,204,110,0.15); color: #E8CC6E; }
+
+        .progress-track {
+            width: 100%; height: 10px; border-radius: 10px;
+            background: rgba(255,255,255,0.06); overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; border-radius: 10px;
+            transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        .gold-line {
+            position: fixed; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            z-index: 999;
+        }
+
+        @keyframes pulse-gold {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(212,175,55,0.4); }
+            50% { box-shadow: 0 0 0 6px rgba(212,175,55,0); }
+        }
+        .pulse-dot { animation: pulse-gold 2s infinite; }
+
+        /* Form inputs */
+        .form-group { position: relative; }
+        .form-label {
+            display: block; font-size: 12px; font-weight: 600;
+            color: rgba(255,255,255,0.45); margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 0.06em;
+        }
+        .input-field {
+            width: 100%; padding: 12px 16px; border-radius: 12px;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+            color: #fff; font-size: 14px; font-family: 'DM Sans', sans-serif;
+            transition: all 0.25s ease; outline: none;
+        }
+        .input-field:focus {
+            border-color: var(--accent);
+            background: rgba(255,255,255,0.06);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.08);
+        }
+        .input-field::placeholder { color: rgba(255,255,255,0.2); }
+        .input-field.readonly {
+            background: rgba(255,255,255,0.025);
+            border-color: rgba(255,255,255,0.04);
+            color: rgba(255,255,255,0.5);
+            cursor: default;
+        }
+        .input-field.error { border-color: #EF4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.1); }
+        .error-msg { font-size: 11px; color: #F87171; margin-top: 6px; display: none; }
+        .error-msg.show { display: block; }
+
+        select.input-field {
+            appearance: none; cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 40px;
+        }
+
+        /* Segmented selector */
+        .segment-group {
+            display: flex; gap: 4px; padding: 4px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
+        }
+        .segment-btn {
+            flex: 1; padding: 10px 16px; border-radius: 10px;
+            font-size: 13px; font-weight: 600;
+            color: rgba(255,255,255,0.4); background: transparent;
+            border: none; cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            font-family: 'DM Sans', sans-serif;
+            position: relative; overflow: hidden;
+        }
+        .segment-btn:hover { color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.04); }
+        .segment-btn.active {
+            color: #0D0D0D; background: var(--accent);
+            box-shadow: 0 2px 12px rgba(212,175,55,0.3);
+        }
+
+        /* Highlight range row */
+        .highlight-row {
+            padding: 16px; border-radius: 14px;
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            animation: rowSlideIn 0.35s cubic-bezier(0.4,0,0.2,1);
+        }
+        .highlight-row:hover {
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(255,255,255,0.08);
+        }
+        .highlight-row.has-error {
+            border-color: rgba(239,68,68,0.2);
+            background: rgba(239,68,68,0.02);
+        }
+        @keyframes rowSlideIn {
+            from { opacity: 0; transform: translateY(-10px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes rowSlideOut {
+            from { opacity: 1; transform: translateY(0) scale(1); max-height: 200px; margin-bottom: 12px; }
+            to { opacity: 0; transform: translateY(-10px) scale(0.95); max-height: 0; margin-bottom: 0; padding: 0 16px; overflow: hidden; }
+        }
+        .highlight-row.removing {
+            animation: rowSlideOut 0.3s cubic-bezier(0.4,0,0.2,1) forwards;
+            pointer-events: none;
+        }
+        .highlight-input {
+            width: 100%; padding: 10px 12px; border-radius: 10px;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+            color: #fff; font-size: 14px; font-family: 'DM Sans', sans-serif;
+            transition: all 0.25s ease; outline: none; text-align: center;
+        }
+        .highlight-input:focus {
+            border-color: var(--accent);
+            background: rgba(255,255,255,0.06);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.08);
+        }
+        .highlight-input::placeholder { color: rgba(255,255,255,0.15); }
+        .highlight-input.input-error { border-color: #EF4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.08); }
+
+        .delete-row-btn {
+            width: 38px; height: 38px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.3); cursor: pointer;
+            transition: all 0.25s ease; flex-shrink: 0;
+        }
+        .delete-row-btn:hover {
+            background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.2);
+            color: #F87171;
+        }
+
+        /* Section divider */
+        .section-divider {
+            display: flex; align-items: center; gap: 14px;
+            margin-bottom: 24px;
+        }
+        .section-divider .line {
+            flex: 1; height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.06), transparent);
+        }
+        .section-divider h3 {
+            font-size: 14px; font-weight: 600;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase; letter-spacing: 0.08em;
+            white-space: nowrap;
+        }
+        .section-divider .icon-wrap {
+            width: 32px; height: 32px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* Buttons */
+        .btn-gold {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px 28px; border-radius: 12px;
+            background: linear-gradient(135deg, #B8962E, #D4AF37, #E8CC6E);
+            color: #0D0D0D; font-size: 14px; font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            border: none; cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: 0 4px 16px rgba(212,175,55,0.2);
+        }
+        .btn-gold:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 24px rgba(212,175,55,0.35);
+        }
+        .btn-gold:active { transform: translateY(0) scale(0.98); }
+
+        .btn-outline {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px 24px; border-radius: 12px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer; transition: all 0.25s ease;
+        }
+        .btn-outline:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .btn-outline:active { transform: scale(0.98); }
+
+        .btn-ghost {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px 20px; border-radius: 12px;
+            background: transparent; border: none;
+            color: rgba(255,255,255,0.4); font-size: 14px; font-weight: 500;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer; transition: all 0.25s ease;
+        }
+        .btn-ghost:hover { color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.03); }
+
+        /* Preview card */
+        .preview-card {
+            position: relative; overflow: hidden;
+            background: linear-gradient(145deg, rgba(212,175,55,0.06) 0%, rgba(26,26,26,0.9) 40%, rgba(26,26,26,0.95) 100%);
+            border: 1px solid rgba(212,175,55,0.15);
+            border-radius: 20px;
+        }
+        .preview-card::before {
+            content: '';
+            position: absolute; top: -50%; right: -30%;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .preview-card::after {
+            content: '';
+            position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(212,175,55,0.3), transparent);
+        }
+        .preview-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px; font-weight: 900;
+            letter-spacing: 4px; line-height: 1.1;
+            background: linear-gradient(135deg, #fff 0%, #E8CC6E 50%, #D4AF37 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .highlight-gold {
+            color: #D4AF37 !important;
+            -webkit-text-fill-color: #D4AF37 !important;
+            text-shadow: 0 0 20px rgba(212,175,55,0.3);
+        }
+
+        /* Price strike-through */
+        .price-original {
+            text-decoration: line-through;
+            text-decoration-color: rgba(239,68,68,0.5);
+            color: rgba(255,255,255,0.35);
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        .shimmer-text {
+            background: linear-gradient(90deg, #D4AF37, #E8CC6E, #fff, #E8CC6E, #D4AF37);
+            background-size: 200% auto;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s linear infinite;
+        }
+
+        /* Toast */
+        .toast-container { position: fixed; top: 24px; right: 24px; z-index: 200; display: flex; flex-direction: column; gap: 10px; }
+        .toast {
+            padding: 14px 20px; border-radius: 12px;
+            background: #222; border: 1px solid rgba(255,255,255,0.08);
+            font-size: 13px; color: #fff; min-width: 280px;
+            display: flex; align-items: center; gap: 10px;
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        .toast.show { transform: translateX(0); }
+
+        /* Dropdown */
+        .dropdown {
+            position: absolute; top: calc(100% + 8px); right: 0;
+            background: #1E1E1E; border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px; padding: 8px; min-width: 200px;
+            opacity: 0; pointer-events: none; transform: translateY(-8px);
+            transition: all 0.25s ease;
+            box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+            z-index: 60;
+        }
+        .dropdown.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .dropdown-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 14px; border-radius: 10px;
+            font-size: 13px; color: var(--muted); cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .dropdown-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
+        .dropdown-item svg { width: 16px; height: 16px; }
+
+        .sidebar-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            z-index: 45; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .sidebar-overlay.show { opacity: 1; pointer-events: auto; }
+
+        /* Scroll reveal */
+        .reveal {
+            opacity: 0; transform: translateY(24px);
+            transition: all 0.6s cubic-bezier(0.4,0,0.2,1);
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* Recently added mini list */
+        .recent-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.03);
+            transition: all 0.2s ease;
+        }
+        .recent-item:last-child { border-bottom: none; }
+        .recent-item:hover { padding-left: 6px; }
+
+        /* Range label inside rows */
+        .range-label {
+            font-size: 10px; font-weight: 600;
+            color: rgba(255,255,255,0.3);
+            text-transform: uppercase; letter-spacing: 0.06em;
+            margin-bottom: 6px;
+        }
+        .range-preview {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px; font-weight: 900;
+            letter-spacing: 2px;
+            color: var(--accent);
+            min-height: 30px;
+            display: flex; align-items: center;
+        }
+        .range-preview.empty {
+            color: rgba(255,255,255,0.12);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px; font-weight: 500;
+            letter-spacing: 0;
+        }
+        .range-error {
+            font-size: 10px; color: #F87171;
+            margin-top: 4px; display: none;
+        }
+        .range-error.show { display: block; }
+
+        @media (max-width: 1024px) {
+            .sidebar { position: fixed; left: 0; top: 0; transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-wrapper { margin-left: 0 !important; }
+            .preview-number { font-size: 30px; letter-spacing: 2px; }
+        }
+        @media (max-width: 640px) {
+            .preview-number { font-size: 26px; letter-spacing: 1px; }
+            .action-bar { flex-direction: column; }
+            .action-bar .btn-gold, .action-bar .btn-outline { width: 100%; }
+            .highlight-row-grid { grid-template-columns: 1fr 1fr !important; }
+            .highlight-row-grid .delete-col { grid-column: span 2; justify-content: flex-end; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="gold-line"></div>
+    <div class="toast-container" id="toastContainer"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar fixed left-0 top-0 flex flex-col" id="sidebar">
+        <div class="p-6 pb-4 border-b border-white/5">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center">
+                    <span class="font-display font-bold text-charcoal-900 text-lg">V</span>
+                </div>
+                <div>
+                    <h1 class="font-display font-bold text-base text-white leading-tight">VIP Numbers</h1>
+                    <p class="text-[11px] text-white/30 font-medium tracking-wide uppercase">Admin Panel</p>
+                </div>
+            </div>
+        </div>
+        <nav class="flex-1 p-4 space-y-1" aria-label="Main navigation">
+            <p class="text-[10px] font-semibold uppercase tracking-widest text-white/20 px-4 mb-3">Main</p>
+            <a href="#" class="sidebar-link" onclick="event.preventDefault(); showToast('Navigating to Dashboard','info')">
+                <i data-lucide="layout-dashboard"></i> Dashboard
+            </a>
+            <a href="#" class="sidebar-link active">
+                <i data-lucide="phone"></i> Numbers
+            </a>
+            <a href="#" class="sidebar-link" onclick="event.preventDefault(); showToast('Opening Number Status','info')">
+                <i data-lucide="check-circle"></i> Number Status
+            </a>
+            <p class="text-[10px] font-semibold uppercase tracking-widest text-white/20 px-4 mb-3 mt-6">Settings</p>
+            <a href="#" class="sidebar-link" onclick="event.preventDefault(); showToast('Opening Profile','info')">
+                <i data-lucide="user"></i> Profile
+            </a>
+            <a href="#" class="sidebar-link" onclick="event.preventDefault(); showToast('Settings page coming soon','info')">
+                <i data-lucide="settings"></i> Settings
+            </a>
+            <a href="#" class="sidebar-link" onclick="event.preventDefault(); showToast('Logged out successfully','success')">
+                <i data-lucide="log-out"></i> Logout
+            </a>
+        </nav>
+        <div class="p-4 border-t border-white/5">
+            <div class="glass-card no-hover p-4 !bg-gold-subtle !border-gold-muted">
+                <p class="text-xs font-semibold text-gold mb-1">Inventory Health</p>
+                <p class="text-[11px] text-white/40 leading-relaxed">8,432 numbers available across 5 categories</p>
+                <div class="mt-3 progress-track !h-[6px]">
+                    <div class="progress-fill bg-gradient-to-r from-gold-dark to-gold" style="width:65%"></div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-wrapper" style="margin-left:260px;" id="mainWrapper">
+        <!-- Top Header -->
+        <header class="sticky top-0 z-40 border-b border-white/5" style="background:rgba(13,13,13,0.85); backdrop-filter:blur(20px);">
+            <div class="flex items-center justify-between px-6 lg:px-8 py-4">
+                <div class="flex items-center gap-4">
+                    <button class="lg:hidden w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 transition-all" onclick="toggleSidebar()" aria-label="Toggle menu">
+                        <i data-lucide="menu" class="w-5 h-5"></i>
+                    </button>
+                    <div>
+                        <h2 class="text-lg font-semibold text-white">Add New VIP Number</h2>
+                        <div class="flex items-center gap-1.5 mt-0.5">
+                            <a href="#" class="text-xs text-white/30 hover:text-gold transition-colors" onclick="event.preventDefault(); showToast('Navigating to Dashboard','info')">Dashboard</a>
+                            <i data-lucide="chevron-right" class="w-3 h-3 text-white/15"></i>
+                            <a href="#" class="text-xs text-white/30 hover:text-gold transition-colors" onclick="event.preventDefault(); showToast('Navigating to Numbers','info')">Numbers</a>
+                            <i data-lucide="chevron-right" class="w-3 h-3 text-white/15"></i>
+                            <span class="text-xs text-gold font-medium">Add Number</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="relative">
+                        <button class="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-white/50 hover:text-white hover:bg-white/[0.08] transition-all relative" onclick="toggleDropdown('notifDropdown')" aria-label="Notifications">
+                            <i data-lucide="bell" class="w-[18px] h-[18px]"></i>
+                            <span class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gold text-charcoal-900 text-[10px] font-bold flex items-center justify-center pulse-dot">3</span>
+                        </button>
+                        <div class="dropdown" id="notifDropdown" style="min-width:280px;">
+                            <p class="text-[11px] font-semibold uppercase tracking-wider text-white/30 px-3 py-2">Notifications</p>
+                            <div class="dropdown-item" onclick="showToast('Viewing notification','info')">
+                                <div class="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center flex-shrink-0"><i data-lucide="plus-circle" class="w-4 h-4 text-green-400"></i></div>
+                                <div><p class="text-white text-xs font-medium">New number added</p><p class="text-white/30 text-[11px] mt-0.5">2 minutes ago</p></div>
+                            </div>
+                            <div class="dropdown-item" onclick="showToast('Viewing notification','info')">
+                                <div class="w-8 h-8 rounded-lg bg-gold/10 flex items-center justify-center flex-shrink-0"><i data-lucide="star" class="w-4 h-4 text-gold"></i></div>
+                                <div><p class="text-white text-xs font-medium">Premium number tagged</p><p class="text-white/30 text-[11px] mt-0.5">15 minutes ago</p></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <button class="flex items-center gap-2.5 pl-1 pr-3 py-1 rounded-xl hover:bg-white/[0.04] transition-all" onclick="toggleDropdown('profileDropdown')" aria-label="Profile menu">
+                            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-gold/80 to-gold-dark flex items-center justify-center">
+                                <span class="text-charcoal-900 font-bold text-sm">A</span>
+                            </div>
+                            <span class="hidden sm:block text-sm text-white/70 font-medium">Admin</span>
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-white/30"></i>
+                        </button>
+                        <div class="dropdown" id="profileDropdown">
+                            <div class="px-3 py-2.5 border-b border-white/5 mb-1">
+                                <p class="text-sm font-semibold text-white">Admin User</p>
+                                <p class="text-[11px] text-white/35 mt-0.5">admin@vipnumbers.com</p>
+                            </div>
+                            <div class="dropdown-item" onclick="showToast('Opening profile...','info')"><i data-lucide="user"></i> My Profile</div>
+                            <div class="dropdown-item" onclick="showToast('Opening settings...','info')"><i data-lucide="settings"></i> Settings</div>
+                            <div class="dropdown-item" onclick="showToast('Logged out successfully','success')"><i data-lucide="log-out"></i> Logout</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <main class="px-6 lg:px-8 py-6 relative z-10">
+            <div class="flex flex-col xl:flex-row gap-6">
+
+                <!-- Left: Main Form -->
+                <div class="flex-1 min-w-0 space-y-6">
+
+                    <!-- Basic Information -->
+                    <section class="glass-card no-hover p-6 lg:p-8 reveal">
+                        <div class="section-divider">
+                            <div class="icon-wrap bg-gold-subtle"><i data-lucide="info" class="w-4 h-4 text-gold"></i></div>
+                            <h3>Basic Information</h3>
+                            <div class="line"></div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Mobile Number -->
+                            <div class="form-group md:col-span-2">
+                                <label class="form-label" for="mobileNumber">
+                                    <i data-lucide="smartphone" class="w-3.5 h-3.5 inline mr-1 -mt-0.5"></i>
+                                    Mobile Number
+                                </label>
+                                <div class="relative">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 font-semibold text-sm">+91</span>
+                                    <input
+                                        type="text" id="mobileNumber" class="input-field !pl-14"
+                                        placeholder="Enter Mobile Number" maxlength="10"
+                                        oninput="handleNumberInput(this); updatePreview(); refreshAllHighlightPreviews();"
+                                        aria-describedby="numberError"
+                                    >
+                                </div>
+                                <p class="error-msg" id="numberError">Please enter a valid 10-digit mobile number</p>
+                            </div>
+
+                            <!-- Category -->
+                            <div class="form-group">
+                                <label class="form-label" for="category">
+                                    <i data-lucide="tag" class="w-3.5 h-3.5 inline mr-1 -mt-0.5"></i>
+                                    Category
+                                </label>
+                                <select id="category" class="input-field" onchange="updatePreview()">
+                                    <option value="">Select Category</option>
+                                    <option value="VIP">VIP</option>
+                                    <option value="Premium">Premium</option>
+                                    <option value="Fancy">Fancy</option>
+                                </select>
+                            </div>
+
+                            <!-- Status -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i data-lucide="activity" class="w-3.5 h-3.5 inline mr-1 -mt-0.5"></i>
+                                    Status
+                                </label>
+                                <div class="segment-group" role="radiogroup" aria-label="Number status">
+                                    <button type="button" class="segment-btn active" role="radio" aria-checked="true" onclick="setStatus(this, 'Available')">Available</button>
+                                    <button type="button" class="segment-btn" role="radio" aria-checked="false" onclick="setStatus(this, 'Sold')">Sold</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Highlight Ranges -->
+                    <section class="glass-card no-hover p-6 lg:p-8 reveal">
+                        <div class="section-divider">
+                            <div class="icon-wrap" style="background:rgba(244,114,182,0.1);"><i data-lucide="sparkles" class="w-4 h-4 text-pink-400"></i></div>
+                            <h3>Highlight Ranges</h3>
+                            <div class="line"></div>
+                        </div>
+
+                        <p class="text-xs text-white/30 mb-5 -mt-3">Define position ranges to highlight specific digit sequences in the preview. Positions are 1-based.</p>
+
+                        <!-- Dynamic rows container -->
+                        <div class="space-y-3" id="highlightRowsContainer">
+                            <!-- Rows rendered by JS -->
+                        </div>
+
+                        <!-- Add button -->
+                        <button type="button" class="mt-4 w-full py-3 rounded-xl border border-dashed border-gold/25 bg-gold/[0.03] text-gold text-sm font-semibold flex items-center justify-center gap-2 hover:bg-gold/[0.08] hover:border-gold/40 transition-all active:scale-[0.99]" onclick="addHighlightRow()">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            Add Highlight Range
+                        </button>
+                    </section>
+
+                    <!-- Pricing -->
+                    <section class="glass-card no-hover p-6 lg:p-8 reveal">
+                        <div class="section-divider">
+                            <div class="icon-wrap" style="background:rgba(34,197,94,0.1);"><i data-lucide="indian-rupee" class="w-4 h-4 text-green-400"></i></div>
+                            <h3>Pricing</h3>
+                            <div class="line"></div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                            <div class="form-group">
+                                <label class="form-label" for="originalPrice">
+                                    <i data-lucide="banknote" class="w-3.5 h-3.5 inline mr-1 -mt-0.5"></i>
+                                    Original Price (INR)
+                                </label>
+                                <div class="relative">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 font-semibold text-sm">₹</span>
+                                    <input type="number" id="originalPrice" class="input-field !pl-10" placeholder="e.g. 50000" min="0" oninput="calculatePricing(); updatePreview()">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="discount">
+                                    <i data-lucide="percent" class="w-3.5 h-3.5 inline mr-1 -mt-0.5"></i>
+                                    Discount (%)
+                                </label>
+                                <input type="number" id="discount" class="input-field text-center" placeholder="e.g. 10" min="0" max="100" oninput="calculatePricing(); updatePreview()">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="sellingPrice">
+                                    <i data-lucide="circle-dollar-sign" class="w-3.5 h-3.5 inline mr-1 -mt-0.5"></i>
+                                    Selling Price (INR)
+                                </label>
+                                <div class="relative">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gold/50 font-semibold text-sm">₹</span>
+                                    <input type="text" id="sellingPrice" class="input-field !pl-10 !border-gold/20 !bg-gold/[0.03]" placeholder="Auto-calculated" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pricing calculation display -->
+                        <div class="flex items-center gap-3 p-4 rounded-xl bg-white/[0.02] border border-white/[0.04]" id="pricingCalcBar">
+                            <i data-lucide="equal" class="w-4 h-4 text-white/20 flex-shrink-0"></i>
+                            <p class="text-xs text-white/30 font-mono" id="pricingFormula">
+                                Enter original price and discount to see calculation
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- Live Preview -->
+                    <section class="reveal">
+                        <div class="section-divider px-2">
+                            <div class="icon-wrap" style="background:rgba(212,175,55,0.12);"><i data-lucide="eye" class="w-4 h-4 text-gold"></i></div>
+                            <h3>Live VIP Number Preview</h3>
+                            <div class="line"></div>
+                        </div>
+
+                        <div class="preview-card p-8 lg:p-10">
+                            <div class="relative z-10">
+                                <!-- Top row -->
+                                <div class="flex items-center justify-between mb-8">
+                                    <div class="flex items-center gap-2">
+                                        <i data-lucide="smartphone" class="w-5 h-5 text-gold/60"></i>
+                                        <span class="text-xs text-white/30 font-medium uppercase tracking-widest">VIP Number</span>
+                                    </div>
+                                    <div class="flex items-center gap-2" id="previewBadges">
+                                        <span class="badge" style="background:rgba(255,255,255,0.05); color:rgba(255,255,255,0.25); font-size:11px;" id="previewCategoryBadge">No Category</span>
+                                        <span class="badge badge-available" id="previewStatusBadge">Available</span>
+                                    </div>
+                                </div>
+
+                                <!-- Number -->
+                                <div class="mb-8" id="previewNumberWrap">
+                                    <div class="preview-number" id="previewNumber">0000000000</div>
+                                </div>
+
+                                <!-- Price row -->
+                                <div class="flex flex-wrap items-end gap-6">
+                                    <div>
+                                        <p class="text-[10px] text-white/25 uppercase tracking-widest font-semibold mb-1">Original Price</p>
+                                        <p class="text-lg font-semibold price-original" id="previewOriginalPrice">₹0</p>
+                                    </div>
+                                    <div id="previewDiscountWrap" style="display:none;">
+                                        <p class="text-[10px] text-white/25 uppercase tracking-widest font-semibold mb-1">Discount</p>
+                                        <p class="text-lg font-semibold text-red-400" id="previewDiscount">-0%</p>
+                                    </div>
+                                    <div class="ml-auto text-right">
+                                        <p class="text-[10px] text-gold/50 uppercase tracking-widest font-semibold mb-1">Selling Price</p>
+                                        <p class="text-2xl font-bold font-display shimmer-text" id="previewSellingPrice">₹0</p>
+                                    </div>
+                                </div>
+
+                                <!-- Highlights preview -->
+                                <div class="mt-6 pt-5 border-t border-white/5" id="previewHighlightsWrap" style="display:none;">
+                                    <p class="text-[10px] text-white/25 uppercase tracking-widest font-semibold mb-2">Active Highlights</p>
+                                    <div class="flex flex-wrap gap-2" id="previewHighlights"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Action Buttons -->
+                    <section class="reveal">
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 action-bar pb-8">
+                            <button type="button" class="btn-ghost" onclick="resetForm()">
+                                <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reset
+                            </button>
+                            <button type="button" class="btn-outline" onclick="showToast('Cancelled — no changes saved','info')">
+                                <i data-lucide="x" class="w-4 h-4"></i> Cancel
+                            </button>
+                            <button type="button" class="btn-outline" onclick="saveAndAddAnother()">
+                                <i data-lucide="plus" class="w-4 h-4"></i> Save & Add Another
+                            </button>
+                            <button type="button" class="btn-gold" onclick="saveNumber()">
+                                <i data-lucide="check" class="w-4 h-4"></i> Save Number
+                            </button>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Right Sidebar -->
+                <div class="w-full xl:w-80 flex-shrink-0 space-y-5">
+                    <!-- Summary Card -->
+                    <div class="glass-card no-hover p-5 reveal">
+                        <div class="flex items-center gap-2 mb-5">
+                            <div class="w-8 h-8 rounded-lg bg-gold-subtle flex items-center justify-center">
+                                <i data-lucide="bar-chart-3" class="w-4 h-4 text-gold"></i>
+                            </div>
+                            <h4 class="text-sm font-semibold text-white">Quick Summary</h4>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-lg bg-accent-blueSubtle flex items-center justify-center">
+                                        <i data-lucide="hash" class="w-3.5 h-3.5 text-accent-blue"></i>
+                                    </div>
+                                    <span class="text-xs text-white/50 font-medium">Total Numbers</span>
+                                </div>
+                                <span class="text-sm font-bold text-white font-display">12,847</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(34,197,94,0.1);">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5 text-green-400"></i>
+                                    </div>
+                                    <span class="text-xs text-white/50 font-medium">Available</span>
+                                </div>
+                                <span class="text-sm font-bold text-green-400 font-display">8,432</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-lg bg-gold-subtle flex items-center justify-center">
+                                        <i data-lucide="crown" class="w-3.5 h-3.5 text-gold"></i>
+                                    </div>
+                                    <span class="text-xs text-white/50 font-medium">Premium</span>
+                                </div>
+                                <span class="text-sm font-bold text-gold font-display">3,156</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recently Added -->
+                    <div class="glass-card no-hover p-5 reveal">
+                        <div class="flex items-center gap-2 mb-4">
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(34,197,94,0.1);">
+                                <i data-lucide="clock" class="w-4 h-4 text-green-400"></i>
+                            </div>
+                            <h4 class="text-sm font-semibold text-white">Recently Added</h4>
+                        </div>
+
+                        <div id="recentlyAdded">
+                            <div class="recent-item">
+                                <div>
+                                    <p class="text-sm font-semibold text-white font-mono tracking-wider">9999001122</p>
+                                    <p class="text-[11px] text-white/25 mt-0.5">Fancy &middot; ₹45,000</p>
+                                </div>
+                                <span class="badge badge-available" style="font-size:10px; padding:2px 8px;">Available</span>
+                            </div>
+                            <div class="recent-item">
+                                <div>
+                                    <p class="text-sm font-semibold text-white font-mono tracking-wider">8888000099</p>
+                                    <p class="text-[11px] text-white/25 mt-0.5">VIP &middot; ₹2,10,000</p>
+                                </div>
+                                <span class="badge badge-available" style="font-size:10px; padding:2px 8px;">Available</span>
+                            </div>
+                            <div class="recent-item">
+                                <div>
+                                    <p class="text-sm font-semibold text-white font-mono tracking-wider">9999888877</p>
+                                    <p class="text-[11px] text-white/25 mt-0.5">Premium &middot; ₹1,85,000</p>
+                                </div>
+                                <span class="badge badge-available" style="font-size:10px; padding:2px 8px;">Available</span>
+                            </div>
+                            <div class="recent-item">
+                                <div>
+                                    <p class="text-sm font-semibold text-white font-mono tracking-wider">7777000088</p>
+                                    <p class="text-[11px] text-white/25 mt-0.5">Business &middot; ₹65,000</p>
+                                </div>
+                                <span class="badge badge-reserved" style="font-size:10px; padding:2px 8px;">Reserved</span>
+                            </div>
+                            <div class="recent-item">
+                                <div>
+                                    <p class="text-sm font-semibold text-white font-mono tracking-wider">7777666655</p>
+                                    <p class="text-[11px] text-white/25 mt-0.5">Business &middot; ₹78,000</p>
+                                </div>
+                                <span class="badge badge-available" style="font-size:10px; padding:2px 8px;">Available</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tips Card -->
+                    <div class="glass-card no-hover p-5 reveal" style="border-color:rgba(212,175,55,0.1); background:rgba(212,175,55,0.02);">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i data-lucide="lightbulb" class="w-4 h-4 text-gold"></i>
+                            <h4 class="text-sm font-semibold text-gold">Pro Tips</h4>
+                        </div>
+                        <ul class="space-y-2.5">
+                            <li class="flex items-start gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gold/40 mt-1.5 flex-shrink-0"></span>
+                                <p class="text-[12px] text-white/35 leading-relaxed">Numbers with repeating digits like 9999 command higher prices</p>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gold/40 mt-1.5 flex-shrink-0"></span>
+                                <p class="text-[12px] text-white/35 leading-relaxed">786 sequences are highly sought after in specific markets</p>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gold/40 mt-1.5 flex-shrink-0"></span>
+                                <p class="text-[12px] text-white/35 leading-relaxed">Mirror numbers (1234-4321) attract premium buyers</p>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gold/40 mt-1.5 flex-shrink-0"></span>
+                                <p class="text-[12px] text-white/35 leading-relaxed">Use highlight ranges to mark premium digit positions</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="px-6 lg:px-8 py-6 border-t border-white/5 relative z-10">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-6 h-6 rounded-md bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center">
+                        <span class="font-display font-bold text-charcoal-900 text-[10px]">V</span>
+                    </div>
+                    <span class="text-xs text-white/30 font-medium">VIP Number Management System</span>
+                </div>
+                <div class="flex items-center gap-4 text-[11px] text-white/20">
+                    <span>v2.4.1</span>
+                    <span class="w-1 h-1 rounded-full bg-white/10"></span>
+                    <span>Last updated: Jan 15, 2025</span>
+                    <span class="w-1 h-1 rounded-full bg-white/10"></span>
+                    <span>2025 All Rights Reserved</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        /* ============================================
+           State
+        ============================================ */
+        let currentStatus = 'Available';
+        let highlightRanges = []; // Array of { id, start, end }
+        let highlightIdCounter = 0;
+
+        /* ============================================
+           Initialize
+        ============================================ */
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            initScrollReveal();
+            // Add one default empty highlight row
+            addHighlightRow();
+        });
+
+        /* ============================================
+           Sidebar Toggle
+        ============================================ */
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('show');
+        }
+
+        /* ============================================
+           Dropdown Toggle
+        ============================================ */
+        function toggleDropdown(id) {
+            const dd = document.getElementById(id);
+            const isOpen = dd.classList.contains('show');
+            document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
+            if (!isOpen) dd.classList.add('show');
+        }
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.relative')) {
+                document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
+            }
+        });
+
+        /* ============================================
+           Toast Notifications
+        ============================================ */
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            const iconMap = {
+                success: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ADE80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+                error: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F87171" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+                info: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60B5FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+                warning: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FBBF24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+            };
+            toast.innerHTML = (iconMap[type] || iconMap.info) + `<span>${message}</span>`;
+            container.appendChild(toast);
+            requestAnimationFrame(() => { toast.classList.add('show'); });
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 3500);
+        }
+
+        /* ============================================
+           Scroll Reveal
+        ============================================ */
+        function initScrollReveal() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, i) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        }
+
+        /* ============================================
+           Mobile Number Input (numeric only)
+        ============================================ */
+        function handleNumberInput(el) {
+            el.value = el.value.replace(/[^0-9]/g, '').slice(0, 10);
+            const errEl = document.getElementById('numberError');
+            if (el.value.length > 0 && el.value.length < 10) {
+                el.classList.add('error');
+                errEl.classList.add('show');
+            } else {
+                el.classList.remove('error');
+                errEl.classList.remove('show');
+            }
+        }
+
+        /* ============================================
+           Status Segmented Selector
+        ============================================ */
+        function setStatus(btn, status) {
+            currentStatus = status;
+            btn.closest('.segment-group').querySelectorAll('.segment-btn').forEach(b => {
+                b.classList.remove('active');
+                b.setAttribute('aria-checked', 'false');
+            });
+            btn.classList.add('active');
+            btn.setAttribute('aria-checked', 'true');
+            updatePreview();
+        }
+
+        /* ============================================
+           Highlight Ranges — Dynamic Rows
+        ============================================ */
+        function addHighlightRow() {
+            const id = ++highlightIdCounter;
+            highlightRanges.push({ id, start: '', end: '' });
+            renderHighlightRows();
+            // Focus the start input of the new row
+            setTimeout(() => {
+                const startInput = document.querySelector(`[data-range-id="${id}"] .hl-start`);
+                if (startInput) startInput.focus();
+            }, 50);
+        }
+
+        function removeHighlightRow(id) {
+            const rowEl = document.querySelector(`[data-range-id="${id}"]`);
+            if (rowEl) {
+                rowEl.classList.add('removing');
+                setTimeout(() => {
+                    highlightRanges = highlightRanges.filter(r => r.id !== id);
+                    renderHighlightRows();
+                    updatePreview();
+                }, 300);
+            }
+        }
+
+        function onHighlightInputChange(id, field, value) {
+            // Sanitize: only digits, max 2 chars
+            value = value.replace(/[^0-9]/g, '').slice(0, 2);
+            const range = highlightRanges.find(r => r.id === id);
+            if (range) {
+                range[field] = value;
+                validateHighlightRow(id);
+                updateHighlightPreview(id);
+                updatePreview();
+            }
+        }
+
+        function validateHighlightRow(id) {
+            const range = highlightRanges.find(r => r.id === id);
+            if (!range) return;
+            const rowEl = document.querySelector(`[data-range-id="${id}"]`);
+            if (!rowEl) return;
+
+            const errorEl = rowEl.querySelector('.range-error');
+            const startInput = rowEl.querySelector('.hl-start');
+            const endInput = rowEl.querySelector('.hl-end');
+            const number = document.getElementById('mobileNumber').value;
+            const numLen = number.length;
+
+            let errorMsg = '';
+            const s = parseInt(range.start);
+            const e = parseInt(range.end);
+
+            // Clear error states
+            startInput.classList.remove('input-error');
+            endInput.classList.remove('input-error');
+            rowEl.classList.remove('has-error');
+
+            if (range.start !== '' && range.end !== '') {
+                if (s < 1) {
+                    errorMsg = 'Position must be at least 1';
+                    startInput.classList.add('input-error');
+                } else if (s > 10) {
+                    errorMsg = 'Maximum position is 10';
+                    startInput.classList.add('input-error');
+                } else if (e < 1) {
+                    errorMsg = 'Position must be at least 1';
+                    endInput.classList.add('input-error');
+                } else if (e > 10) {
+                    errorMsg = 'Maximum position is 10';
+                    endInput.classList.add('input-error');
+                } else if (e < s) {
+                    errorMsg = 'End position cannot be smaller than start';
+                    endInput.classList.add('input-error');
+                } else if (s > numLen) {
+                    errorMsg = `Start position exceeds number length (${numLen})`;
+                    startInput.classList.add('input-error');
+                } else if (e > numLen) {
+                    errorMsg = `End position exceeds number length (${numLen})`;
+                    endInput.classList.add('input-error');
+                }
+            } else if (range.start !== '' && parseInt(range.start) > 10) {
+                errorMsg = 'Maximum position is 10';
+                startInput.classList.add('input-error');
+            } else if (range.end !== '' && parseInt(range.end) > 10) {
+                errorMsg = 'Maximum position is 10';
+                endInput.classList.add('input-error');
+            }
+
+            if (errorMsg) {
+                rowEl.classList.add('has-error');
+                errorEl.textContent = errorMsg;
+                errorEl.classList.add('show');
+            } else {
+                errorEl.classList.remove('show');
+            }
+        }
+
+        function updateHighlightPreview(id) {
+            const range = highlightRanges.find(r => r.id === id);
+            if (!range) return;
+            const rowEl = document.querySelector(`[data-range-id="${id}"]`);
+            if (!rowEl) return;
+
+            const previewEl = rowEl.querySelector('.range-preview');
+            const number = document.getElementById('mobileNumber').value;
+            const s = parseInt(range.start);
+            const e = parseInt(range.end);
+
+            if (!range.start || !range.end || isNaN(s) || isNaN(e) || s < 1 || e < 1 || s > number.length || e > number.length || e < s) {
+                previewEl.textContent = 'Enter valid positions';
+                previewEl.classList.add('empty');
+                return;
+            }
+
+            // Extract the substring (1-based to 0-based)
+            const digits = number.substring(s - 1, e);
+            previewEl.textContent = digits;
+            previewEl.classList.remove('empty');
+        }
+
+        function refreshAllHighlightPreviews() {
+            highlightRanges.forEach(r => {
+                validateHighlightRow(r.id);
+                updateHighlightPreview(r.id);
+            });
+            updatePreview();
+        }
+
+        function renderHighlightRows() {
+            const container = document.getElementById('highlightRowsContainer');
+            container.innerHTML = '';
+
+            highlightRanges.forEach((range, index) => {
+                const row = document.createElement('div');
+                row.className = 'highlight-row';
+                row.setAttribute('data-range-id', range.id);
+                row.innerHTML = `
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-[11px] font-semibold text-white/25 uppercase tracking-wider flex-shrink-0">Range ${index + 1}</span>
+                        <div class="flex-1 h-px bg-white/[0.04]"></div>
+                        <button type="button" class="delete-row-btn" onclick="removeHighlightRow(${range.id})" aria-label="Delete highlight range ${index + 1}">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 highlight-row-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+                        <div>
+                            <label class="range-label">Start Position</label>
+                            <input type="text" class="highlight-input hl-start" placeholder="1"
+                                value="${range.start}"
+                                oninput="onHighlightInputChange(${range.id}, 'start', this.value)"
+                                aria-label="Start position for range ${index + 1}">
+                        </div>
+                        <div>
+                            <label class="range-label">End Position</label>
+                            <input type="text" class="highlight-input hl-end" placeholder="10"
+                                value="${range.end}"
+                                oninput="onHighlightInputChange(${range.id}, 'end', this.value)"
+                                aria-label="End position for range ${index + 1}">
+                        </div>
+                        <div>
+                            <label class="range-label">Preview</label>
+                            <div class="range-preview empty" data-preview-id="${range.id}">Enter valid positions</div>
+                        </div>
+                    </div>
+                    <p class="range-error"></p>
+                `;
+                container.appendChild(row);
+            });
+
+            // Re-initialize lucide icons for the new rows
+            lucide.createIcons();
+
+            // Restore preview text for existing ranges
+            highlightRanges.forEach(r => {
+                updateHighlightPreview(r.id);
+                validateHighlightRow(r.id);
+            });
+        }
+
+        /* ============================================
+           Pricing Calculation
+        ============================================ */
+        function calculatePricing() {
+            const original = parseFloat(document.getElementById('originalPrice').value) || 0;
+            const discount = Math.min(100, Math.max(0, parseFloat(document.getElementById('discount').value) || 0));
+            const selling = Math.max(0, original - (original * discount / 100));
+
+            document.getElementById('sellingPrice').value = selling > 0 ? formatCurrency(selling) : '';
+
+            const formula = document.getElementById('pricingFormula');
+            if (original > 0) {
+                formula.innerHTML = `<span style="color:#fff;">₹${formatNum(original)}</span> <span style="color:rgba(255,255,255,0.2);">−</span> <span style="color:#F87171;">${discount}%</span> <span style="color:rgba(255,255,255,0.2);">=</span> <span style="color:#D4AF37; font-weight:700;">₹${formatNum(selling)}</span>`;
+            } else {
+                formula.textContent = 'Enter original price and discount to see calculation';
+            }
+        }
+
+        /* ============================================
+           Live Preview Update
+        ============================================ */
+        function updatePreview() {
+            const number = document.getElementById('mobileNumber').value || '0000000000';
+            const category = document.getElementById('category').value;
+            const original = parseFloat(document.getElementById('originalPrice').value) || 0;
+            const discount = Math.min(100, Math.max(0, parseFloat(document.getElementById('discount').value) || 0));
+            const selling = Math.max(0, original - (original * discount / 100));
+
+            // Build a set of positions to highlight (0-based indices)
+            const highlightedPositions = new Set();
+            const validRanges = [];
+
+            highlightRanges.forEach(range => {
+                const s = parseInt(range.start);
+                const e = parseInt(range.end);
+                if (!isNaN(s) && !isNaN(e) && s >= 1 && e >= 1 && e >= s && s <= number.length && e <= number.length) {
+                    for (let i = s - 1; i < e; i++) {
+                        highlightedPositions.add(i);
+                    }
+                    validRanges.push({ start: s, end: e, digits: number.substring(s - 1, e) });
+                }
+            });
+
+            // Format number with position-based highlights
+            let formatted = number.split('').map((d, i) => {
+                if (highlightedPositions.has(i)) {
+                    return `<span class="highlight-gold">${d}</span>`;
+                }
+                return `<span>${d}</span>`;
+            }).join('');
+
+            document.getElementById('previewNumber').innerHTML = formatted;
+
+            // Category badge
+            const catBadge = document.getElementById('previewCategoryBadge');
+            if (category) {
+                const catClasses = { VIP: 'badge-vip', Premium: 'badge-premium', Fancy: 'badge-fancy' };
+                catBadge.className = `badge ${catClasses[category] || 'badge-premium'}`;
+                catBadge.textContent = category;
+                catBadge.style.cssText = '';
+            } else {
+                catBadge.className = 'badge';
+                catBadge.style.cssText = 'background:rgba(255,255,255,0.05); color:rgba(255,255,255,0.25); font-size:11px;';
+                catBadge.textContent = 'No Category';
+            }
+
+            // Status badge
+            const statusBadge = document.getElementById('previewStatusBadge');
+            const statusClasses = { Available: 'badge-available', Sold: 'badge-sold' };
+            statusBadge.className = `badge ${statusClasses[currentStatus] || 'badge-available'}`;
+            statusBadge.textContent = currentStatus;
+
+            // Prices
+            document.getElementById('previewOriginalPrice').textContent = original > 0 ? `₹${formatNum(original)}` : '₹0';
+
+            const discountWrap = document.getElementById('previewDiscountWrap');
+            if (discount > 0) {
+                discountWrap.style.display = 'block';
+                document.getElementById('previewDiscount').textContent = `-${discount}%`;
+            } else {
+                discountWrap.style.display = 'none';
+            }
+
+            document.getElementById('previewSellingPrice').textContent = selling > 0 ? `₹${formatNum(selling)}` : '₹0';
+
+            // Active Highlights summary in preview
+            const hlWrap = document.getElementById('previewHighlightsWrap');
+            const hlContainer = document.getElementById('previewHighlights');
+            if (validRanges.length > 0) {
+                hlWrap.style.display = 'block';
+                hlContainer.innerHTML = validRanges.map(r =>
+                    `<span style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:8px;background:rgba(212,175,55,0.12);border:1px solid rgba(212,175,55,0.2);color:#E8CC6E;font-size:12px;font-weight:600;">${r.start}–${r.end}: ${r.digits}</span>`
+                ).join('');
+            } else {
+                hlWrap.style.display = 'none';
+            }
+        }
+
+        /* ============================================
+           Form Actions
+        ============================================ */
+        function saveNumber() {
+            const number = document.getElementById('mobileNumber').value;
+            const category = document.getElementById('category').value;
+            const original = parseFloat(document.getElementById('originalPrice').value) || 0;
+
+            let valid = true;
+
+            if (number.length !== 10) {
+                document.getElementById('mobileNumber').classList.add('error');
+                document.getElementById('numberError').classList.add('show');
+                valid = false;
+            }
+            if (!category) {
+                document.getElementById('category').classList.add('error');
+                valid = false;
+                setTimeout(() => document.getElementById('category').classList.remove('error'), 2000);
+            }
+            if (original <= 0) {
+                document.getElementById('originalPrice').classList.add('error');
+                valid = false;
+                setTimeout(() => document.getElementById('originalPrice').classList.remove('error'), 2000);
+            }
+
+            // Validate highlight ranges
+            let rangeErrors = false;
+            highlightRanges.forEach(r => {
+                const s = parseInt(r.start);
+                const e = parseInt(r.end);
+                if (r.start !== '' && r.end !== '') {
+                    if (isNaN(s) || isNaN(e) || s < 1 || e < 1 || s > 10 || e > 10 || e < s || s > number.length || e > number.length) {
+                        rangeErrors = true;
+                        validateHighlightRow(r.id);
+                    }
+                }
+            });
+            if (rangeErrors) {
+                valid = false;
+                showToast('Please fix invalid highlight ranges', 'error');
+            }
+
+            if (!valid && !rangeErrors) {
+                showToast('Please fill in all required fields correctly', 'error');
+                return;
+            }
+            if (!valid) return;
+
+            const selling = Math.max(0, original - (original * (parseFloat(document.getElementById('discount').value) || 0) / 100));
+            const rangeCount = highlightRanges.filter(r => r.start && r.end).length;
+            let msg = `VIP Number ${number} saved successfully — ₹${formatNum(selling)}`;
+            if (rangeCount > 0) msg += ` (${rangeCount} highlight${rangeCount > 1 ? 's' : ''})`;
+            showToast(msg, 'success');
+        }
+
+        function saveAndAddAnother() {
+            const number = document.getElementById('mobileNumber').value;
+            const category = document.getElementById('category').value;
+            const original = parseFloat(document.getElementById('originalPrice').value) || 0;
+
+            let valid = true;
+
+            if (number.length !== 10) {
+                document.getElementById('mobileNumber').classList.add('error');
+                document.getElementById('numberError').classList.add('show');
+                valid = false;
+            }
+            if (!category) {
+                document.getElementById('category').classList.add('error');
+                valid = false;
+                setTimeout(() => document.getElementById('category').classList.remove('error'), 2000);
+            }
+            if (original <= 0) {
+                document.getElementById('originalPrice').classList.add('error');
+                valid = false;
+                setTimeout(() => document.getElementById('originalPrice').classList.remove('error'), 2000);
+            }
+
+            let rangeErrors = false;
+            highlightRanges.forEach(r => {
+                const s = parseInt(r.start);
+                const e = parseInt(r.end);
+                if (r.start !== '' && r.end !== '') {
+                    if (isNaN(s) || isNaN(e) || s < 1 || e < 1 || s > 10 || e > 10 || e < s || s > number.length || e > number.length) {
+                        rangeErrors = true;
+                        validateHighlightRow(r.id);
+                    }
+                }
+            });
+            if (rangeErrors) {
+                valid = false;
+                showToast('Please fix invalid highlight ranges', 'error');
+            }
+
+            if (!valid && !rangeErrors) {
+                showToast('Please fill in all required fields correctly', 'error');
+                return;
+            }
+            if (!valid) return;
+
+            showToast(`Number ${number} saved — form reset for next entry`, 'success');
+
+            // Reset input fields
+            document.getElementById('mobileNumber').value = '';
+            document.getElementById('mobileNumber').classList.remove('error');
+            document.getElementById('numberError').classList.remove('show');
+            document.getElementById('category').value = '';
+            document.getElementById('originalPrice').value = '';
+            document.getElementById('discount').value = '';
+            document.getElementById('sellingPrice').value = '';
+            document.getElementById('pricingFormula').textContent = 'Enter original price and discount to see calculation';
+
+            // Reset status
+            const segGroup = document.querySelector('.segment-group');
+            segGroup.querySelectorAll('.segment-btn').forEach(b => {
+                b.classList.remove('active');
+                b.setAttribute('aria-checked', 'false');
+            });
+            segGroup.querySelector('.segment-btn').classList.add('active');
+            segGroup.querySelector('.segment-btn').setAttribute('aria-checked', 'true');
+            currentStatus = 'Available';
+
+            // Reset highlights to a single empty row
+            highlightRanges = [];
+            highlightIdCounter = 0;
+            addHighlightRow();
+
+            updatePreview();
+        }
+
+        function resetForm() {
+            document.getElementById('mobileNumber').value = '';
+            document.getElementById('mobileNumber').classList.remove('error');
+            document.getElementById('numberError').classList.remove('show');
+            document.getElementById('category').value = '';
+            document.getElementById('category').classList.remove('error');
+            document.getElementById('originalPrice').value = '';
+            document.getElementById('originalPrice').classList.remove('error');
+            document.getElementById('discount').value = '';
+            document.getElementById('sellingPrice').value = '';
+            document.getElementById('pricingFormula').textContent = 'Enter original price and discount to see calculation';
+
+            // Reset status
+            const segGroup = document.querySelector('.segment-group');
+            segGroup.querySelectorAll('.segment-btn').forEach(b => {
+                b.classList.remove('active');
+                b.setAttribute('aria-checked', 'false');
+            });
+            segGroup.querySelector('.segment-btn').classList.add('active');
+            segGroup.querySelector('.segment-btn').setAttribute('aria-checked', 'true');
+            currentStatus = 'Available';
+
+            // Reset highlights to a single empty row
+            highlightRanges = [];
+            highlightIdCounter = 0;
+            addHighlightRow();
+
+            updatePreview();
+            showToast('Form has been reset', 'info');
+        }
+
+        /* ============================================
+           Utilities
+        ============================================ */
+        function formatNum(n) {
+            return n.toLocaleString('en-IN');
+        }
+
+        function formatCurrency(n) {
+            return '₹' + formatNum(n);
+        }
+    </script>
+</body>
+</html>

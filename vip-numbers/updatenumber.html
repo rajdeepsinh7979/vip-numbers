@@ -1,0 +1,1699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update VIP Number — Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        charcoal: { 950:'#080808', 900:'#0D0D0D', 800:'#121212', 700:'#1A1A1A', 600:'#222222', 500:'#2A2A2A', 400:'#333333' },
+                        gold: { DEFAULT:'#D4AF37', light:'#E8CC6E', dark:'#B8962E', subtle:'rgba(212,175,55,0.1)', muted:'rgba(212,175,55,0.25)' },
+                        accent: { blue:'#4A9DFF', blueSubtle:'rgba(74,157,255,0.1)' }
+                    },
+                    fontFamily: { display:['Playfair Display','serif'], sans:['DM Sans','sans-serif'] },
+                    borderRadius: { card:'18px', xl:'24px' }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --bg: #0D0D0D;
+            --fg: #FFFFFF;
+            --muted: #999999;
+            --accent: #D4AF37;
+            --card: rgba(255,255,255,0.035);
+            --card-hover: rgba(255,255,255,0.065);
+            --border: rgba(255,255,255,0.06);
+            --border-gold: rgba(212,175,55,0.25);
+            --accent-blue: #4A9DFF;
+        }
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { background: var(--bg); color: var(--fg); font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
+
+        body::before {
+            content: '';
+            position: fixed; top: -20%; right: -10%;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(212,175,55,0.04) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
+        }
+        body::after {
+            content: '';
+            position: fixed; bottom: -15%; left: -5%;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(74,157,255,0.03) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+        .glass-card {
+            background: var(--card);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+        }
+        .glass-card.no-hover { transition: none; }
+        .glass-card.no-hover:hover { transform: none; background: var(--card); border-color: var(--border); box-shadow: none; }
+
+        .sidebar {
+            width: 260px; min-height: 100vh;
+            background: rgba(18,18,18,0.95);
+            backdrop-filter: blur(30px);
+            border-right: 1px solid var(--border);
+            transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+            z-index: 50;
+        }
+        .sidebar-link {
+            display: flex; align-items: center; gap: 12px;
+            padding: 11px 20px; border-radius: 12px;
+            color: var(--muted); font-size: 14px; font-weight: 500;
+            transition: all 0.25s ease;
+            position: relative; overflow: hidden;
+        }
+        .sidebar-link::before {
+            content: ''; position: absolute; left: 0; top: 50%;
+            transform: translateY(-50%); width: 3px; height: 0;
+            background: var(--accent); border-radius: 0 4px 4px 0;
+            transition: height 0.25s ease;
+        }
+        .sidebar-link:hover { color: #fff; background: rgba(255,255,255,0.04); }
+        .sidebar-link.active { color: var(--accent); background: rgba(212,175,55,0.08); }
+        .sidebar-link.active::before { height: 24px; }
+        .sidebar-link svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        .badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 12px; border-radius: 20px;
+            font-size: 12px; font-weight: 600;
+        }
+        .badge-available { background: rgba(34,197,94,0.12); color: #4ADE80; }
+        .badge-sold { background: rgba(239,68,68,0.12); color: #F87171; }
+        .badge-premium { background: rgba(212,175,55,0.15); color: #E8CC6E; }
+        .badge-vip { background: rgba(244,114,182,0.12); color: #F472B6; }
+        .badge-fancy { background: rgba(232,204,110,0.15); color: #E8CC6E; }
+
+        .progress-track {
+            width: 100%; height: 10px; border-radius: 10px;
+            background: rgba(255,255,255,0.06); overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; border-radius: 10px;
+            transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        .gold-line {
+            position: fixed; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            z-index: 999;
+        }
+
+        @keyframes pulse-gold {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(212,175,55,0.4); }
+            50% { box-shadow: 0 0 0 6px rgba(212,175,55,0); }
+        }
+        .pulse-dot { animation: pulse-gold 2s infinite; }
+
+        .form-group { position: relative; }
+        .form-label {
+            display: block; font-size: 12px; font-weight: 600;
+            color: rgba(255,255,255,0.45); margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 0.06em;
+        }
+        .input-field {
+            width: 100%; padding: 12px 16px; border-radius: 12px;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+            color: #fff; font-size: 14px; font-family: 'DM Sans', sans-serif;
+            transition: all 0.25s ease; outline: none;
+        }
+        .input-field:focus {
+            border-color: var(--accent);
+            background: rgba(255,255,255,0.06);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.08);
+        }
+        .input-field::placeholder { color: rgba(255,255,255,0.2); }
+        .input-field.error { border-color: #EF4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.1); }
+        .error-msg { font-size: 11px; color: #F87171; margin-top: 6px; display: none; }
+        .error-msg.show { display: block; }
+
+        select.input-field {
+            appearance: none; cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 40px;
+        }
+
+        .segment-group {
+            display: flex; gap: 4px; padding: 4px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
+        }
+        .segment-btn {
+            flex: 1; padding: 10px 16px; border-radius: 10px;
+            font-size: 13px; font-weight: 600;
+            color: rgba(255,255,255,0.4); background: transparent;
+            border: none; cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            font-family: 'DM Sans', sans-serif;
+        }
+        .segment-btn:hover { color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.04); }
+        .segment-btn.active {
+            color: #0D0D0D; background: var(--accent);
+            box-shadow: 0 2px 12px rgba(212,175,55,0.3);
+        }
+
+        .highlight-row {
+            padding: 16px; border-radius: 14px;
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            animation: rowSlideIn 0.35s cubic-bezier(0.4,0,0.2,1);
+        }
+        .highlight-row:hover {
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(255,255,255,0.08);
+        }
+        .highlight-row.has-error {
+            border-color: rgba(239,68,68,0.2);
+            background: rgba(239,68,68,0.02);
+        }
+        @keyframes rowSlideIn {
+            from { opacity: 0; transform: translateY(-10px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes rowSlideOut {
+            from { opacity: 1; transform: translateY(0) scale(1); max-height: 200px; margin-bottom: 12px; }
+            to { opacity: 0; transform: translateY(-10px) scale(0.95); max-height: 0; margin-bottom: 0; padding: 0 16px; overflow: hidden; }
+        }
+        .highlight-row.removing {
+            animation: rowSlideOut 0.3s cubic-bezier(0.4,0,0.2,1) forwards;
+            pointer-events: none;
+        }
+        .highlight-input {
+            width: 100%; padding: 10px 12px; border-radius: 10px;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+            color: #fff; font-size: 14px; font-family: 'DM Sans', sans-serif;
+            transition: all 0.25s ease; outline: none; text-align: center;
+        }
+        .highlight-input:focus {
+            border-color: var(--accent);
+            background: rgba(255,255,255,0.06);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.08);
+        }
+        .highlight-input::placeholder { color: rgba(255,255,255,0.15); }
+        .highlight-input.input-error { border-color: #EF4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.08); }
+
+        .delete-row-btn {
+            width: 38px; height: 38px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.3); cursor: pointer;
+            transition: all 0.25s ease; flex-shrink: 0;
+        }
+        .delete-row-btn:hover {
+            background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.2);
+            color: #F87171;
+        }
+
+        .section-divider {
+            display: flex; align-items: center; gap: 14px;
+            margin-bottom: 24px;
+        }
+        .section-divider .line {
+            flex: 1; height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.06), transparent);
+        }
+        .section-divider h3 {
+            font-size: 14px; font-weight: 600;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase; letter-spacing: 0.08em;
+            white-space: nowrap;
+        }
+        .section-divider .icon-wrap {
+            width: 32px; height: 32px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .btn-gold {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px 28px; border-radius: 12px;
+            background: linear-gradient(135deg, #B8962E, #D4AF37, #E8CC6E);
+            color: #0D0D0D; font-size: 14px; font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            border: none; cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: 0 4px 16px rgba(212,175,55,0.2);
+        }
+        .btn-gold:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 24px rgba(212,175,55,0.35);
+        }
+        .btn-gold:active { transform: translateY(0) scale(0.98); }
+        .btn-gold:disabled {
+            opacity: 0.5; cursor: not-allowed; transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn-outline {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px 24px; border-radius: 12px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer; transition: all 0.25s ease;
+        }
+        .btn-outline:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .btn-outline:active { transform: scale(0.98); }
+
+        .btn-ghost {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px 20px; border-radius: 12px;
+            background: transparent; border: none;
+            color: rgba(255,255,255,0.4); font-size: 14px; font-weight: 500;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer; transition: all 0.25s ease;
+        }
+        .btn-ghost:hover { color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.03); }
+
+        .btn-back {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 16px; border-radius: 10px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 500;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer; transition: all 0.25s ease;
+        }
+        .btn-back:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+
+        .preview-card {
+            position: relative; overflow: hidden;
+            background: linear-gradient(145deg, rgba(212,175,55,0.06) 0%, rgba(26,26,26,0.9) 40%, rgba(26,26,26,0.95) 100%);
+            border: 1px solid rgba(212,175,55,0.15);
+            border-radius: 20px;
+        }
+        .preview-card::before {
+            content: '';
+            position: absolute; top: -50%; right: -30%;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .preview-card::after {
+            content: '';
+            position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(212,175,55,0.3), transparent);
+        }
+        .preview-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px; font-weight: 900;
+            letter-spacing: 4px; line-height: 1.1;
+        }
+        .preview-digit {
+            display: inline-block;
+            background: linear-gradient(135deg, #fff 0%, #E8CC6E 50%, #D4AF37 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: all 0.3s ease;
+        }
+        .preview-digit.highlighted {
+            -webkit-text-fill-color: #D4AF37;
+            text-shadow: 0 0 20px rgba(212,175,55,0.3);
+            background: linear-gradient(135deg, #E8CC6E, #D4AF37, #B8962E);
+            -webkit-background-clip: text; background-clip: text;
+            transform: scale(1.08);
+            filter: drop-shadow(0 0 8px rgba(212,175,55,0.4));
+        }
+
+        .price-original {
+            text-decoration: line-through;
+            text-decoration-color: rgba(239,68,68,0.5);
+            color: rgba(255,255,255,0.35);
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        .shimmer-text {
+            background: linear-gradient(90deg, #D4AF37, #E8CC6E, #fff, #E8CC6E, #D4AF37);
+            background-size: 200% auto;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s linear infinite;
+        }
+
+        .toast-container { position: fixed; top: 24px; right: 24px; z-index: 200; display: flex; flex-direction: column; gap: 10px; }
+        .toast {
+            padding: 14px 20px; border-radius: 12px;
+            background: #222; border: 1px solid rgba(255,255,255,0.08);
+            font-size: 13px; color: #fff; min-width: 300px;
+            display: flex; align-items: center; gap: 10px;
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        .toast.show { transform: translateX(0); }
+        .toast.success { border-color: rgba(34,197,94,0.3); }
+        .toast.error { border-color: rgba(239,68,68,0.3); }
+        .toast.info { border-color: rgba(74,157,255,0.3); }
+
+        .dropdown {
+            position: absolute; top: calc(100% + 8px); right: 0;
+            background: #1E1E1E; border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px; padding: 8px; min-width: 200px;
+            opacity: 0; pointer-events: none; transform: translateY(-8px);
+            transition: all 0.25s ease;
+            box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+            z-index: 60;
+        }
+        .dropdown.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .dropdown-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 14px; border-radius: 10px;
+            font-size: 13px; color: var(--muted); cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .dropdown-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
+        .dropdown-item svg { width: 16px; height: 16px; }
+
+        .sidebar-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            z-index: 45; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .sidebar-overlay.show { opacity: 1; pointer-events: auto; }
+
+        .reveal {
+            opacity: 0; transform: translateY(24px);
+            transition: all 0.6s cubic-bezier(0.4,0,0.2,1);
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        .recent-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.03);
+            transition: all 0.2s ease;
+        }
+        .recent-item:last-child { border-bottom: none; }
+        .recent-item:hover { padding-left: 6px; }
+
+        .range-label {
+            font-size: 10px; font-weight: 600;
+            color: rgba(255,255,255,0.3);
+            text-transform: uppercase; letter-spacing: 0.06em;
+            margin-bottom: 6px;
+        }
+        .range-preview {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px; font-weight: 900;
+            letter-spacing: 2px;
+            color: var(--accent);
+            min-height: 30px;
+            display: flex; align-items: center;
+        }
+        .range-preview.empty {
+            color: rgba(255,255,255,0.12);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px; font-weight: 500;
+            letter-spacing: 0;
+        }
+        .range-error {
+            font-size: 10px; color: #F87171;
+            margin-top: 4px; display: none;
+        }
+        .range-error.show { display: block; }
+
+        .record-id-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 4px 12px; border-radius: 8px;
+            background: rgba(74,157,255,0.08);
+            border: 1px solid rgba(74,157,255,0.15);
+            font-size: 11px; font-weight: 600;
+            color: #60B5FF;
+            font-family: 'DM Sans', monospace;
+        }
+
+        .loading-skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 75%);
+            background-size: 200% 100%;
+            animation: skeletonPulse 1.5s ease-in-out infinite;
+            border-radius: 10px;
+        }
+        @keyframes skeletonPulse {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .fade-in-scale { animation: fadeInScale 0.5s cubic-bezier(0.4,0,0.2,1); }
+
+        @media (max-width: 1024px) {
+            .sidebar { position: fixed; left: 0; top: 0; transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-wrapper { margin-left: 0 !important; }
+            .preview-number { font-size: 30px; letter-spacing: 2px; }
+        }
+        @media (max-width: 640px) {
+            .preview-number { font-size: 24px; letter-spacing: 1px; }
+            .action-bar { flex-direction: column; }
+            .action-bar .btn-gold, .action-bar .btn-outline, .action-bar .btn-ghost { width: 100%; }
+            .highlight-row-grid { grid-template-columns: 1fr 1fr !important; }
+            .highlight-row-grid .delete-col { grid-column: span 2; justify-content: flex-end; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="gold-line"></div>
+    <div class="toast-container" id="toastContainer"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar fixed left-0 top-0 flex flex-col" id="sidebar">
+        <div class="p-6 pb-4 border-b border-white/5">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center">
+                    <span class="font-display font-bold text-charcoal-900 text-lg">V</span>
+                </div>
+                <div>
+                    <h1 class="font-display font-bold text-base text-white leading-tight">VIP Numbers</h1>
+                    <p class="text-[11px] text-white/30 font-medium tracking-wide uppercase">Admin Panel</p>
+                </div>
+            </div>
+        </div>
+        <nav class="flex-1 p-4 space-y-1" aria-label="Main navigation">
+            <p class="text-[10px] font-semibold uppercase tracking-widest text-white/20 px-4 mb-3">Main</p>
+            <a href="#" class="sidebar-link" onclick="event.preventDefault(); showToast('Navigating to Dashboard','info')">
+                <i data-lucide="layout-dashboard"></i> Dashboard
+            </a>
+            <a href="#" class="sidebar-link active">
+                <i data-lucide="phone"></i> Numbers
+            </a>
+            <a href="#" class="sidebar-link" onclick="event.preventDefault(); showToast('Opening Number Status','info')">
+                <i data-lucide="check-circle"></i> Number Status
+            </a>
+            <p class="text-[10px] font-semibold uppercase tracking-widest text-white/20 px-4 mb-3 mt-6">Settings</p>
+            <a href="#" class="sidebar-link" onclick="event.preventDefault(); showToast('Opening Profile','info')">
+                <i data-lucide="user"></i> Profile
+            </a>
+            <a href="#" class="sidebar-link" onclick="event.preventDefault(); showToast('Settings page coming soon','info')">
+                <i data-lucide="settings"></i> Settings
+            </a>
+            <a href="#" class="sidebar-link" onclick="event.preventDefault(); showToast('Logged out successfully','success')">
+                <i data-lucide="log-out"></i> Logout
+            </a>
+        </nav>
+        <div class="p-4 border-t border-white/5">
+            <div class="glass-card no-hover p-4 !bg-gold-subtle !border-gold-muted">
+                <p class="text-xs font-semibold text-gold mb-1">Inventory Health</p>
+                <p class="text-[11px] text-white/40 leading-relaxed">8,432 numbers available across 5 categories</p>
+                <div class="mt-3 progress-track !h-[6px]">
+                    <div class="progress-fill bg-gradient-to-r from-gold-dark to-gold" style="width:65%"></div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-wrapper" style="margin-left:260px;" id="mainWrapper">
+        <!-- Top Header -->
+        <header class="sticky top-0 z-40 border-b border-white/5" style="background:rgba(13,13,13,0.85); backdrop-filter:blur(20px);">
+            <div class="flex items-center justify-between px-6 lg:px-8 py-4">
+                <div class="flex items-center gap-4">
+                    <button class="lg:hidden w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 transition-all" onclick="toggleSidebar()" aria-label="Toggle menu">
+                        <i data-lucide="menu" class="w-5 h-5"></i>
+                    </button>
+                    <div>
+                        <h2 class="text-lg font-semibold text-white">Update VIP Number</h2>
+                        <div class="flex items-center gap-1.5 mt-0.5">
+                            <a href="#" class="text-xs text-white/30 hover:text-gold transition-colors" onclick="event.preventDefault(); showToast('Navigating to Dashboard','info')">Dashboard</a>
+                            <i data-lucide="chevron-right" class="w-3 h-3 text-white/15"></i>
+                            <a href="#" class="text-xs text-white/30 hover:text-gold transition-colors" onclick="event.preventDefault(); showToast('Navigating to Numbers','info')">Numbers</a>
+                            <i data-lucide="chevron-right" class="w-3 h-3 text-white/15"></i>
+                            <span class="text-xs text-gold font-medium">Update Number</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="relative">
+                        <button class="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-white/50 hover:text-white hover:bg-white/[0.08] transition-all relative" onclick="toggleDropdown('notifDropdown')" aria-label="Notifications">
+                            <i data-lucide="bell" class="w-[18px] h-[18px]"></i>
+                            <span class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gold text-charcoal-900 text-[10px] font-bold flex items-center justify-center pulse-dot">3</span>
+                        </button>
+                        <div class="dropdown" id="notifDropdown" style="min-width:280px;">
+                            <p class="text-[11px] font-semibold uppercase tracking-wider text-white/30 px-3 py-2">Notifications</p>
+                            <div class="dropdown-item" onclick="showToast('Viewing notification','info')">
+                                <div class="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center flex-shrink-0"><i data-lucide="plus-circle" class="w-4 h-4 text-green-400"></i></div>
+                                <div><p class="text-white text-xs font-medium">New number added</p><p class="text-white/30 text-[11px] mt-0.5">2 minutes ago</p></div>
+                            </div>
+                            <div class="dropdown-item" onclick="showToast('Viewing notification','info')">
+                                <div class="w-8 h-8 rounded-lg bg-gold/10 flex items-center justify-center flex-shrink-0"><i data-lucide="star" class="w-4 h-4 text-gold"></i></div>
+                                <div><p class="text-white text-xs font-medium">Premium number tagged</p><p class="text-white/30 text-[11px] mt-0.5">15 minutes ago</p></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <button class="flex items-center gap-2.5 pl-1 pr-3 py-1 rounded-xl hover:bg-white/[0.04] transition-all" onclick="toggleDropdown('profileDropdown')" aria-label="Profile menu">
+                            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-gold/80 to-gold-dark flex items-center justify-center">
+                                <span class="text-charcoal-900 font-bold text-sm">A</span>
+                            </div>
+                            <span class="hidden sm:block text-sm text-white/70 font-medium">Admin</span>
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-white/30"></i>
+                        </button>
+                        <div class="dropdown" id="profileDropdown">
+                            <div class="px-3 py-2.5 border-b border-white/5 mb-1">
+                                <p class="text-sm font-semibold text-white">Admin User</p>
+                                <p class="text-[11px] text-white/35 mt-0.5">admin@vipnumbers.com</p>
+                            </div>
+                            <div class="dropdown-item" onclick="showToast('Opening profile...','info')"><i data-lucide="user"></i> My Profile</div>
+                            <div class="dropdown-item" onclick="showToast('Opening settings...','info')"><i data-lucide="settings"></i> Settings</div>
+                            <div class="dropdown-item" onclick="showToast('Logged out successfully','success')"><i data-lucide="log-out"></i> Logout</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <main class="px-6 lg:px-8 py-6 relative z-10">
+
+            <!-- Back Button + Record ID -->
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 reveal">
+                <button type="button" class="btn-back" onclick="goBackToNumbers()">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    Back to Numbers
+                </button>
+                <div class="record-id-badge">
+                    <i data-lucide="fingerprint" class="w-3.5 h-3.5"></i>
+                    Record ID: <span id="recordIdDisplay">VN-00000</span>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="space-y-6">
+                <div class="glass-card no-hover p-8">
+                    <div class="loading-skeleton h-6 w-48 mb-6"></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="loading-skeleton h-12"></div>
+                        <div class="loading-skeleton h-12"></div>
+                        <div class="loading-skeleton h-12 md:col-span-2"></div>
+                    </div>
+                </div>
+                <div class="glass-card no-hover p-8">
+                    <div class="loading-skeleton h-6 w-40 mb-6"></div>
+                    <div class="loading-skeleton h-12 mb-3"></div>
+                    <div class="loading-skeleton h-12"></div>
+                </div>
+            </div>
+
+            <!-- Main Form (hidden until loaded) -->
+            <div id="formState" class="hidden">
+                <div class="flex flex-col xl:flex-row gap-6">
+
+                    <!-- Left: Main Form -->
+                    <div class="flex-1 min-w-0 space-y-6">
+
+                        <!-- Basic Information -->
+                        <section class="glass-card no-hover p-6 lg:p-8 reveal">
+                            <div class="section-divider">
+                                <div class="icon-wrap bg-gold-subtle"><i data-lucide="info" class="w-4 h-4 text-gold"></i></div>
+                                <h3>Basic Information</h3>
+                                <div class="line"></div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Mobile Number -->
+                                <div class="form-group md:col-span-2">
+                                    <label class="form-label" for="mobileNumber">
+                                        <i data-lucide="smartphone" class="w-3.5 h-3.5 inline mr-1 -mt-0.5"></i>
+                                        Mobile Number
+                                    </label>
+                                    <div class="relative">
+                                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 font-semibold text-sm">+91</span>
+                                        <input
+                                            type="text" id="mobileNumber" class="input-field !pl-14"
+                                            placeholder="Enter Mobile Number" maxlength="10"
+                                            oninput="handleNumberInput(this); updatePreview(); refreshAllHighlightPreviews();"
+                                            aria-describedby="numberError"
+                                        >
+                                    </div>
+                                    <p class="error-msg" id="numberError">Please enter a valid 10-digit mobile number</p>
+                                    <p class="error-msg" id="duplicateError">This number already exists in the system</p>
+                                </div>
+
+                                <!-- Category -->
+                                <div class="form-group">
+                                    <label class="form-label" for="category">
+                                        <i data-lucide="tag" class="w-3.5 h-3.5 inline mr-1 -mt-0.5"></i>
+                                        Category
+                                    </label>
+                                    <select id="category" class="input-field" onchange="updatePreview()">
+                                        <option value="">Select Category</option>
+                                        <option value="VIP">VIP</option>
+                                        <option value="Premium">Premium</option>
+                                        <option value="Fancy">Fancy</option>
+                                    </select>
+                                </div>
+
+                                <!-- Status -->
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i data-lucide="activity" class="w-3.5 h-3.5 inline mr-1 -mt-0.5"></i>
+                                        Status
+                                    </label>
+                                    <div class="segment-group" role="radiogroup" aria-label="Number status">
+                                        <button type="button" class="segment-btn active" role="radio" aria-checked="true" onclick="setStatus(this, 'Available')">Available</button>
+                                        <button type="button" class="segment-btn" role="radio" aria-checked="false" onclick="setStatus(this, 'Sold')">Sold</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Pricing -->
+                        <section class="glass-card no-hover p-6 lg:p-8 reveal">
+                            <div class="section-divider">
+                                <div class="icon-wrap" style="background:rgba(34,197,94,0.1);"><i data-lucide="indian-rupee" class="w-4 h-4 text-green-400"></i></div>
+                                <h3>Pricing</h3>
+                                <div class="line"></div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="originalPrice">
+                                        <i data-lucide="banknote" class="w-3.5 h-3.5 inline mr-1 -mt-0.5"></i>
+                                        Original Price (INR)
+                                    </label>
+                                    <div class="relative">
+                                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 font-semibold text-sm">₹</span>
+                                        <input type="number" id="originalPrice" class="input-field !pl-10" placeholder="e.g. 50000" min="0" oninput="calculatePricing(); updatePreview()">
+                                    </div>
+                                    <p class="error-msg" id="originalPriceError">Price cannot be negative</p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="discount">
+                                        <i data-lucide="percent" class="w-3.5 h-3.5 inline mr-1 -mt-0.5"></i>
+                                        Discount (%)
+                                    </label>
+                                    <input type="number" id="discount" class="input-field text-center" placeholder="e.g. 10" min="0" max="100" oninput="calculatePricing(); updatePreview()">
+                                    <p class="error-msg" id="discountError">Discount must be between 0 and 100</p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="sellingPrice">
+                                        <i data-lucide="circle-dollar-sign" class="w-3.5 h-3.5 inline mr-1 -mt-0.5"></i>
+                                        Selling Price (INR)
+                                    </label>
+                                    <div class="relative">
+                                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gold/50 font-semibold text-sm">₹</span>
+                                        <input type="text" id="sellingPrice" class="input-field !pl-10 !border-gold/20 !bg-gold/[0.03]" placeholder="Auto-calculated" readonly>
+                                    </div>
+                                    <p class="error-msg" id="sellingPriceError">Selling price cannot be negative</p>
+                                </div>
+                            </div>
+
+                            <!-- Pricing calculation display -->
+                            <div class="flex items-center gap-3 p-4 rounded-xl bg-white/[0.02] border border-white/[0.04]" id="pricingCalcBar">
+                                <i data-lucide="equal" class="w-4 h-4 text-white/20 flex-shrink-0"></i>
+                                <p class="text-xs text-white/30 font-mono" id="pricingFormula">
+                                    Enter original price and discount to see calculation
+                                </p>
+                            </div>
+                        </section>
+
+                        <!-- Highlight Ranges -->
+                        <section class="glass-card no-hover p-6 lg:p-8 reveal">
+                            <div class="section-divider">
+                                <div class="icon-wrap" style="background:rgba(244,114,182,0.1);"><i data-lucide="sparkles" class="w-4 h-4 text-pink-400"></i></div>
+                                <h3>Highlight Ranges</h3>
+                                <div class="line"></div>
+                            </div>
+
+                            <p class="text-xs text-white/30 mb-5 -mt-3">Define position ranges to highlight specific digit sequences in the preview. Positions are 1-based (max 10).</p>
+
+                            <!-- Dynamic rows container -->
+                            <div class="space-y-3" id="highlightRowsContainer">
+                                <!-- Rows rendered by JS -->
+                            </div>
+
+                            <!-- Add button -->
+                            <button type="button" class="mt-4 w-full py-3 rounded-xl border border-dashed border-gold/25 bg-gold/[0.03] text-gold text-sm font-semibold flex items-center justify-center gap-2 hover:bg-gold/[0.08] hover:border-gold/40 transition-all active:scale-[0.99]" onclick="addHighlightRow()">
+                                <i data-lucide="plus" class="w-4 h-4"></i>
+                                Add Highlight Range
+                            </button>
+                        </section>
+
+                        <!-- Live Preview -->
+                        <section class="reveal">
+                            <div class="section-divider px-2">
+                                <div class="icon-wrap" style="background:rgba(212,175,55,0.12);"><i data-lucide="eye" class="w-4 h-4 text-gold"></i></div>
+                                <h3>Live VIP Number Preview</h3>
+                                <div class="line"></div>
+                            </div>
+
+                            <div class="preview-card p-8 lg:p-10">
+                                <div class="relative z-10">
+                                    <!-- Top row -->
+                                    <div class="flex flex-wrap items-center justify-between mb-8 gap-3">
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="smartphone" class="w-5 h-5 text-gold/60"></i>
+                                            <span class="text-xs text-white/30 font-medium uppercase tracking-widest">VIP Number</span>
+                                        </div>
+                                        <div class="flex items-center gap-2" id="previewBadges">
+                                            <span class="badge" style="background:rgba(255,255,255,0.05); color:rgba(255,255,255,0.25); font-size:11px;" id="previewCategoryBadge">No Category</span>
+                                            <span class="badge badge-available" id="previewStatusBadge">Available</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Number -->
+                                    <div class="mb-8" id="previewNumberWrap">
+                                        <div class="preview-number" id="previewNumber"></div>
+                                    </div>
+
+                                    <!-- Price row -->
+                                    <div class="flex flex-wrap items-end gap-6">
+                                        <div>
+                                            <p class="text-[10px] text-white/25 uppercase tracking-widest font-semibold mb-1">Original Price</p>
+                                            <p class="text-lg font-semibold price-original" id="previewOriginalPrice">₹0</p>
+                                        </div>
+                                        <div id="previewDiscountWrap" style="display:none;">
+                                            <p class="text-[10px] text-white/25 uppercase tracking-widest font-semibold mb-1">Discount</p>
+                                            <p class="text-lg font-semibold text-red-400" id="previewDiscount">-0%</p>
+                                        </div>
+                                        <div class="ml-auto text-right">
+                                            <p class="text-[10px] text-gold/50 uppercase tracking-widest font-semibold mb-1">Selling Price</p>
+                                            <p class="text-2xl font-bold font-display shimmer-text" id="previewSellingPrice">₹0</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Highlights preview -->
+                                    <div class="mt-6 pt-5 border-t border-white/5" id="previewHighlightsWrap" style="display:none;">
+                                        <p class="text-[10px] text-white/25 uppercase tracking-widest font-semibold mb-2">Active Highlights</p>
+                                        <div class="flex flex-wrap gap-2" id="previewHighlights"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Action Buttons -->
+                        <section class="reveal">
+                            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 action-bar pb-8">
+                                <button type="button" class="btn-ghost" onclick="resetForm()">
+                                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reset Changes
+                                </button>
+                                <button type="button" class="btn-outline" onclick="cancelUpdate()">
+                                    <i data-lucide="x" class="w-4 h-4"></i> Cancel
+                                </button>
+                                <button type="button" class="btn-gold" onclick="saveChanges()">
+                                    <i data-lucide="save" class="w-4 h-4"></i> Save Changes
+                                </button>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- Right Sidebar -->
+                    <div class="w-full xl:w-80 flex-shrink-0 space-y-5">
+                        <!-- Record Info Card -->
+                        <div class="glass-card no-hover p-5 reveal">
+                            <div class="flex items-center gap-2 mb-5">
+                                <div class="w-8 h-8 rounded-lg bg-gold-subtle flex items-center justify-center">
+                                    <i data-lucide="file-text" class="w-4 h-4 text-gold"></i>
+                                </div>
+                                <h4 class="text-sm font-semibold text-white">Record Details</h4>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-white/35">Record ID</span>
+                                    <span class="text-xs text-white/70 font-mono font-semibold" id="sideRecordId">VN-00000</span>
+                                </div>
+                                <div class="w-full h-px bg-white/5"></div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-white/35">Created</span>
+                                    <span class="text-xs text-white/50" id="sideCreated">—</span>
+                                </div>
+                                <div class="w-full h-px bg-white/5"></div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-white/35">Last Updated</span>
+                                    <span class="text-xs text-white/50" id="sideUpdated">—</span>
+                                </div>
+                                <div class="w-full h-px bg-white/5"></div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-white/35">Highlights</span>
+                                    <span class="text-xs text-gold font-semibold" id="sideHighlightCount">0 ranges</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Summary Card -->
+                        <div class="glass-card no-hover p-5 reveal">
+                            <div class="flex items-center gap-2 mb-5">
+                                <div class="w-8 h-8 rounded-lg bg-gold-subtle flex items-center justify-center">
+                                    <i data-lucide="bar-chart-3" class="w-4 h-4 text-gold"></i>
+                                </div>
+                                <h4 class="text-sm font-semibold text-white">Quick Summary</h4>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+                                    <div class="flex items-center gap-2.5">
+                                        <div class="w-8 h-8 rounded-lg bg-accent-blueSubtle flex items-center justify-center">
+                                            <i data-lucide="hash" class="w-3.5 h-3.5 text-accent-blue"></i>
+                                        </div>
+                                        <span class="text-xs text-white/50 font-medium">Total Numbers</span>
+                                    </div>
+                                    <span class="text-sm font-bold text-white font-display">12,847</span>
+                                </div>
+                                <div class="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+                                    <div class="flex items-center gap-2.5">
+                                        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(34,197,94,0.1);">
+                                            <i data-lucide="check-circle" class="w-3.5 h-3.5 text-green-400"></i>
+                                        </div>
+                                        <span class="text-xs text-white/50 font-medium">Available</span>
+                                    </div>
+                                    <span class="text-sm font-bold text-green-400 font-display">8,432</span>
+                                </div>
+                                <div class="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+                                    <div class="flex items-center gap-2.5">
+                                        <div class="w-8 h-8 rounded-lg bg-gold-subtle flex items-center justify-center">
+                                            <i data-lucide="crown" class="w-3.5 h-3.5 text-gold"></i>
+                                        </div>
+                                        <span class="text-xs text-white/50 font-medium">Premium</span>
+                                    </div>
+                                    <span class="text-sm font-bold text-gold font-display">3,156</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recently Added -->
+                        <div class="glass-card no-hover p-5 reveal">
+                            <div class="flex items-center gap-2 mb-4">
+                                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(34,197,94,0.1);">
+                                    <i data-lucide="clock" class="w-4 h-4 text-green-400"></i>
+                                </div>
+                                <h4 class="text-sm font-semibold text-white">Recently Added</h4>
+                            </div>
+                            <div id="recentlyAdded">
+                                <div class="recent-item">
+                                    <div>
+                                        <p class="text-sm font-semibold text-white font-mono tracking-wider">9999001122</p>
+                                        <p class="text-[11px] text-white/25 mt-0.5">Fancy &middot; ₹45,000</p>
+                                    </div>
+                                    <span class="badge badge-available" style="font-size:10px; padding:2px 8px;">Available</span>
+                                </div>
+                                <div class="recent-item">
+                                    <div>
+                                        <p class="text-sm font-semibold text-white font-mono tracking-wider">8888000099</p>
+                                        <p class="text-[11px] text-white/25 mt-0.5">VIP &middot; ₹2,10,000</p>
+                                    </div>
+                                    <span class="badge badge-available" style="font-size:10px; padding:2px 8px;">Available</span>
+                                </div>
+                                <div class="recent-item">
+                                    <div>
+                                        <p class="text-sm font-semibold text-white font-mono tracking-wider">9999888877</p>
+                                        <p class="text-[11px] text-white/25 mt-0.5">Premium &middot; ₹1,85,000</p>
+                                    </div>
+                                    <span class="badge badge-available" style="font-size:10px; padding:2px 8px;">Available</span>
+                                </div>
+                                <div class="recent-item">
+                                    <div>
+                                        <p class="text-sm font-semibold text-white font-mono tracking-wider">7777000088</p>
+                                        <p class="text-[11px] text-white/25 mt-0.5">Business &middot; ₹65,000</p>
+                                    </div>
+                                    <span class="badge badge-available" style="font-size:10px; padding:2px 8px;">Available</span>
+                                </div>
+                                <div class="recent-item">
+                                    <div>
+                                        <p class="text-sm font-semibold text-white font-mono tracking-wider">7777666655</p>
+                                        <p class="text-[11px] text-white/25 mt-0.5">Business &middot; ₹78,000</p>
+                                    </div>
+                                    <span class="badge badge-available" style="font-size:10px; padding:2px 8px;">Available</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tips Card -->
+                        <div class="glass-card no-hover p-5 reveal" style="border-color:rgba(212,175,55,0.1); background:rgba(212,175,55,0.02);">
+                            <div class="flex items-center gap-2 mb-3">
+                                <i data-lucide="lightbulb" class="w-4 h-4 text-gold"></i>
+                                <h4 class="text-sm font-semibold text-gold">Update Tips</h4>
+                            </div>
+                            <ul class="space-y-2.5">
+                                <li class="flex items-start gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-gold/40 mt-1.5 flex-shrink-0"></span>
+                                    <span class="text-[11px] text-white/35 leading-relaxed">Changes are saved instantly. Use Reset to undo unsaved edits.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-gold/40 mt-1.5 flex-shrink-0"></span>
+                                    <span class="text-[11px] text-white/35 leading-relaxed">Highlight ranges use 1-based positions. Position 1 is the first digit.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-gold/40 mt-1.5 flex-shrink-0"></span>
+                                    <span class="text-[11px] text-white/35 leading-relaxed">The preview updates in real time as you modify any field.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        /* =========================================
+           SIMULATED DATABASE
+        ========================================= */
+        const existingNumbers = [
+            '9482399990', '9876543210', '9999001122', '8888000099',
+            '9999888877', '7777000088', '7777666655', '9123456789',
+            '9988776655', '9012345678', '8765432109', '7654321098'
+        ];
+
+        const recordsDB = {
+            'VN-10427': {
+                id: 'VN-10427',
+                mobileNumber: '9482399990',
+                category: 'VIP',
+                status: 'Available',
+                originalPrice: 250000,
+                discount: 15,
+                highlights: [
+                    { start: 6, end: 9 }
+                ],
+                createdAt: '2025-01-15 09:32:00',
+                updatedAt: '2025-01-20 14:10:00'
+            },
+            'VN-10428': {
+                id: 'VN-10428',
+                mobileNumber: '9876543210',
+                category: 'Premium',
+                status: 'Available',
+                originalPrice: 180000,
+                discount: 10,
+                highlights: [
+                    { start: 1, end: 4 },
+                    { start: 7, end: 10 }
+                ],
+                createdAt: '2025-01-14 11:05:00',
+                updatedAt: '2025-01-19 08:45:00'
+            },
+            'VN-10429': {
+                id: 'VN-10429',
+                mobileNumber: '9123456789',
+                category: 'Fancy',
+                status: 'Sold',
+                originalPrice: 95000,
+                discount: 0,
+                highlights: [],
+                createdAt: '2025-01-13 16:22:00',
+                updatedAt: '2025-01-18 10:30:00'
+            }
+        };
+
+        /* =========================================
+           STATE
+        ========================================= */
+        let currentRecord = null;
+        let originalRecord = null; // deep copy for reset
+        let currentStatus = 'Available';
+        let highlightRowId = 0;
+        let highlightRows = [];
+
+        /* =========================================
+           INITIALIZATION
+        ========================================= */
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+
+            // Parse ID from URL or default to VN-10427
+            const params = new URLSearchParams(window.location.search);
+            const recordId = params.get('id') || 'VN-10427';
+
+            // Simulate loading delay
+            setTimeout(function() {
+                loadRecord(recordId);
+            }, 800);
+
+            // Scroll reveal
+            initScrollReveal();
+        });
+
+        function loadRecord(id) {
+            const record = recordsDB[id];
+            if (!record) {
+                showToast('Record not found. Redirecting...', 'error');
+                setTimeout(function() { goBackToNumbers(); }, 2000);
+                return;
+            }
+
+            currentRecord = JSON.parse(JSON.stringify(record));
+            originalRecord = JSON.parse(JSON.stringify(record));
+            currentStatus = record.status;
+
+            // Set record ID display
+            document.getElementById('recordIdDisplay').textContent = record.id;
+            document.getElementById('sideRecordId').textContent = record.id;
+            document.getElementById('sideCreated').textContent = formatDate(record.createdAt);
+            document.getElementById('sideUpdated').textContent = formatDate(record.updatedAt);
+
+            // Fill form fields
+            document.getElementById('mobileNumber').value = record.mobileNumber;
+            document.getElementById('category').value = record.category;
+            document.getElementById('originalPrice').value = record.originalPrice;
+            document.getElementById('discount').value = record.discount;
+
+            // Set status
+            var segBtns = document.querySelectorAll('.segment-btn');
+            segBtns.forEach(function(btn) {
+                btn.classList.remove('active');
+                btn.setAttribute('aria-checked', 'false');
+                if (btn.textContent.trim() === record.status) {
+                    btn.classList.add('active');
+                    btn.setAttribute('aria-checked', 'true');
+                }
+            });
+
+            // Calculate selling price
+            calculatePricing();
+
+            // Load highlight ranges
+            highlightRows = [];
+            highlightRowId = 0;
+            record.highlights.forEach(function(h) {
+                addHighlightRow(h.start, h.end);
+            });
+
+            // Update preview
+            updatePreview();
+            updateSideHighlightCount();
+
+            // Show form, hide loading
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('formState').classList.remove('hidden');
+            document.getElementById('formState').classList.add('fade-in-scale');
+
+            // Re-init icons and reveal
+            lucide.createIcons();
+            setTimeout(initScrollReveal, 50);
+        }
+
+        /* =========================================
+           SIDEBAR & NAVIGATION
+        ========================================= */
+        function toggleSidebar() {
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+        }
+
+        function toggleDropdown(id) {
+            var dd = document.getElementById(id);
+            var isShow = dd.classList.contains('show');
+            // Close all dropdowns first
+            document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
+            if (!isShow) dd.classList.add('show');
+        }
+
+        // Close dropdowns on outside click
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.relative')) {
+                document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
+            }
+        });
+
+        function goBackToNumbers() {
+            showToast('Navigating back to Numbers page...', 'info');
+        }
+
+        function cancelUpdate() {
+            showToast('Cancelled — no changes saved', 'info');
+        }
+
+        /* =========================================
+           FORM HANDLERS
+        ========================================= */
+        function handleNumberInput(input) {
+            input.value = input.value.replace(/[^0-9]/g, '');
+            clearFieldError('numberError');
+            clearFieldError('duplicateError');
+            input.classList.remove('error');
+        }
+
+        function setStatus(btn, value) {
+            currentStatus = value;
+            var segBtns = document.querySelectorAll('.segment-btn');
+            segBtns.forEach(function(b) {
+                b.classList.remove('active');
+                b.setAttribute('aria-checked', 'false');
+            });
+            btn.classList.add('active');
+            btn.setAttribute('aria-checked', 'true');
+            updatePreview();
+        }
+
+        function calculatePricing() {
+            var orig = parseFloat(document.getElementById('originalPrice').value) || 0;
+            var disc = parseFloat(document.getElementById('discount').value) || 0;
+
+            // Clamp discount
+            if (disc < 0) disc = 0;
+            if (disc > 100) disc = 100;
+
+            var selling = orig - (orig * disc / 100);
+            if (selling < 0) selling = 0;
+
+            document.getElementById('sellingPrice').value = formatNumber(Math.round(selling));
+
+            // Update formula display
+            var formula = document.getElementById('pricingFormula');
+            if (orig > 0) {
+                formula.innerHTML = '<span style="color:rgba(255,255,255,0.5)">₹' + formatNumber(orig) + '</span>' +
+                    ' <span style="color:rgba(255,255,255,0.2)">−</span> ' +
+                    '<span style="color:rgba(239,68,68,0.7)">' + disc + '%</span>' +
+                    ' <span style="color:rgba(255,255,255,0.2)">=</span> ' +
+                    '<span style="color:#D4AF37">₹' + formatNumber(Math.round(selling)) + '</span>';
+            } else {
+                formula.textContent = 'Enter original price and discount to see calculation';
+            }
+
+            // Clear errors
+            clearFieldError('originalPriceError');
+            clearFieldError('discountError');
+            clearFieldError('sellingPriceError');
+            document.getElementById('originalPrice').classList.remove('error');
+            document.getElementById('discount').classList.remove('error');
+        }
+
+        /* =========================================
+           HIGHLIGHT RANGES
+        ========================================= */
+        function addHighlightRow(startVal, endVal) {
+            highlightRowId++;
+            var rowId = highlightRowId;
+            var start = (startVal !== undefined) ? startVal : '';
+            var end = (endVal !== undefined) ? endVal : '';
+
+            highlightRows.push({ id: rowId, start: start, end: end });
+            renderHighlightRows();
+            updatePreview();
+            updateSideHighlightCount();
+        }
+
+        function removeHighlightRow(rowId) {
+            var rowEl = document.getElementById('hrow-' + rowId);
+            if (rowEl) {
+                rowEl.classList.add('removing');
+                setTimeout(function() {
+                    highlightRows = highlightRows.filter(function(r) { return r.id !== rowId; });
+                    renderHighlightRows();
+                    updatePreview();
+                    updateSideHighlightCount();
+                }, 300);
+            }
+        }
+
+        function renderHighlightRows() {
+            var container = document.getElementById('highlightRowsContainer');
+            container.innerHTML = '';
+
+            highlightRows.forEach(function(row) {
+                var previewText = getHighlightPreviewText(row.start, row.end);
+                var hasError = false;
+                var errorMsg = '';
+
+                if (row.start !== '' && row.end !== '') {
+                    var s = parseInt(row.start);
+                    var e = parseInt(row.end);
+                    if (s < 1 || s > 10) { hasError = true; errorMsg = 'Start position must be 1–10'; }
+                    else if (e < 1 || e > 10) { hasError = true; errorMsg = 'End position must be 1–10'; }
+                    else if (e < s) { hasError = true; errorMsg = 'End cannot be smaller than start'; }
+                }
+
+                var html = '<div class="highlight-row' + (hasError ? ' has-error' : '') + '" id="hrow-' + row.id + '">' +
+                    '<div class="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto_auto] gap-4 items-end highlight-row-grid">' +
+                        '<div>' +
+                            '<div class="range-label">Start Position</div>' +
+                            '<input type="number" class="highlight-input' + (hasError && (parseInt(row.start) < 1 || parseInt(row.start) > 10) ? ' input-error' : '') + '" ' +
+                                'value="' + row.start + '" min="1" max="10" placeholder="1" ' +
+                                'oninput="updateHighlightField(' + row.id + ', \'start\', this.value)" ' +
+                                'aria-label="Start position for highlight range ' + row.id + '">' +
+                        '</div>' +
+                        '<div>' +
+                            '<div class="range-label">End Position</div>' +
+                            '<input type="number" class="highlight-input' + (hasError && (parseInt(row.end) < 1 || parseInt(row.end) > 10 || (parseInt(row.end) < parseInt(row.start))) ? ' input-error' : '') + '" ' +
+                                'value="' + row.end + '" min="1" max="10" placeholder="10" ' +
+                                'oninput="updateHighlightField(' + row.id + ', \'end\', this.value)" ' +
+                                'aria-label="End position for highlight range ' + row.id + '">' +
+                        '</div>' +
+                        '<div class="flex items-end">' +
+                            '<div class="range-preview ' + (previewText === '—' ? 'empty' : '') + '" id="hpreview-' + row.id + '">' + previewText + '</div>' +
+                        '</div>' +
+                        '<div class="flex items-end delete-col">' +
+                            '<button class="delete-row-btn" onclick="removeHighlightRow(' + row.id + ')" aria-label="Delete highlight range">' +
+                                '<i data-lucide="trash-2" class="w-4 h-4"></i>' +
+                            '</button>' +
+                        '</div>' +
+                    '</div>' +
+                    (errorMsg ? '<p class="range-error show mt-2">' + errorMsg + '</p>' : '<p class="range-error mt-2" id="herror-' + row.id + '"></p>') +
+                '</div>';
+
+                container.insertAdjacentHTML('beforeend', html);
+            });
+
+            lucide.createIcons();
+        }
+
+        function updateHighlightField(rowId, field, value) {
+            // Allow empty or numeric only
+            if (value !== '' && isNaN(parseInt(value))) return;
+            if (value !== '') value = parseInt(value);
+
+            var row = highlightRows.find(function(r) { return r.id === rowId; });
+            if (row) {
+                row[field] = value;
+                // Re-render to update preview and errors
+                renderHighlightRows();
+                updatePreview();
+                updateSideHighlightCount();
+            }
+        }
+
+        function getHighlightPreviewText(start, end) {
+            var num = document.getElementById('mobileNumber').value || '0000000000';
+            if (start === '' || end === '') return '—';
+            var s = parseInt(start) - 1; // convert to 0-based
+            var e = parseInt(end); // exclusive end for slice
+            if (s < 0 || s >= 10 || e < 1 || e > 10 || e <= s) return '—';
+            return num.substring(s, e) || '—';
+        }
+
+        function refreshAllHighlightPreviews() {
+            renderHighlightRows();
+            updatePreview();
+        }
+
+        function updateSideHighlightCount() {
+            var validCount = 0;
+            highlightRows.forEach(function(row) {
+                if (row.start !== '' && row.end !== '') {
+                    var s = parseInt(row.start);
+                    var e = parseInt(row.end);
+                    if (s >= 1 && s <= 10 && e >= 1 && e <= 10 && e >= s) {
+                        validCount++;
+                    }
+                }
+            });
+            document.getElementById('sideHighlightCount').textContent = validCount + ' range' + (validCount !== 1 ? 's' : '');
+        }
+
+        /* =========================================
+           LIVE PREVIEW
+        ========================================= */
+        function updatePreview() {
+            var num = document.getElementById('mobileNumber').value || '0000000000';
+            var cat = document.getElementById('category').value;
+            var orig = parseFloat(document.getElementById('originalPrice').value) || 0;
+            var disc = parseFloat(document.getElementById('discount').value) || 0;
+            var selling = orig - (orig * disc / 100);
+            if (selling < 0) selling = 0;
+
+            // Build highlighted number
+            var numberHtml = '';
+            var highlightPositions = getHighlightPositions();
+
+            for (var i = 0; i < 10; i++) {
+                var digit = num[i] || '0';
+                var isHighlighted = false;
+                for (var j = 0; j < highlightPositions.length; j++) {
+                    if (i >= highlightPositions[j][0] && i <= highlightPositions[j][1]) {
+                        isHighlighted = true;
+                        break;
+                    }
+                }
+                numberHtml += '<span class="preview-digit' + (isHighlighted ? ' highlighted' : '') + '">' + digit + '</span>';
+            }
+            document.getElementById('previewNumber').innerHTML = numberHtml;
+
+            // Category badge
+            var catBadge = document.getElementById('previewCategoryBadge');
+            if (cat === 'VIP') {
+                catBadge.className = 'badge badge-vip';
+                catBadge.textContent = 'VIP';
+            } else if (cat === 'Premium') {
+                catBadge.className = 'badge badge-premium';
+                catBadge.textContent = 'Premium';
+            } else if (cat === 'Fancy') {
+                catBadge.className = 'badge badge-fancy';
+                catBadge.textContent = 'Fancy';
+            } else {
+                catBadge.className = 'badge';
+                catBadge.style.background = 'rgba(255,255,255,0.05)';
+                catBadge.style.color = 'rgba(255,255,255,0.25)';
+                catBadge.style.fontSize = '11px';
+                catBadge.textContent = 'No Category';
+            }
+
+            // Status badge
+            var statusBadge = document.getElementById('previewStatusBadge');
+            if (currentStatus === 'Sold') {
+                statusBadge.className = 'badge badge-sold';
+                statusBadge.textContent = 'Sold';
+            } else {
+                statusBadge.className = 'badge badge-available';
+                statusBadge.textContent = 'Available';
+            }
+
+            // Prices
+            document.getElementById('previewOriginalPrice').textContent = '₹' + formatNumber(orig);
+            document.getElementById('previewSellingPrice').textContent = '₹' + formatNumber(Math.round(selling));
+
+            // Discount
+            var discWrap = document.getElementById('previewDiscountWrap');
+            if (disc > 0) {
+                discWrap.style.display = 'block';
+                document.getElementById('previewDiscount').textContent = '-' + disc + '%';
+            } else {
+                discWrap.style.display = 'none';
+            }
+
+            // Highlights list
+            var hlWrap = document.getElementById('previewHighlightsWrap');
+            var hlContainer = document.getElementById('previewHighlights');
+            if (highlightPositions.length > 0) {
+                hlWrap.style.display = 'block';
+                var hlHtml = '';
+                highlightPositions.forEach(function(pos) {
+                    var text = num.substring(pos[0], pos[1] + 1);
+                    hlHtml += '<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold" ' +
+                        'style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.2); color:#E8CC6E; font-family:Playfair Display,serif; letter-spacing:1px;">' +
+                        text + ' <span style="color:rgba(255,255,255,0.2); font-family:DM Sans,sans-serif; font-weight:500; font-size:10px;">[' + (pos[0]+1) + '–' + (pos[1]+1) + ']</span></span>';
+                });
+                hlContainer.innerHTML = hlHtml;
+            } else {
+                hlWrap.style.display = 'none';
+            }
+        }
+
+        function getHighlightPositions() {
+            var positions = [];
+            highlightRows.forEach(function(row) {
+                if (row.start !== '' && row.end !== '') {
+                    var s = parseInt(row.start) - 1; // 0-based
+                    var e = parseInt(row.end) - 1;   // 0-based inclusive
+                    if (s >= 0 && s < 10 && e >= 0 && e < 10 && e >= s) {
+                        positions.push([s, e]);
+                    }
+                }
+            });
+            return positions;
+        }
+
+        /* =========================================
+           VALIDATION
+        ========================================= */
+        function validateForm() {
+            var isValid = true;
+
+            // Mobile number: exactly 10 digits
+            var num = document.getElementById('mobileNumber').value;
+            if (!/^\d{10}$/.test(num)) {
+                showFieldError('numberError');
+                document.getElementById('mobileNumber').classList.add('error');
+                isValid = false;
+            } else {
+                clearFieldError('numberError');
+                document.getElementById('mobileNumber').classList.remove('error');
+            }
+
+            // Duplicate check (exclude current record)
+            var duplicateError = document.getElementById('duplicateError');
+            if (existingNumbers.indexOf(num) !== -1 && num !== originalRecord.mobileNumber) {
+                duplicateError.classList.add('show');
+                document.getElementById('mobileNumber').classList.add('error');
+                isValid = false;
+            } else {
+                duplicateError.classList.remove('show');
+            }
+
+            // Category
+            var cat = document.getElementById('category').value;
+            if (!cat) {
+                document.getElementById('category').classList.add('error');
+                isValid = false;
+            } else {
+                document.getElementById('category').classList.remove('error');
+            }
+
+            // Original price
+            var orig = parseFloat(document.getElementById('originalPrice').value);
+            if (isNaN(orig) || orig < 0) {
+                showFieldError('originalPriceError');
+                document.getElementById('originalPrice').classList.add('error');
+                isValid = false;
+            } else {
+                clearFieldError('originalPriceError');
+                document.getElementById('originalPrice').classList.remove('error');
+            }
+
+            // Discount
+            var disc = parseFloat(document.getElementById('discount').value);
+            if (isNaN(disc) || disc < 0 || disc > 100) {
+                showFieldError('discountError');
+                document.getElementById('discount').classList.add('error');
+                isValid = false;
+            } else {
+                clearFieldError('discountError');
+                document.getElementById('discount').classList.remove('error');
+            }
+
+            // Selling price negative check
+            var selling = orig - (orig * disc / 100);
+            if (selling < 0) {
+                showFieldError('sellingPriceError');
+                isValid = false;
+            } else {
+                clearFieldError('sellingPriceError');
+            }
+
+            // Highlight ranges validation
+            var rangeValid = true;
+            highlightRows.forEach(function(row) {
+                if (row.start !== '' && row.end !== '') {
+                    var s = parseInt(row.start);
+                    var e = parseInt(row.end);
+                    if (s < 1 || s > 10 || e < 1 || e > 10 || e < s) {
+                        rangeValid = false;
+                    }
+                }
+            });
+            if (!rangeValid) {
+                isValid = false;
+                showToast('Please fix invalid highlight ranges', 'error');
+            }
+
+            return isValid;
+        }
+
+        function showFieldError(id) {
+            document.getElementById(id).classList.add('show');
+        }
+
+        function clearFieldError(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+
+        /* =========================================
+           ACTIONS
+        ========================================= */
+        function saveChanges() {
+            if (!validateForm()) {
+                showToast('Please fix the errors before saving', 'error');
+                // Scroll to first error
+                var firstError = document.querySelector('.input-field.error, .highlight-row.has-error');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                return;
+            }
+
+            // Simulate save
+            var btn = document.querySelector('.btn-gold');
+            btn.disabled = true;
+            btn.innerHTML = '<svg class="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-linecap="round" class="opacity-25"></circle><path d="M4 12a8 8 0 018-8" stroke="currentColor" stroke-width="3" stroke-linecap="round" class="opacity-75"></path></svg> Saving...';
+
+            setTimeout(function() {
+                // Update the "database"
+                var num = document.getElementById('mobileNumber').value;
+                var oldNum = originalRecord.mobileNumber;
+
+                // Update existingNumbers array
+                var idx = existingNumbers.indexOf(oldNum);
+                if (idx !== -1) existingNumbers[idx] = num;
+
+                // Update record
+                currentRecord.mobileNumber = num;
+                currentRecord.category = document.getElementById('category').value;
+                currentRecord.status = currentStatus;
+                currentRecord.originalPrice = parseFloat(document.getElementById('originalPrice').value);
+                currentRecord.discount = parseFloat(document.getElementById('discount').value);
+                currentRecord.highlights = [];
+                highlightRows.forEach(function(row) {
+                    if (row.start !== '' && row.end !== '') {
+                        currentRecord.highlights.push({ start: parseInt(row.start), end: parseInt(row.end) });
+                    }
+                });
+                currentRecord.updatedAt = new Date().toISOString().replace('T', ' ').substring(0, 19);
+                originalRecord = JSON.parse(JSON.stringify(currentRecord));
+
+                // Update sidebar info
+                document.getElementById('sideUpdated').textContent = formatDate(currentRecord.updatedAt);
+
+                // Reset button
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="save" class="w-4 h-4"></i> Save Changes';
+                lucide.createIcons();
+
+                showToast('VIP Number updated successfully.', 'success');
+            }, 1200);
+        }
+
+        function resetForm() {
+            if (!originalRecord) return;
+
+            // Restore all fields to original values
+            document.getElementById('mobileNumber').value = originalRecord.mobileNumber;
+            document.getElementById('category').value = originalRecord.category;
+            document.getElementById('originalPrice').value = originalRecord.originalPrice;
+            document.getElementById('discount').value = originalRecord.discount;
+
+            // Reset status
+            currentStatus = originalRecord.status;
+            var segBtns = document.querySelectorAll('.segment-btn');
+            segBtns.forEach(function(btn) {
+                btn.classList.remove('active');
+                btn.setAttribute('aria-checked', 'false');
+                if (btn.textContent.trim() === originalRecord.status) {
+                    btn.classList.add('active');
+                    btn.setAttribute('aria-checked', 'true');
+                }
+            });
+
+            // Reset highlights
+            highlightRows = [];
+            highlightRowId = 0;
+            originalRecord.highlights.forEach(function(h) {
+                addHighlightRow(h.start, h.end);
+            });
+
+            // Clear all errors
+            document.querySelectorAll('.error-msg').forEach(function(el) { el.classList.remove('show'); });
+            document.querySelectorAll('.input-field.error, .highlight-input.input-error').forEach(function(el) { el.classList.remove('error', 'input-error'); });
+
+            calculatePricing();
+            updatePreview();
+            updateSideHighlightCount();
+
+            showToast('Form reset to original values', 'info');
+        }
+
+        /* =========================================
+           TOAST NOTIFICATIONS
+        ========================================= */
+        function showToast(message, type) {
+            type = type || 'info';
+            var container = document.getElementById('toastContainer');
+            var toast = document.createElement('div');
+            toast.className = 'toast ' + type;
+
+            var iconSvg = '';
+            var iconColor = '';
+            if (type === 'success') {
+                iconSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ADE80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+            } else if (type === 'error') {
+                iconSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F87171" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+            } else {
+                iconSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60B5FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+            }
+
+            toast.innerHTML = iconSvg + '<span>' + message + '</span>';
+            container.appendChild(toast);
+
+            // Trigger animation
+            requestAnimationFrame(function() {
+                requestAnimationFrame(function() {
+                    toast.classList.add('show');
+                });
+            });
+
+            // Auto-remove
+            setTimeout(function() {
+                toast.classList.remove('show');
+                setTimeout(function() {
+                    if (toast.parentNode) toast.parentNode.removeChild(toast);
+                }, 400);
+            }, 3500);
+        }
+
+        /* =========================================
+           UTILITIES
+        ========================================= */
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '—';
+            var d = new Date(dateStr);
+            var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            return months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() + ' ' +
+                   String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+        }
+
+        function initScrollReveal() {
+            var reveals = document.querySelectorAll('.reveal:not(.visible)');
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+
+            reveals.forEach(function(el) { observer.observe(el); });
+        }
+    </script>
+</body>
+</html>

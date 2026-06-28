@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile — VIP Number Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        charcoal: { 950:'#080808', 900:'#0D0D0D', 800:'#121212', 700:'#1A1A1A', 600:'#222222', 500:'#2A2A2A', 400:'#333333' },
+                        gold: { DEFAULT:'#D4AF37', light:'#E8CC6E', dark:'#B8962E', subtle:'rgba(212,175,55,0.1)', muted:'rgba(212,175,55,0.25)' },
+                        accent: { blue:'#4A9DFF', blueSubtle:'rgba(74,157,255,0.1)' }
+                    },
+                    fontFamily: { display:['Playfair Display','serif'], sans:['DM Sans','sans-serif'] },
+                    borderRadius: { card:'18px', xl:'24px' }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --bg: #0D0D0D;
+            --fg: #FFFFFF;
+            --muted: #999999;
+            --accent: #D4AF37;
+            --card: rgba(255,255,255,0.035);
+            --card-hover: rgba(255,255,255,0.065);
+            --border: rgba(255,255,255,0.06);
+            --border-gold: rgba(212,175,55,0.25);
+            --accent-blue: #4A9DFF;
+        }
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { background: var(--bg); color: var(--fg); font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
+
+        body::before {
+            content: '';
+            position: fixed; top: -20%; right: -10%;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(212,175,55,0.04) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
+        }
+        body::after {
+            content: '';
+            position: fixed; bottom: -15%; left: -5%;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(74,157,255,0.03) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+        .glass-card {
+            background: var(--card);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+        }
+        .glass-card.no-hover { transition: none; }
+        .glass-card.no-hover:hover { transform: none; background: var(--card); border-color: var(--border); box-shadow: none; }
+
+        .sidebar {
+            width: 260px; min-height: 100vh;
+            background: rgba(18,18,18,0.95);
+            backdrop-filter: blur(30px);
+            border-right: 1px solid var(--border);
+            transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+            z-index: 50;
+        }
+        .sidebar-link {
+            display: flex; align-items: center; gap: 12px;
+            padding: 11px 20px; border-radius: 12px;
+            color: var(--muted); font-size: 14px; font-weight: 500;
+            transition: all 0.25s ease;
+            position: relative; overflow: hidden;
+        }
+        .sidebar-link::before {
+            content: ''; position: absolute; left: 0; top: 50%;
+            transform: translateY(-50%); width: 3px; height: 0;
+            background: var(--accent); border-radius: 0 4px 4px 0;
+            transition: height 0.25s ease;
+        }
+        .sidebar-link:hover { color: #fff; background: rgba(255,255,255,0.04); }
+        .sidebar-link.active { color: var(--accent); background: rgba(212,175,55,0.08); }
+        .sidebar-link.active::before { height: 24px; }
+        .sidebar-link svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        .badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 12px; border-radius: 20px;
+            font-size: 12px; font-weight: 600;
+        }
+        .badge-active { background: rgba(34,197,94,0.12); color: #4ADE80; }
+        .badge-admin { background: rgba(212,175,55,0.15); color: #E8CC6E; }
+        .badge-online { background: rgba(34,197,94,0.12); color: #4ADE80; }
+
+        .progress-track {
+            width: 100%; height: 10px; border-radius: 10px;
+            background: rgba(255,255,255,0.06); overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; border-radius: 10px;
+            transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        .gold-line {
+            position: fixed; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            z-index: 999;
+        }
+
+        @keyframes pulse-gold {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(212,175,55,0.4); }
+            50% { box-shadow: 0 0 0 6px rgba(212,175,55,0); }
+        }
+        .pulse-dot { animation: pulse-gold 2s infinite; }
+
+        @keyframes pulse-green {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.5); }
+            50% { box-shadow: 0 0 0 5px rgba(34,197,94,0); }
+        }
+        .pulse-green { animation: pulse-green 2s infinite; }
+
+        .section-divider {
+            display: flex; align-items: center; gap: 14px;
+            margin-bottom: 24px;
+        }
+        .section-divider .line {
+            flex: 1; height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.06), transparent);
+        }
+        .section-divider h3 {
+            font-size: 14px; font-weight: 600;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase; letter-spacing: 0.08em;
+            white-space: nowrap;
+        }
+        .section-divider .icon-wrap {
+            width: 32px; height: 32px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .btn-gold {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px 28px; border-radius: 12px;
+            background: linear-gradient(135deg, #B8962E, #D4AF37, #E8CC6E);
+            color: #0D0D0D; font-size: 14px; font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            border: none; cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: 0 4px 16px rgba(212,175,55,0.2);
+        }
+        .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(212,175,55,0.35); }
+        .btn-gold:active { transform: translateY(0) scale(0.98); }
+        .btn-gold:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+
+        .btn-outline {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px 24px; border-radius: 12px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer; transition: all 0.25s ease;
+        }
+        .btn-outline:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color: #fff; }
+        .btn-outline:active { transform: scale(0.98); }
+
+        .btn-sm {
+            padding: 8px 18px; font-size: 13px; border-radius: 10px;
+        }
+
+        .info-row {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+        .info-row:last-child { border-bottom: none; }
+        .info-row:hover { padding-left: 4px; transition: padding 0.2s ease; }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 200;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px);
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+
+        .modal-panel {
+            width: 100%; max-width: 600px; max-height: 90vh;
+            background: #1A1A1A;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            overflow: hidden;
+            transform: scale(0.92) translateY(20px);
+            transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+            display: flex; flex-direction: column;
+        }
+        .modal-overlay.show .modal-panel {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            padding: 24px 28px 0;
+            flex-shrink: 0;
+        }
+        .modal-body {
+            padding: 20px 28px 28px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        .modal-body::-webkit-scrollbar { width: 4px; }
+        .modal-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
+
+        .modal-footer {
+            padding: 16px 28px 24px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            flex-shrink: 0;
+        }
+
+        /* Form inputs inside modals */
+        .form-group { position: relative; margin-bottom: 20px; }
+        .form-label {
+            display: block; font-size: 12px; font-weight: 600;
+            color: rgba(255,255,255,0.45); margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 0.06em;
+        }
+        .form-label .required { color: #F87171; margin-left: 2px; }
+        .input-field {
+            width: 100%; padding: 12px 16px; border-radius: 12px;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+            color: #fff; font-size: 14px; font-family: 'DM Sans', sans-serif;
+            transition: all 0.25s ease; outline: none;
+        }
+        .input-field:focus {
+            border-color: var(--accent);
+            background: rgba(255,255,255,0.06);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.08);
+        }
+        .input-field::placeholder { color: rgba(255,255,255,0.2); }
+        .input-field.error { border-color: #EF4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.1); }
+        .error-msg { font-size: 11px; color: #F87171; margin-top: 6px; display: none; }
+        .error-msg.show { display: block; }
+
+        select.input-field {
+            appearance: none; cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 40px;
+        }
+        select.input-field option { background: #1A1A1A; color: #fff; }
+
+        .password-wrap { position: relative; }
+        .password-wrap .input-field { padding-right: 48px; }
+        .password-toggle {
+            position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+            width: 40px; height: 40px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            background: transparent; border: none; cursor: pointer;
+            color: rgba(255,255,255,0.25); transition: all 0.2s ease;
+        }
+        .password-toggle:hover { color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.04); }
+
+        /* Password strength */
+        .strength-bar { display: flex; gap: 4px; margin-top: 10px; }
+        .strength-segment {
+            flex: 1; height: 4px; border-radius: 4px;
+            background: rgba(255,255,255,0.06);
+            transition: background 0.3s ease;
+        }
+        .strength-label {
+            font-size: 11px; font-weight: 600; margin-top: 6px;
+            transition: color 0.3s ease;
+        }
+        .strength-reqs { margin-top: 12px; }
+        .strength-req {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 11px; color: rgba(255,255,255,0.3);
+            margin-bottom: 4px; transition: color 0.2s ease;
+        }
+        .strength-req.met { color: #4ADE80; }
+        .strength-req .req-icon {
+            width: 14px; height: 14px; border-radius: 50%;
+            border: 1.5px solid currentColor;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; font-size: 8px; transition: all 0.2s ease;
+        }
+        .strength-req.met .req-icon {
+            background: #4ADE80; border-color: #4ADE80; color: #0D0D0D;
+        }
+
+        /* Toast */
+        .toast-container { position: fixed; top: 24px; right: 24px; z-index: 300; display: flex; flex-direction: column; gap: 10px; }
+        .toast {
+            padding: 14px 20px; border-radius: 12px;
+            background: #222; border: 1px solid rgba(255,255,255,0.08);
+            font-size: 13px; color: #fff; min-width: 300px;
+            display: flex; align-items: center; gap: 10px;
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        .toast.show { transform: translateX(0); }
+        .toast.success { border-color: rgba(34,197,94,0.3); }
+        .toast.error { border-color: rgba(239,68,68,0.3); }
+        .toast.info { border-color: rgba(74,157,255,0.3); }
+
+        .dropdown {
+            position: absolute; top: calc(100% + 8px); right: 0;
+            background: #1E1E1E; border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px; padding: 8px; min-width: 200px;
+            opacity: 0; pointer-events: none; transform: translateY(-8px);
+            transition: all 0.25s ease;
+            box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+            z-index: 60;
+        }
+        .dropdown.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .dropdown-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 14px; border-radius: 10px;
+            font-size: 13px; color: var(--muted); cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .dropdown-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
+        .dropdown-item svg { width: 16px; height: 16px; }
+
+        .sidebar-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            z-index: 45; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .sidebar-overlay.show { opacity: 1; pointer-events: auto; }
+
+        .reveal {
+            opacity: 0; transform: translateY(24px);
+            transition: all 0.6s cubic-bezier(0.4,0,0.2,1);
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* Avatar ring */
+        .avatar-ring {
+            position: relative;
+            width: 110px; height: 110px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #B8962E, #D4AF37, #E8CC6E, #D4AF37, #B8962E);
+            padding: 3px;
+            flex-shrink: 0;
+        }
+        .avatar-ring::before {
+            content: '';
+            position: absolute; inset: -4px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(212,175,55,0.2), transparent, rgba(212,175,55,0.2));
+            z-index: -1;
+        }
+        .avatar-inner {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            background: #1A1A1A;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .online-dot {
+            position: absolute; bottom: 4px; right: 4px;
+            width: 18px; height: 18px; border-radius: 50%;
+            background: #22C55E; border: 3px solid #1A1A1A;
+            z-index: 2;
+        }
+
+        .masked-password {
+            letter-spacing: 3px;
+            font-size: 16px;
+            color: rgba(255,255,255,0.35);
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar { position: fixed; left: 0; top: 0; transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-wrapper { margin-left: 0 !important; }
+        }
+        @media (max-width: 640px) {
+            .modal-panel { max-height: 95vh; border-radius: 16px; }
+            .modal-header { padding: 20px 20px 0; }
+            .modal-body { padding: 16px 20px 20px; }
+            .modal-footer { padding: 12px 20px 20px; }
+            .profile-header-inner { flex-direction: column; text-align: center; }
+            .profile-header-inner .avatar-ring { margin: 0 auto; }
+            .profile-badges { justify-content: center !important; }
+            .profile-meta-grid { grid-template-columns: 1fr !important; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="gold-line"></div>
+    <div class="toast-container" id="toastContainer"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar fixed left-0 top-0 flex flex-col" id="sidebar">
+        <div class="p-6 pb-4 border-b border-white/5">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center">
+                    <span class="font-display font-bold text-charcoal-900 text-lg">V</span>
+                </div>
+                <div>
+                    <h1 class="font-display font-bold text-base text-white leading-tight">VIP Numbers</h1>
+                    <p class="text-[11px] text-white/30 font-medium tracking-wide uppercase">Admin Panel</p>
+                </div>
+            </div>
+        </div>
+        <nav class="flex-1 p-4 space-y-1" aria-label="Main navigation">
+            <p class="text-[10px] font-semibold uppercase tracking-widest text-white/20 px-4 mb-3">Main</p>
+            <a href="#" class="sidebar-link" onclick="event.preventDefault(); showToast('Navigating to Dashboard','info')">
+                <i data-lucide="layout-dashboard"></i> Dashboard
+            </a>
+            <a href="#" class="sidebar-link" onclick="event.preventDefault(); showToast('Navigating to Numbers','info')">
+                <i data-lucide="phone"></i> Numbers
+            </a>
+            <a href="#" class="sidebar-link" onclick="event.preventDefault(); showToast('Opening Number Status','info')">
+                <i data-lucide="check-circle"></i> Number Status
+            </a>
+            <p class="text-[10px] font-semibold uppercase tracking-widest text-white/20 px-4 mb-3 mt-6">Settings</p>
+            <a href="#" class="sidebar-link active">
+                <i data-lucide="user"></i> Profile
+            </a>
+            <a href="#" class="sidebar-link" onclick="event.preventDefault(); showToast('Settings page coming soon','info')">
+                <i data-lucide="settings"></i> Settings
+            </a>
+            <a href="#" class="sidebar-link" onclick="event.preventDefault(); showToast('Logged out successfully','success')">
+                <i data-lucide="log-out"></i> Logout
+            </a>
+        </nav>
+        <div class="p-4 border-t border-white/5">
+            <div class="glass-card no-hover p-4 !bg-gold-subtle !border-gold-muted">
+                <p class="text-xs font-semibold text-gold mb-1">Inventory Health</p>
+                <p class="text-[11px] text-white/40 leading-relaxed">8,432 numbers available across 5 categories</p>
+                <div class="mt-3 progress-track !h-[6px]">
+                    <div class="progress-fill bg-gradient-to-r from-gold-dark to-gold" style="width:65%"></div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-wrapper" style="margin-left:260px;" id="mainWrapper">
+        <!-- Top Header -->
+        <header class="sticky top-0 z-40 border-b border-white/5" style="background:rgba(13,13,13,0.85); backdrop-filter:blur(20px);">
+            <div class="flex items-center justify-between px-6 lg:px-8 py-4">
+                <div class="flex items-center gap-4">
+                    <button class="lg:hidden w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 transition-all" onclick="toggleSidebar()" aria-label="Toggle menu">
+                        <i data-lucide="menu" class="w-5 h-5"></i>
+                    </button>
+                    <div>
+                        <h2 class="text-lg font-semibold text-white">My Profile</h2>
+                        <div class="flex items-center gap-1.5 mt-0.5">
+                            <a href="#" class="text-xs text-white/30 hover:text-gold transition-colors" onclick="event.preventDefault(); showToast('Navigating to Dashboard','info')">Dashboard</a>
+                            <i data-lucide="chevron-right" class="w-3 h-3 text-white/15"></i>
+                            <span class="text-xs text-gold font-medium">Profile</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="relative">
+                        <button class="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-white/50 hover:text-white hover:bg-white/[0.08] transition-all relative" onclick="toggleDropdown('notifDropdown')" aria-label="Notifications">
+                            <i data-lucide="bell" class="w-[18px] h-[18px]"></i>
+                            <span class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gold text-charcoal-900 text-[10px] font-bold flex items-center justify-center pulse-dot">3</span>
+                        </button>
+                        <div class="dropdown" id="notifDropdown" style="min-width:280px;">
+                            <p class="text-[11px] font-semibold uppercase tracking-wider text-white/30 px-3 py-2">Notifications</p>
+                            <div class="dropdown-item" onclick="showToast('Viewing notification','info')">
+                                <div class="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center flex-shrink-0"><i data-lucide="plus-circle" class="w-4 h-4 text-green-400"></i></div>
+                                <div><p class="text-white text-xs font-medium">New number added</p><p class="text-white/30 text-[11px] mt-0.5">2 minutes ago</p></div>
+                            </div>
+                            <div class="dropdown-item" onclick="showToast('Viewing notification','info')">
+                                <div class="w-8 h-8 rounded-lg bg-gold/10 flex items-center justify-center flex-shrink-0"><i data-lucide="star" class="w-4 h-4 text-gold"></i></div>
+                                <div><p class="text-white text-xs font-medium">Premium number tagged</p><p class="text-white/30 text-[11px] mt-0.5">15 minutes ago</p></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <button class="flex items-center gap-2.5 pl-1 pr-3 py-1 rounded-xl hover:bg-white/[0.04] transition-all" onclick="toggleDropdown('profileDropdown')" aria-label="Profile menu">
+                            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-gold/80 to-gold-dark flex items-center justify-center">
+                                <span class="text-charcoal-900 font-bold text-sm">A</span>
+                            </div>
+                            <span class="hidden sm:block text-sm text-white/70 font-medium">Admin</span>
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-white/30"></i>
+                        </button>
+                        <div class="dropdown" id="profileDropdown">
+                            <div class="px-3 py-2.5 border-b border-white/5 mb-1">
+                                <p class="text-sm font-semibold text-white">Admin User</p>
+                                <p class="text-[11px] text-white/35 mt-0.5">admin@vipnumbers.com</p>
+                            </div>
+                            <div class="dropdown-item" onclick="showToast('Already on profile page','info')"><i data-lucide="user"></i> My Profile</div>
+                            <div class="dropdown-item" onclick="showToast('Opening settings...','info')"><i data-lucide="settings"></i> Settings</div>
+                            <div class="dropdown-item" onclick="showToast('Logged out successfully','success')"><i data-lucide="log-out"></i> Logout</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <main class="px-6 lg:px-8 py-6 relative z-10">
+            <div class="max-w-4xl mx-auto space-y-6">
+
+                <!-- Profile Header Card -->
+                <section class="glass-card no-hover p-8 reveal" style="border-color: rgba(212,175,55,0.1); background: linear-gradient(145deg, rgba(212,175,55,0.04) 0%, rgba(26,26,26,0.9) 40%, var(--card) 100%);">
+                    <div class="profile-header-inner flex items-start gap-6 lg:gap-8">
+                        <!-- Avatar -->
+                        <div class="relative flex-shrink-0">
+                            <div class="avatar-ring">
+                                <div class="avatar-inner">
+                                    <span class="font-display font-bold text-3xl text-gold" id="avatarInitials">AR</span>
+                                </div>
+                            </div>
+                            <div class="online-dot pulse-green"></div>
+                        </div>
+
+                        <!-- Info -->
+                        <div class="flex-1 min-w-0">
+                            <div class="flex flex-wrap items-center gap-3 mb-2">
+                                <h1 class="text-2xl lg:text-3xl font-display font-bold text-white" id="displayName">Arjun Rathore</h1>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2 mb-4 profile-badges">
+                                <span class="badge badge-admin"><i data-lucide="shield-check" class="w-3 h-3"></i> Administrator</span>
+                                <span class="badge badge-online"><span class="w-1.5 h-1.5 rounded-full bg-green-400"></span> Online</span>
+                                <span class="badge badge-active"><i data-lucide="check-circle" class="w-3 h-3"></i> Active</span>
+                            </div>
+                            <p class="text-sm text-white/40 mb-1">@<span id="displayUsername">arjun.rathore</span></p>
+                            <div class="flex flex-wrap items-center gap-4 mt-3 text-xs text-white/30">
+                                <span class="flex items-center gap-1.5"><i data-lucide="mail" class="w-3.5 h-3.5"></i> <span id="displayEmail">arjun.rathore@vipnumbers.com</span></span>
+                                <span class="flex items-center gap-1.5"><i data-lucide="phone" class="w-3.5 h-3.5"></i> <span id="displayPhone">+91 98765 43210</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Meta stats -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 pt-6 border-t border-white/5 profile-meta-grid">
+                        <div class="text-center p-3 rounded-xl bg-white/[0.02]">
+                            <p class="text-[10px] text-white/25 uppercase tracking-widest font-semibold mb-1">Member Since</p>
+                            <p class="text-sm font-semibold text-white/70">Jan 15, 2024</p>
+                        </div>
+                        <div class="text-center p-3 rounded-xl bg-white/[0.02]">
+                            <p class="text-[10px] text-white/25 uppercase tracking-widest font-semibold mb-1">Last Login</p>
+                            <p class="text-sm font-semibold text-white/70" id="displayLastLogin">Today, 09:42 AM</p>
+                        </div>
+                        <div class="text-center p-3 rounded-xl bg-white/[0.02]">
+                            <p class="text-[10px] text-white/25 uppercase tracking-widest font-semibold mb-1">Total Logins</p>
+                            <p class="text-sm font-semibold text-white/70">1,247</p>
+                        </div>
+                        <div class="text-center p-3 rounded-xl bg-white/[0.02]">
+                            <p class="text-[10px] text-white/25 uppercase tracking-widest font-semibold mb-1">Session</p>
+                            <p class="text-sm font-semibold text-green-400">Active</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Personal Information -->
+                <section class="glass-card no-hover p-6 lg:p-8 reveal">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="section-divider !mb-0 flex-1">
+                            <div class="icon-wrap bg-gold-subtle"><i data-lucide="user-circle" class="w-4 h-4 text-gold"></i></div>
+                            <h3>Personal Information</h3>
+                            <div class="line"></div>
+                        </div>
+                        <button type="button" class="btn-gold btn-sm ml-4 flex-shrink-0" onclick="openModal('profileModal')">
+                            <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                            Edit Personal Information
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+                        <div class="info-row">
+                            <span class="text-xs text-white/30 font-medium uppercase tracking-wider flex-shrink-0">Full Name</span>
+                            <span class="text-sm text-white/80 font-medium text-right" id="infoFullName">Arjun Rathore</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="text-xs text-white/30 font-medium uppercase tracking-wider flex-shrink-0">Username</span>
+                            <span class="text-sm text-white/80 font-medium text-right" id="infoUsername">arjun.rathore</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="text-xs text-white/30 font-medium uppercase tracking-wider flex-shrink-0">Email Address</span>
+                            <span class="text-sm text-white/80 font-medium text-right" id="infoEmail">arjun.rathore@vipnumbers.com</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="text-xs text-white/30 font-medium uppercase tracking-wider flex-shrink-0">Mobile Number</span>
+                            <span class="text-sm text-white/80 font-medium text-right" id="infoPhone">+91 98765 43210</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="text-xs text-white/30 font-medium uppercase tracking-wider flex-shrink-0">Date of Birth</span>
+                            <span class="text-sm text-white/80 font-medium text-right" id="infoDob">March 12, 1990</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="text-xs text-white/30 font-medium uppercase tracking-wider flex-shrink-0">Gender</span>
+                            <span class="text-sm text-white/80 font-medium text-right" id="infoGender">Male</span>
+                        </div>
+                        <div class="info-row md:col-span-2">
+                            <span class="text-xs text-white/30 font-medium uppercase tracking-wider flex-shrink-0">Address</span>
+                            <span class="text-sm text-white/80 font-medium text-right" id="infoAddress">42, MG Road, Sector 14, Gurgaon, Haryana 122001, India</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Account Security -->
+                <section class="glass-card no-hover p-6 lg:p-8 reveal">
+                    <div class="section-divider">
+                        <div class="icon-wrap" style="background:rgba(239,68,68,0.1);"><i data-lucide="shield" class="w-4 h-4 text-red-400"></i></div>
+                        <h3>Account Security</h3>
+                        <div class="line"></div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-white/[0.04] flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="key-round" class="w-5 h-5 text-white/30"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-white/80">Password</p>
+                                <p class="masked-password mt-0.5">************</p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-outline btn-sm flex-shrink-0" onclick="openModal('passwordModal')">
+                            <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+                            Change Password
+                        </button>
+                    </div>
+
+                    <!-- Security hints -->
+                    <div class="mt-5 flex flex-wrap gap-3">
+                        <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-green-500/[0.06] border border-green-500/[0.1]">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-green-400"></i>
+                            <span class="text-[11px] text-green-400/80 font-medium">Password last changed 45 days ago</span>
+                        </div>
+                        <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-gold/[0.04] border border-gold/[0.08]">
+                            <i data-lucide="info" class="w-3.5 h-3.5 text-gold/60"></i>
+                            <span class="text-[11px] text-gold/50 font-medium">Recommended: Change every 90 days</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Account Information -->
+                <section class="glass-card no-hover p-6 lg:p-8 reveal">
+                    <div class="section-divider">
+                        <div class="icon-wrap" style="background:rgba(74,157,255,0.1);"><i data-lucide="database" class="w-4 h-4 text-accent-blue"></i></div>
+                        <h3>Account Information</h3>
+                        <div class="line"></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+                        <div class="info-row">
+                            <span class="text-xs text-white/30 font-medium uppercase tracking-wider flex-shrink-0">User ID</span>
+                            <span class="text-sm text-white/50 font-mono font-semibold text-right">USR-00001</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="text-xs text-white/30 font-medium uppercase tracking-wider flex-shrink-0">Account Role</span>
+                            <span class="text-sm text-gold font-semibold text-right">Administrator</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="text-xs text-white/30 font-medium uppercase tracking-wider flex-shrink-0">Account Status</span>
+                            <span class="badge badge-active" style="font-size:11px; padding:3px 10px;">Active</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="text-xs text-white/30 font-medium uppercase tracking-wider flex-shrink-0">Created Date</span>
+                            <span class="text-sm text-white/60 text-right">Jan 15, 2024 at 10:30 AM</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="text-xs text-white/30 font-medium uppercase tracking-wider flex-shrink-0">Last Updated</span>
+                            <span class="text-sm text-white/60 text-right" id="infoLastUpdated">Jun 02, 2025 at 03:15 PM</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="text-xs text-white/30 font-medium uppercase tracking-wider flex-shrink-0">Last Login</span>
+                            <span class="text-sm text-white/60 text-right" id="infoLastLogin2">Jun 18, 2025 at 09:42 AM</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="text-xs text-white/30 font-medium uppercase tracking-wider flex-shrink-0">Total Login Count</span>
+                            <span class="text-sm text-white/70 font-bold font-display text-right">1,247</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="text-xs text-white/30 font-medium uppercase tracking-wider flex-shrink-0">2FA Enabled</span>
+                            <span class="text-sm text-green-400 font-semibold text-right">Yes</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Bottom spacing -->
+                <div class="h-8"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ======================== -->
+    <!-- MODAL 1: Edit Profile    -->
+    <!-- ======================== -->
+    <div class="modal-overlay" id="profileModal" onclick="handleOverlayClick(event, 'profileModal')">
+        <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="profileModalTitle">
+            <div class="modal-header">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gold-subtle flex items-center justify-center">
+                            <i data-lucide="user-pen" class="w-5 h-5 text-gold"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-semibold text-white" id="profileModalTitle">Update Personal Information</h2>
+                            <p class="text-xs text-white/30 mt-0.5">Edit your profile details below</p>
+                        </div>
+                    </div>
+                    <button type="button" class="w-9 h-9 rounded-lg bg-white/[0.04] flex items-center justify-center text-white/40 hover:text-white hover:bg-white/[0.08] transition-all" onclick="closeModal('profileModal')" aria-label="Close">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="profileForm" onsubmit="return false;" novalidate>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-5">
+                        <div class="form-group">
+                            <label class="form-label" for="pFullName">Full Name <span class="required">*</span></label>
+                            <input type="text" id="pFullName" class="input-field" placeholder="Enter full name" value="Arjun Rathore">
+                            <p class="error-msg" id="pFullNameError">Full name is required</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="pUsername">Username <span class="required">*</span></label>
+                            <input type="text" id="pUsername" class="input-field" placeholder="Enter username" value="arjun.rathore">
+                            <p class="error-msg" id="pUsernameError">Username is required</p>
+                        </div>
+                        <div class="form-group sm:col-span-2">
+                            <label class="form-label" for="pEmail">Email Address <span class="required">*</span></label>
+                            <input type="email" id="pEmail" class="input-field" placeholder="Enter email address" value="arjun.rathore@vipnumbers.com">
+                            <p class="error-msg" id="pEmailError">Please enter a valid email address</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="pPhone">Mobile Number <span class="required">*</span></label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 font-semibold text-sm">+91</span>
+                                <input type="text" id="pPhone" class="input-field !pl-14" placeholder="10-digit number" maxlength="10" value="9876543210" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                            </div>
+                            <p class="error-msg" id="pPhoneError">Please enter a valid 10-digit mobile number</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="pDob">Date of Birth</label>
+                            <input type="date" id="pDob" class="input-field" value="1990-03-12" style="color-scheme:dark;">
+                            <p class="error-msg" id="pDobError"></p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="pGender">Gender</label>
+                            <select id="pGender" class="input-field">
+                                <option value="">Select Gender</option>
+                                <option value="Male" selected>Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                                <option value="Prefer not to say">Prefer not to say</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="pCity">City</label>
+                            <input type="text" id="pCity" class="input-field" placeholder="Enter city" value="Gurgaon">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="pState">State</label>
+                            <input type="text" id="pState" class="input-field" placeholder="Enter state" value="Haryana">
+                        </div>
+                        <div class="form-group sm:col-span-2">
+                            <label class="form-label" for="pAddress">Address</label>
+                            <input type="text" id="pAddress" class="input-field" placeholder="Enter full address" value="42, MG Road, Sector 14">
+                        </div>
+                        <div class="form-group sm:col-span-2">
+                            <label class="form-label" for="pCountry">Country</label>
+                            <input type="text" id="pCountry" class="input-field" placeholder="Enter country" value="India">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer flex items-center justify-end gap-3">
+                <button type="button" class="btn-outline btn-sm" onclick="closeModal('profileModal')">
+                    <i data-lucide="x" class="w-3.5 h-3.5"></i> Cancel
+                </button>
+                <button type="button" class="btn-gold btn-sm" id="profileSaveBtn" onclick="saveProfile()">
+                    <i data-lucide="check" class="w-3.5 h-3.5"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================== -->
+    <!-- MODAL 2: Change Password -->
+    <!-- ======================== -->
+    <div class="modal-overlay" id="passwordModal" onclick="handleOverlayClick(event, 'passwordModal')">
+        <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="passwordModalTitle" style="max-width:520px;">
+            <div class="modal-header">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(239,68,68,0.1);">
+                            <i data-lucide="lock" class="w-5 h-5 text-red-400"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-semibold text-white" id="passwordModalTitle">Change Password</h2>
+                            <p class="text-xs text-white/30 mt-0.5">Update your account password</p>
+                        </div>
+                    </div>
+                    <button type="button" class="w-9 h-9 rounded-lg bg-white/[0.04] flex items-center justify-center text-white/40 hover:text-white hover:bg-white/[0.08] transition-all" onclick="closeModal('passwordModal')" aria-label="Close">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="passwordForm" onsubmit="return false;" novalidate>
+                    <!-- Current Password -->
+                    <div class="form-group">
+                        <label class="form-label" for="pwCurrent">Current Password <span class="required">*</span></label>
+                        <div class="password-wrap">
+                            <input type="password" id="pwCurrent" class="input-field" placeholder="Enter current password" autocomplete="current-password">
+                            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('pwCurrent', this)" aria-label="Toggle password visibility">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <p class="error-msg" id="pwCurrentError">Current password is required</p>
+                    </div>
+
+                    <!-- New Password -->
+                    <div class="form-group">
+                        <label class="form-label" for="pwNew">New Password <span class="required">*</span></label>
+                        <div class="password-wrap">
+                            <input type="password" id="pwNew" class="input-field" placeholder="Enter new password" autocomplete="new-password" oninput="updatePasswordStrength()">
+                            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('pwNew', this)" aria-label="Toggle password visibility">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <p class="error-msg" id="pwNewError">New password is required</p>
+                        <p class="error-msg" id="pwNewSameError">New password must be different from current password</p>
+
+                        <!-- Strength bar -->
+                        <div class="strength-bar">
+                            <div class="strength-segment" id="str1"></div>
+                            <div class="strength-segment" id="str2"></div>
+                            <div class="strength-segment" id="str3"></div>
+                            <div class="strength-segment" id="str4"></div>
+                        </div>
+                        <p class="strength-label" id="strengthLabel" style="color:rgba(255,255,255,0.2);">Enter a password to see strength</p>
+
+                        <!-- Requirements -->
+                        <div class="strength-reqs">
+                            <div class="strength-req" id="reqLength">
+                                <span class="req-icon"><i data-lucide="check" class="w-2 h-2"></i></span>
+                                <span>Minimum 8 characters</span>
+                            </div>
+                            <div class="strength-req" id="reqUpper">
+                                <span class="req-icon"><i data-lucide="check" class="w-2 h-2"></i></span>
+                                <span>Uppercase letter</span>
+                            </div>
+                            <div class="strength-req" id="reqLower">
+                                <span class="req-icon"><i data-lucide="check" class="w-2 h-2"></i></span>
+                                <span>Lowercase letter</span>
+                            </div>
+                            <div class="strength-req" id="reqNumber">
+                                <span class="req-icon"><i data-lucide="check" class="w-2 h-2"></i></span>
+                                <span>Number</span>
+                            </div>
+                            <div class="strength-req" id="reqSpecial">
+                                <span class="req-icon"><i data-lucide="check" class="w-2 h-2"></i></span>
+                                <span>Special character</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label class="form-label" for="pwConfirm">Confirm New Password <span class="required">*</span></label>
+                        <div class="password-wrap">
+                            <input type="password" id="pwConfirm" class="input-field" placeholder="Confirm new password" autocomplete="new-password">
+                            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('pwConfirm', this)" aria-label="Toggle password visibility">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <p class="error-msg" id="pwConfirmError">Please confirm your new password</p>
+                        <p class="error-msg" id="pwMatchError">Passwords do not match</p>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer flex items-center justify-end gap-3">
+                <button type="button" class="btn-outline btn-sm" onclick="closeModal('passwordModal')">
+                    <i data-lucide="x" class="w-3.5 h-3.5"></i> Cancel
+                </button>
+                <button type="button" class="btn-gold btn-sm" id="pwSaveBtn" onclick="savePassword()">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Update Password
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* =========================================
+           ADMIN DATA (Simulated)
+        ========================================= */
+        var adminData = {
+            fullName: 'Arjun Rathore',
+            username: 'arjun.rathore',
+            email: 'arjun.rathore@vipnumbers.com',
+            phone: '9876543210',
+            dob: '1990-03-12',
+            gender: 'Male',
+            address: '42, MG Road, Sector 14',
+            city: 'Gurgaon',
+            state: 'Haryana',
+            country: 'India',
+            currentPassword: 'Admin@2024' // simulated
+        };
+
+        /* =========================================
+           INITIALIZATION
+        ========================================= */
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            initScrollReveal();
+
+            // Keyboard support
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeModal('profileModal');
+                    closeModal('passwordModal');
+                }
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    if (document.getElementById('profileModal').classList.contains('show')) {
+                        var active = document.activeElement;
+                        if (active && active.tagName !== 'TEXTAREA') {
+                            e.preventDefault();
+                            saveProfile();
+                        }
+                    }
+                    if (document.getElementById('passwordModal').classList.contains('show')) {
+                        var active2 = document.activeElement;
+                        if (active2 && active2.tagName !== 'TEXTAREA') {
+                            e.preventDefault();
+                            savePassword();
+                        }
+                    }
+                }
+            });
+        });
+
+        /* =========================================
+           SIDEBAR & NAVIGATION
+        ========================================= */
+        function toggleSidebar() {
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+        }
+
+        function toggleDropdown(id) {
+            var dd = document.getElementById(id);
+            var isShow = dd.classList.contains('show');
+            document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
+            if (!isShow) dd.classList.add('show');
+        }
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.relative')) {
+                document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
+            }
+        });
+
+        /* =========================================
+           MODAL MANAGEMENT
+        ========================================= */
+        function openModal(id) {
+            var modal = document.getElementById(id);
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+            lucide.createIcons();
+
+            // Pre-fill profile modal with current data
+            if (id === 'profileModal') {
+                document.getElementById('pFullName').value = adminData.fullName;
+                document.getElementById('pUsername').value = adminData.username;
+                document.getElementById('pEmail').value = adminData.email;
+                document.getElementById('pPhone').value = adminData.phone;
+                document.getElementById('pDob').value = adminData.dob;
+                document.getElementById('pGender').value = adminData.gender;
+                document.getElementById('pAddress').value = adminData.address;
+                document.getElementById('pCity').value = adminData.city;
+                document.getElementById('pState').value = adminData.state;
+                document.getElementById('pCountry').value = adminData.country;
+                clearAllProfileErrors();
+            }
+
+            // Reset password modal
+            if (id === 'passwordModal') {
+                document.getElementById('pwCurrent').value = '';
+                document.getElementById('pwNew').value = '';
+                document.getElementById('pwConfirm').value = '';
+                clearAllPasswordErrors();
+                resetPasswordStrength();
+                // Reset eye icons
+                document.querySelectorAll('#passwordModal .password-toggle i').forEach(function(ic) {
+                    ic.setAttribute('data-lucide', 'eye');
+                });
+                lucide.createIcons();
+            }
+
+            // Focus first input
+            setTimeout(function() {
+                var firstInput = modal.querySelector('input:not([type="hidden"])');
+                if (firstInput) firstInput.focus();
+            }, 350);
+        }
+
+        function closeModal(id) {
+            var modal = document.getElementById(id);
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        function handleOverlayClick(event, id) {
+            if (event.target === event.currentTarget) {
+                closeModal(id);
+            }
+        }
+
+        /* =========================================
+           SAVE PROFILE
+        ========================================= */
+        function saveProfile() {
+            if (!validateProfileForm()) return;
+
+            var btn = document.getElementById('profileSaveBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<svg class="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-linecap="round" class="opacity-25"></circle><path d="M4 12a8 8 0 018-8" stroke="currentColor" stroke-width="3" stroke-linecap="round" class="opacity-75"></path></svg> Saving...';
+
+            setTimeout(function() {
+                // Update local data
+                adminData.fullName = document.getElementById('pFullName').value.trim();
+                adminData.username = document.getElementById('pUsername').value.trim();
+                adminData.email = document.getElementById('pEmail').value.trim();
+                adminData.phone = document.getElementById('pPhone').value.trim();
+                adminData.dob = document.getElementById('pDob').value;
+                adminData.gender = document.getElementById('pGender').value;
+                adminData.address = document.getElementById('pAddress').value.trim();
+                adminData.city = document.getElementById('pCity').value.trim();
+                adminData.state = document.getElementById('pState').value.trim();
+                adminData.country = document.getElementById('pCountry').value.trim();
+
+                // Update display
+                updateProfileDisplay();
+
+                // Reset button
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5"></i> Save Changes';
+                lucide.createIcons();
+
+                // Close modal
+                closeModal('profileModal');
+
+                // Toast
+                showToast('Profile updated successfully.', 'success');
+            }, 1000);
+        }
+
+        function validateProfileForm() {
+            var isValid = true;
+
+            // Full name
+            var fullName = document.getElementById('pFullName').value.trim();
+            if (!fullName) {
+                showFieldError('pFullNameError');
+                document.getElementById('pFullName').classList.add('error');
+                isValid = false;
+            } else {
+                clearFieldError('pFullNameError');
+                document.getElementById('pFullName').classList.remove('error');
+            }
+
+            // Username
+            var username = document.getElementById('pUsername').value.trim();
+            if (!username) {
+                showFieldError('pUsernameError');
+                document.getElementById('pUsername').classList.add('error');
+                isValid = false;
+            } else {
+                clearFieldError('pUsernameError');
+                document.getElementById('pUsername').classList.remove('error');
+            }
+
+            // Email
+            var email = document.getElementById('pEmail').value.trim();
+            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email || !emailRegex.test(email)) {
+                showFieldError('pEmailError');
+                document.getElementById('pEmail').classList.add('error');
+                isValid = false;
+            } else {
+                clearFieldError('pEmailError');
+                document.getElementById('pEmail').classList.remove('error');
+            }
+
+            // Phone
+            var phone = document.getElementById('pPhone').value.trim();
+            if (!/^\d{10}$/.test(phone)) {
+                showFieldError('pPhoneError');
+                document.getElementById('pPhone').classList.add('error');
+                isValid = false;
+            } else {
+                clearFieldError('pPhoneError');
+                document.getElementById('pPhone').classList.remove('error');
+            }
+
+            return isValid;
+        }
+
+        function updateProfileDisplay() {
+            var nameParts = adminData.fullName.split(' ');
+            var initials = nameParts.map(function(n) { return n[0]; }).join('').substring(0, 2).toUpperCase();
+            document.getElementById('avatarInitials').textContent = initials;
+            document.getElementById('displayName').textContent = adminData.fullName;
+            document.getElementById('displayUsername').textContent = adminData.username;
+            document.getElementById('displayEmail').textContent = adminData.email;
+
+            // Format phone
+            var ph = adminData.phone;
+            var formattedPhone = '+91 ' + ph.substring(0, 5) + ' ' + ph.substring(5);
+            document.getElementById('displayPhone').textContent = formattedPhone;
+
+            // Info rows
+            document.getElementById('infoFullName').textContent = adminData.fullName;
+            document.getElementById('infoUsername').textContent = adminData.username;
+            document.getElementById('infoEmail').textContent = adminData.email;
+            document.getElementById('infoPhone').textContent = formattedPhone;
+
+            // DOB
+            if (adminData.dob) {
+                var d = new Date(adminData.dob + 'T00:00:00');
+                var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+                document.getElementById('infoDob').textContent = months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+            } else {
+                document.getElementById('infoDob').textContent = '—';
+            }
+
+            document.getElementById('infoGender').textContent = adminData.gender || '—';
+
+            // Address
+            var addrParts = [adminData.address, adminData.city, adminData.state].filter(function(p) { return p; });
+            if (adminData.country) addrParts.push(adminData.country);
+            document.getElementById('infoAddress').textContent = addrParts.length ? addrParts.join(', ') : '—';
+
+            // Last updated
+            var now = new Date();
+            var mL = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            var timeStr = mL[now.getMonth()] + ' ' + String(now.getDate()).padStart(2,'0') + ', ' + now.getFullYear() + ' at ' +
+                          String(now.getHours() % 12 || 12).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ' ' + (now.getHours() >= 12 ? 'PM' : 'AM');
+            document.getElementById('infoLastUpdated').textContent = timeStr;
+        }
+
+        /* =========================================
+           SAVE PASSWORD
+        ========================================= */
+        function savePassword() {
+            if (!validatePasswordForm()) return;
+
+            var btn = document.getElementById('pwSaveBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<svg class="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-linecap="round" class="opacity-25"></circle><path d="M4 12a8 8 0 018-8" stroke="currentColor" stroke-width="3" stroke-linecap="round" class="opacity-75"></path></svg> Updating...';
+
+            setTimeout(function() {
+                // Update simulated password
+                adminData.currentPassword = document.getElementById('pwNew').value;
+
+                // Reset button
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Update Password';
+                lucide.createIcons();
+
+                // Close modal
+                closeModal('passwordModal');
+
+                // Clear fields
+                document.getElementById('pwCurrent').value = '';
+                document.getElementById('pwNew').value = '';
+                document.getElementById('pwConfirm').value = '';
+
+                // Toast
+                showToast('Password changed successfully.', 'success');
+            }, 1200);
+        }
+
+        function validatePasswordForm() {
+            var isValid = true;
+            var current = document.getElementById('pwCurrent').value;
+            var newPw = document.getElementById('pwNew').value;
+            var confirm = document.getElementById('pwConfirm').value;
+
+            // Clear all first
+            clearAllPasswordErrors();
+
+            // Current password
+            if (!current) {
+                showFieldError('pwCurrentError');
+                document.getElementById('pwCurrent').classList.add('error');
+                isValid = false;
+            } else if (current !== adminData.currentPassword) {
+                document.getElementById('pwCurrentError').textContent = 'Current password is incorrect';
+                showFieldError('pwCurrentError');
+                document.getElementById('pwCurrent').classList.add('error');
+                isValid = false;
+            }
+
+            // New password
+            if (!newPw) {
+                showFieldError('pwNewError');
+                document.getElementById('pwNew').classList.add('error');
+                isValid = false;
+            } else if (newPw === current) {
+                showFieldError('pwNewSameError');
+                document.getElementById('pwNew').classList.add('error');
+                isValid = false;
+            }
+
+            // Confirm password
+            if (!confirm) {
+                showFieldError('pwConfirmError');
+                document.getElementById('pwConfirm').classList.add('error');
+                isValid = false;
+            } else if (confirm !== newPw) {
+                showFieldError('pwMatchError');
+                document.getElementById('pwConfirm').classList.add('error');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        /* =========================================
+           PASSWORD STRENGTH
+        ========================================= */
+        function updatePasswordStrength() {
+            var pw = document.getElementById('pwNew').value;
+
+            var hasLength = pw.length >= 8;
+            var hasUpper = /[A-Z]/.test(pw);
+            var hasLower = /[a-z]/.test(pw);
+            var hasNumber = /[0-9]/.test(pw);
+            var hasSpecial = /[^A-Za-z0-9]/.test(pw);
+
+            // Update requirement indicators
+            toggleReq('reqLength', hasLength);
+            toggleReq('reqUpper', hasUpper);
+            toggleReq('reqLower', hasLower);
+            toggleReq('reqNumber', hasNumber);
+            toggleReq('reqSpecial', hasSpecial);
+
+            // Calculate strength score
+            var score = 0;
+            if (hasLength) score++;
+            if (hasUpper) score++;
+            if (hasLower) score++;
+            if (hasNumber) score++;
+            if (hasSpecial) score++;
+
+            // Update bar segments
+            var colors = ['', '#EF4444', '#F97316', '#EAB308', '#22C55E', '#10B981'];
+            var labels = ['Enter a password to see strength', 'Very Weak', 'Weak', 'Fair', 'Strong', 'Very Strong'];
+            var labelColors = ['rgba(255,255,255,0.2)', '#EF4444', '#F97316', '#EAB308', '#22C55E', '#10B981'];
+
+            var activeSegments = pw.length === 0 ? 0 : score;
+            for (var i = 1; i <= 4; i++) {
+                var seg = document.getElementById('str' + i);
+                if (i <= activeSegments) {
+                    seg.style.background = colors[score];
+                } else {
+                    seg.style.background = 'rgba(255,255,255,0.06)';
+                }
+            }
+
+            var label = document.getElementById('strengthLabel');
+            label.textContent = labels[activeSegments];
+            label.style.color = labelColors[activeSegments];
+
+            // Clear new password errors on input
+            clearFieldError('pwNewError');
+            clearFieldError('pwNewSameError');
+            document.getElementById('pwNew').classList.remove('error');
+        }
+
+        function toggleReq(id, met) {
+            var el = document.getElementById(id);
+            if (met) {
+                el.classList.add('met');
+            } else {
+                el.classList.remove('met');
+            }
+        }
+
+        function resetPasswordStrength() {
+            for (var i = 1; i <= 4; i++) {
+                document.getElementById('str' + i).style.background = 'rgba(255,255,255,0.06)';
+            }
+            document.getElementById('strengthLabel').textContent = 'Enter a password to see strength';
+            document.getElementById('strengthLabel').style.color = 'rgba(255,255,255,0.2)';
+            ['reqLength', 'reqUpper', 'reqLower', 'reqNumber', 'reqSpecial'].forEach(function(id) {
+                document.getElementById(id).classList.remove('met');
+            });
+        }
+
+        /* =========================================
+           PASSWORD VISIBILITY TOGGLE
+        ========================================= */
+        function togglePasswordVisibility(inputId, btn) {
+            var input = document.getElementById(inputId);
+            var icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                input.type = 'password';
+                icon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+        }
+
+        /* =========================================
+           ERROR HELPERS
+        ========================================= */
+        function showFieldError(id) {
+            document.getElementById(id).classList.add('show');
+        }
+
+        function clearFieldError(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+
+        function clearAllProfileErrors() {
+            ['pFullNameError', 'pUsernameError', 'pEmailError', 'pPhoneError', 'pDobError'].forEach(clearFieldError);
+            document.querySelectorAll('#profileModal .input-field.error').forEach(function(el) { el.classList.remove('error'); });
+        }
+
+        function clearAllPasswordErrors() {
+            ['pwCurrentError', 'pwNewError', 'pwNewSameError', 'pwConfirmError', 'pwMatchError'].forEach(function(id) {
+                clearFieldError(id);
+                // Reset custom error messages
+                if (id === 'pwCurrentError') document.getElementById(id).textContent = 'Current password is required';
+            });
+            document.querySelectorAll('#passwordModal .input-field.error').forEach(function(el) { el.classList.remove('error'); });
+        }
+
+        /* =========================================
+           TOAST NOTIFICATIONS
+        ========================================= */
+        function showToast(message, type) {
+            type = type || 'info';
+            var container = document.getElementById('toastContainer');
+            var toast = document.createElement('div');
+            toast.className = 'toast ' + type;
+
+            var iconSvg = '';
+            if (type === 'success') {
+                iconSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ADE80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+            } else if (type === 'error') {
+                iconSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F87171" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+            } else {
+                iconSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60B5FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+            }
+
+            toast.innerHTML = iconSvg + '<span>' + message + '</span>';
+            container.appendChild(toast);
+
+            requestAnimationFrame(function() {
+                requestAnimationFrame(function() {
+                    toast.classList.add('show');
+                });
+            });
+
+            setTimeout(function() {
+                toast.classList.remove('show');
+                setTimeout(function() {
+                    if (toast.parentNode) toast.parentNode.removeChild(toast);
+                }, 400);
+            }, 3500);
+        }
+
+        /* =========================================
+           SCROLL REVEAL
+        ========================================= */
+        function initScrollReveal() {
+            var reveals = document.querySelectorAll('.reveal:not(.visible)');
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
+
+            reveals.forEach(function(el) { observer.observe(el); });
+        }
+    </script>
+</body>
+</html>
