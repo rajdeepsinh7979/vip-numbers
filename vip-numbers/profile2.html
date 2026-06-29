@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Profile</title>
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,200;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,900;1,9..40,400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        display: ['Playfair Display', 'serif'],
+        body: ['DM Sans', 'sans-serif'],
+      },
+      colors: {
+        base: {
+          900: '#0f0f14',
+          800: '#16161e',
+          700: '#1e1e28',
+          600: '#2a2a36',
+          500: '#3a3a48',
+        },
+        surface: {
+          DEFAULT: '#1c1c26',
+          raised: '#22222e',
+          hover: '#282836',
+        },
+        accent: {
+          DEFAULT: '#d4a24e',
+          light: '#e8bf6a',
+          dark: '#b8872e',
+          muted: 'rgba(212,162,78,0.12)',
+        },
+        txt: {
+          primary: '#f0ece4',
+          secondary: '#9a96a6',
+          muted: '#6b6778',
+        },
+        danger: '#e05252',
+        success: '#4ecb8d',
+      }
+    }
+  }
+}
+</script>
+
+<style>
+  :root {
+    --bg: #0f0f14;
+    --fg: #f0ece4;
+    --muted: #6b6778;
+    --accent: #d4a24e;
+    --card: #1c1c26;
+    --border: #2a2a36;
+    --raised: #22222e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Subtle background atmosphere */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -30%;
+    left: -10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(212,162,78,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+    animation: floatBlob 20s ease-in-out infinite alternate;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -20%;
+    right: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(212,162,78,0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+    animation: floatBlob 25s ease-in-out infinite alternate-reverse;
+  }
+
+  @keyframes floatBlob {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(40px, -30px) scale(1.1); }
+    100% { transform: translate(-20px, 20px) scale(0.95); }
+  }
+
+  /* Noise texture overlay */
+  .noise-overlay {
+    position: fixed;
+    inset: 0;
+    opacity: 0.025;
+    pointer-events: none;
+    z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  /* Card styling */
+  .profile-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .profile-card:hover {
+    border-color: rgba(212,162,78,0.15);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  /* Form inputs */
+  .form-input {
+    background: var(--raised);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px 12px 46px;
+    color: var(--fg);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    width: 100%;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    outline: none;
+  }
+
+  .form-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(212,162,78,0.1);
+    background: #262632;
+  }
+
+  .form-input::placeholder {
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .form-input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+    transition: color 0.25s ease;
+  }
+
+  .input-group:focus-within .input-icon {
+    color: var(--accent);
+  }
+
+  /* Buttons */
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent) 0%, #b8872e 100%);
+    color: #0f0f14;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 12px 28px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
+    transform: translateX(-100%);
+    transition: transform 0.5s ease;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px rgba(212,162,78,0.25);
+  }
+
+  .btn-primary:hover::after {
+    transform: translateX(100%);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(212,162,78,0.15);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--fg);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    padding: 12px 28px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-secondary:hover {
+    background: var(--raised);
+    border-color: rgba(212,162,78,0.2);
+  }
+
+  /* Avatar */
+  .avatar-wrapper {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--border);
+    transition: border-color 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .avatar-wrapper:hover {
+    border-color: var(--accent);
+  }
+
+  .avatar-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .avatar-wrapper:hover img {
+    transform: scale(1.05);
+  }
+
+  .avatar-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15,15,20,0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+  }
+
+  .avatar-wrapper:hover .avatar-overlay {
+    opacity: 1;
+  }
+
+  /* Info row */
+  .info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(42,42,54,0.6);
+  }
+
+  .info-row:last-child {
+    border-bottom: none;
+  }
+
+  .info-label {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    min-width: 130px;
+    padding-top: 2px;
+  }
+
+  .info-value {
+    color: var(--fg);
+    font-size: 15px;
+    font-weight: 400;
+    word-break: break-word;
+  }
+
+  /* Toast notification */
+  .toast-container {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .toast {
+    background: var(--raised);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--fg);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    transform: translateX(120%);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    max-width: 360px;
+  }
+
+  .toast.show {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  .toast.success { border-left: 3px solid var(--success, #4ecb8d); }
+  .toast.error   { border-left: 3px solid var(--danger, #e05252); }
+  .toast.info    { border-left: 3px solid var(--accent); }
+
+  /* Section heading */
+  .section-heading {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--fg);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .section-heading .heading-bar {
+    width: 4px;
+    height: 22px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  /* Divider */
+  .section-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, var(--border) 50%, transparent 100%);
+    margin: 8px 0;
+  }
+
+  /* Badge */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .badge-active {
+    background: rgba(78,203,141,0.1);
+    color: #4ecb8d;
+    border: 1px solid rgba(78,203,141,0.2);
+  }
+
+  /* Password toggle */
+  .password-toggle {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 6px;
+    transition: color 0.2s ease, background 0.2s ease;
+    background: none;
+    border: none;
+  }
+
+  .password-toggle:hover {
+    color: var(--accent);
+    background: rgba(212,162,78,0.08);
+  }
+
+  /* Fade-in animation */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-up {
+    animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+  }
+
+  .fade-up-d1 { animation-delay: 0.08s; }
+  .fade-up-d2 { animation-delay: 0.16s; }
+  .fade-up-d3 { animation-delay: 0.24s; }
+  .fade-up-d4 { animation-delay: 0.32s; }
+
+  /* Tab active indicator */
+  .tab-btn {
+    position: relative;
+    padding: 10px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.25s ease;
+    border-radius: 8px;
+  }
+
+  .tab-btn:hover {
+    color: var(--fg);
+    background: rgba(255,255,255,0.03);
+  }
+
+  .tab-btn.active {
+    color: var(--accent);
+    background: rgba(212,162,78,0.08);
+  }
+
+  .tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 20%;
+    width: 60%;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 1px;
+  }
+
+  /* Spinner */
+  .spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid transparent;
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    display: none;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .btn-primary.loading .spinner { display: inline-block; }
+  .btn-primary.loading .btn-text { opacity: 0.6; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .avatar-wrapper {
+      width: 90px;
+      height: 90px;
+    }
+    .info-row {
+      flex-direction: column;
+      gap: 4px;
+    }
+    .info-label {
+      min-width: unset;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="noise-overlay" aria-hidden="true"></div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+<!-- Main Layout -->
+<div class="relative z-10 min-h-screen">
+
+  <!-- Top Nav Bar -->
+  <header class="sticky top-0 z-50 backdrop-blur-xl bg-base-900/80 border-b border-base-600/50">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
+          <i data-lucide="shield-check" class="w-4 h-4 text-accent"></i>
+        </div>
+        <span class="font-body font-700 text-txt-primary text-lg tracking-tight">Admin Panel</span>
+      </div>
+      <nav class="flex items-center gap-2">
+        <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-lg text-txt-muted text-sm hover:text-txt-primary hover:bg-surface-hover transition-all duration-200">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">Dashboard</span>
+        </a>
+        <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-lg text-accent bg-accent-muted text-sm font-medium transition-all duration-200">
+          <i data-lucide="user-circle" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">Profile</span>
+        </a>
+        <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-lg text-txt-muted text-sm hover:text-txt-primary hover:bg-surface-hover transition-all duration-200">
+          <i data-lucide="log-out" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">Logout</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Page Content -->
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+
+    <!-- Page Title -->
+    <div class="mb-8 fade-up">
+      <h1 class="font-display text-3xl sm:text-4xl font-900 text-txt-primary tracking-tight">My Profile</h1>
+      <p class="text-txt-secondary mt-2 text-sm sm:text-base">Manage your account information and security settings</p>
+    </div>
+
+    <!-- Profile Overview Card -->
+    <section class="profile-card p-6 sm:p-8 mb-6 fade-up fade-up-d1" aria-label="Profile overview">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+        <!-- Avatar -->
+        <div class="avatar-wrapper" id="displayAvatarWrapper">
+          <img
+            id="displayAvatarImg"
+            src="https://picsum.photos/seed/adminprofile/300/300.jpg"
+            alt="Profile photo of the admin user"
+          >
+          <div class="avatar-overlay" id="avatarOverlayTrigger" title="Change profile photo" role="button" tabindex="0" aria-label="Click to change profile photo">
+            <i data-lucide="camera" class="w-6 h-6 text-white"></i>
+          </div>
+        </div>
+
+        <!-- Name & Status -->
+        <div class="flex-1 min-w-0">
+          <div class="flex flex-wrap items-center gap-3 mb-1">
+            <h2 class="font-display text-2xl font-700 text-txt-primary truncate" id="displayName">John Anderson</h2>
+            <span class="badge badge-active">
+              <span class="w-1.5 h-1.5 rounded-full bg-green-400 inline-block"></span>
+              Active
+            </span>
+          </div>
+          <p class="text-txt-secondary text-sm mb-3" id="displayUsername">@johnanderson</p>
+
+          <!-- Quick Info Pills -->
+          <div class="flex flex-wrap gap-3 text-xs text-txt-muted">
+            <span class="flex items-center gap-1.5 bg-surface-raised px-3 py-1.5 rounded-full">
+              <i data-lucide="mail" class="w-3.5 h-3.5"></i>
+              <span id="displayEmail">john@example.com</span>
+            </span>
+            <span class="flex items-center gap-1.5 bg-surface-raised px-3 py-1.5 rounded-full">
+              <i data-lucide="phone" class="w-3.5 h-3.5"></i>
+              <span id="displayMobile">+1 555-0192</span>
+            </span>
+            <span class="flex items-center gap-1.5 bg-surface-raised px-3 py-1.5 rounded-full">
+              <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+              <span id="displayCreated">Joined Jan 15, 2024</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tabs -->
+    <div class="flex gap-1 mb-6 bg-surface rounded-xl p-1.5 border border-base-600/50 fade-up fade-up-d2" role="tablist" aria-label="Profile sections">
+      <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="tab-profile" id="tab-btn-profile" data-tab="profile">
+        <span class="flex items-center gap-2">
+          <i data-lucide="user-pen" class="w-4 h-4"></i>
+          Edit Profile
+        </span>
+      </button>
+      <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-details" id="tab-btn-details" data-tab="details">
+        <span class="flex items-center gap-2">
+          <i data-lucide="info" class="w-4 h-4"></i>
+          Account Details
+        </span>
+      </button>
+      <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-password" id="tab-btn-password" data-tab="password">
+        <span class="flex items-center gap-2">
+          <i data-lucide="lock" class="w-4 h-4"></i>
+          Change Password
+        </span>
+      </button>
+    </div>
+
+    <!-- Tab: Edit Profile -->
+    <div class="tab-panel fade-up fade-up-d3" id="tab-profile" role="tabpanel" aria-labelledby="tab-btn-profile">
+      <section class="profile-card p-6 sm:p-8">
+        <div class="section-heading">
+          <span class="heading-bar"></span>
+          Edit Profile Information
+        </div>
+
+        <form id="profileForm" novalidate>
+          <!-- Profile Image Upload -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-txt-secondary mb-3">Profile Image</label>
+            <div class="flex items-center gap-5">
+              <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-base-600 flex-shrink-0" id="editAvatarPreviewWrapper">
+                <img
+                  id="editAvatarPreview"
+                  src="https://picsum.photos/seed/adminprofile/300/300.jpg"
+                  alt="Current profile photo preview"
+                  class="w-full h-full object-cover"
+                >
+              </div>
+              <div class="flex-1">
+                <input
+                  type="file"
+                  name="profile_image"
+                  id="profileImageInput"
+                  accept="image/jpeg,image/png,image/gif,image/webp"
+                  class="hidden"
+                  aria-label="Upload profile image"
+                >
+                <button
+                  type="button"
+                  id="chooseImageBtn"
+                  class="btn-secondary text-sm py-2.5 px-5"
+                >
+                  Choose Image
+                </button>
+                <p class="text-txt-muted text-xs mt-2">JPG, PNG, GIF, or WebP. Max 2 MB.</p>
+                <button
+                  type="button"
+                  id="removeImageBtn"
+                  class="text-xs text-danger hover:underline mt-1 hidden"
+                  style="color: var(--danger);"
+                >
+                  Remove current image
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-divider mb-6"></div>
+
+          <!-- Form Fields Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
+
+            <!-- Full Name -->
+            <div class="input-group relative">
+              <label for="full_name" class="block text-sm font-medium text-txt-secondary mb-2">Full Name <span class="text-danger" style="color:var(--danger);">*</span></label>
+              <i data-lucide="user" class="input-icon"></i>
+              <input
+                type="text"
+                name="full_name"
+                id="full_name"
+                class="form-input"
+                placeholder="Enter your full name"
+                value="John Anderson"
+                required
+                autocomplete="name"
+              >
+            </div>
+
+            <!-- Username -->
+            <div class="input-group relative">
+              <label for="username" class="block text-sm font-medium text-txt-secondary mb-2">Username <span class="text-danger" style="color:var(--danger);">*</span></label>
+              <i data-lucide="at-sign" class="input-icon"></i>
+              <input
+                type="text"
+                name="username"
+                id="username"
+                class="form-input"
+                placeholder="Choose a username"
+                value="johnanderson"
+                required
+                autocomplete="username"
+              >
+            </div>
+
+            <!-- Email -->
+            <div class="input-group relative">
+              <label for="email" class="block text-sm font-medium text-txt-secondary mb-2">Email Address <span class="text-danger" style="color:var(--danger);">*</span></label>
+              <i data-lucide="mail" class="input-icon"></i>
+              <input
+                type="email"
+                name="email"
+                id="email"
+                class="form-input"
+                placeholder="you@example.com"
+                value="john@example.com"
+                required
+                autocomplete="email"
+              >
+            </div>
+
+            <!-- Mobile Number -->
+            <div class="input-group relative">
+              <label for="mobile_number" class="block text-sm font-medium text-txt-secondary mb-2">Mobile Number <span class="text-danger" style="color:var(--danger);">*</span></label>
+              <i data-lucide="phone" class="input-icon"></i>
+              <input
+                type="tel"
+                name="mobile_number"
+                id="mobile_number"
+                class="form-input"
+                placeholder="+1 555-000-0000"
+                value="+1 555-0192"
+                required
+                autocomplete="tel"
+              >
+            </div>
+
+          </div>
+
+          <!-- Form Actions -->
+          <div class="flex flex-wrap items-center gap-3 mt-8 pt-6 border-t border-base-600/50">
+            <button type="submit" class="btn-primary" id="saveProfileBtn">
+              <span class="btn-text flex items-center gap-2">
+                <i data-lucide="save" class="w-4 h-4"></i>
+                Save Changes
+              </span>
+              <span class="spinner"></span>
+            </button>
+            <button type="button" class="btn-secondary" id="cancelEditBtn">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <!-- Tab: Account Details -->
+    <div class="tab-panel hidden" id="tab-details" role="tabpanel" aria-labelledby="tab-btn-details">
+      <section class="profile-card p-6 sm:p-8">
+        <div class="section-heading">
+          <span class="heading-bar"></span>
+          Account Details
+        </div>
+
+        <div class="space-y-0">
+          <div class="info-row">
+            <span class="info-label">Full Name</span>
+            <span class="info-value" id="detailFullName">John Anderson</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Username</span>
+            <span class="info-value" id="detailUsername">@johnanderson</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Email</span>
+            <span class="info-value" id="detailEmail">john@example.com</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Mobile Number</span>
+            <span class="info-value" id="detailMobile">+1 555-0192</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Profile Image</span>
+            <span class="info-value">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full overflow-hidden border border-base-600 flex-shrink-0">
+                  <img id="detailAvatarImg" src="https://picsum.photos/seed/adminprofile/300/300.jpg" alt="Profile image thumbnail" class="w-full h-full object-cover">
+                </div>
+                <span class="text-txt-muted text-sm">Uploaded</span>
+              </div>
+            </span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Account Created</span>
+            <span class="info-value flex items-center gap-2" id="detailCreatedAt">
+              <i data-lucide="calendar-plus" class="w-4 h-4 text-txt-muted"></i>
+              January 15, 2024 at 10:32 AM
+            </span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Last Updated</span>
+            <span class="info-value flex items-center gap-2" id="detailUpdatedAt">
+              <i data-lucide="clock" class="w-4 h-4 text-txt-muted"></i>
+              June 8, 2025 at 2:14 PM
+            </span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Tab: Change Password -->
+    <div class="tab-panel hidden" id="tab-password" role="tabpanel" aria-labelledby="tab-btn-password">
+      <section class="profile-card p-6 sm:p-8">
+        <div class="section-heading">
+          <span class="heading-bar"></span>
+          Change Password
+        </div>
+        <p class="text-txt-secondary text-sm mb-6">Ensure your account stays secure by using a strong, unique password.</p>
+
+        <form id="passwordForm" novalidate>
+          <!-- Current Password -->
+          <div class="input-group relative mb-5">
+            <label for="current_password" class="block text-sm font-medium text-txt-secondary mb-2">Current Password <span class="text-danger" style="color:var(--danger);">*</span></label>
+            <i data-lucide="key-round" class="input-icon"></i>
+            <input
+              type="password"
+              name="current_password"
+              id="current_password"
+              class="form-input"
+              placeholder="Enter current password"
+              required
+              autocomplete="current-password"
+            >
+            <button type="button" class="password-toggle" data-target="current_password" aria-label="Toggle password visibility">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- New Password -->
+          <div class="input-group relative mb-5">
+            <label for="new_password" class="block text-sm font-medium text-txt-secondary mb-2">New Password <span class="text-danger" style="color:var(--danger);">*</span></label>
+            <i data-lucide="lock" class="input-icon"></i>
+            <input
+              type="password"
+              name="new_password"
+              id="new_password"
+              class="form-input"
+              placeholder="Enter new password"
+              required
+              autocomplete="new-password"
+            >
+            <button type="button" class="password-toggle" data-target="new_password" aria-label="Toggle password visibility">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+            <!-- Password Strength Bar -->
+            <div class="mt-3 h-1.5 bg-base-600 rounded-full overflow-hidden">
+              <div class="h-full rounded-full transition-all duration-300 ease-out" id="strengthBar" style="width:0%; background: var(--border);"></div>
+            </div>
+            <p class="text-xs mt-1.5 text-txt-muted" id="strengthText">Enter a password to see strength</p>
+          </div>
+
+          <!-- Confirm New Password -->
+          <div class="input-group relative mb-6">
+            <label for="confirm_password" class="block text-sm font-medium text-txt-secondary mb-2">Confirm New Password <span class="text-danger" style="color:var(--danger);">*</span></label>
+            <i data-lucide="lock" class="input-icon"></i>
+            <input
+              type="password"
+              name="confirm_password"
+              id="confirm_password"
+              class="form-input"
+              placeholder="Re-enter new password"
+              required
+              autocomplete="new-password"
+            >
+            <button type="button" class="password-toggle" data-target="confirm_password" aria-label="Toggle password visibility">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="flex flex-wrap items-center gap-3 pt-6 border-t border-base-600/50">
+            <button type="submit" class="btn-primary" id="savePasswordBtn">
+              <span class="btn-text flex items-center gap-2">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                Update Password
+              </span>
+              <span class="spinner"></span>
+            </button>
+            <button type="button" class="btn-secondary" id="cancelPasswordBtn">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="relative z-10 border-t border-base-600/30 mt-12">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-txt-muted">
+      <span>Admin Panel &mdash; Profile Management</span>
+      <span>Secured with encrypted sessions</span>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+/* ───────────────────────────────────────────
+   Initialize Lucide icons
+   ─────────────────────────────────────────── */
+lucide.createIcons();
+
+/* ───────────────────────────────────────────
+   Toast Notification System
+   ─────────────────────────────────────────── */
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+
+  const iconMap = { success: 'check-circle-2', error: 'alert-circle', info: 'info' };
+  toast.innerHTML = `
+    <i data-lucide="${iconMap[type] || 'info'}" style="width:18px;height:18px;flex-shrink:0;color:${type === 'success' ? '#4ecb8d' : type === 'error' ? '#e05252' : 'var(--accent)'}"></i>
+    <span>${message}</span>
+  `;
+  container.appendChild(toast);
+  lucide.createIcons({ nodes: [toast] });
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => toast.classList.add('show'));
+  });
+
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 400);
+  }, 4000);
+}
+
+/* ───────────────────────────────────────────
+   Tab Switching
+   ─────────────────────────────────────────── */
+const tabBtns = document.querySelectorAll('.tab-btn');
+const tabPanels = document.querySelectorAll('.tab-panel');
+
+tabBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.dataset.tab;
+
+    tabBtns.forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-selected', 'false');
+    });
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
+
+    tabPanels.forEach(panel => {
+      if (panel.id === `tab-${target}`) {
+        panel.classList.remove('hidden');
+        panel.style.animation = 'none';
+        panel.offsetHeight; // trigger reflow
+        panel.style.animation = 'fadeUp 0.4s cubic-bezier(0.16,1,0.3,1) forwards';
+      } else {
+        panel.classList.add('hidden');
+      }
+    });
+  });
+});
+
+/* ───────────────────────────────────────────
+   Profile Image Upload & Preview
+   ─────────────────────────────────────────── */
+const profileImageInput = document.getElementById('profileImageInput');
+const chooseImageBtn = document.getElementById('chooseImageBtn');
+const removeImageBtn = document.getElementById('removeImageBtn');
+const editAvatarPreview = document.getElementById('editAvatarPreview');
+const displayAvatarImg = document.getElementById('displayAvatarImg');
+const detailAvatarImg = document.getElementById('detailAvatarImg');
+const avatarOverlayTrigger = document.getElementById('avatarOverlayTrigger');
+
+const defaultAvatarSrc = 'https://picsum.photos/seed/adminprofile/300/300.jpg';
+let hasCustomImage = false;
+
+function openImagePicker() {
+  profileImageInput.click();
+}
+
+chooseImageBtn.addEventListener('click', openImagePicker);
+avatarOverlayTrigger.addEventListener('click', openImagePicker);
+avatarOverlayTrigger.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openImagePicker(); }
+});
+
+profileImageInput.addEventListener('change', function() {
+  const file = this.files[0];
+  if (!file) return;
+
+  /* Validate file type */
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+  if (!allowedTypes.includes(file.type)) {
+    showToast('Invalid file type. Please use JPG, PNG, GIF, or WebP.', 'error');
+    this.value = '';
+    return;
+  }
+
+  /* Validate file size (2 MB max) */
+  if (file.size > 2 * 1024 * 1024) {
+    showToast('Image is too large. Maximum size is 2 MB.', 'error');
+    this.value = '';
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    editAvatarPreview.src = e.target.result;
+    displayAvatarImg.src = e.target.result;
+    detailAvatarImg.src = e.target.result;
+    hasCustomImage = true;
+    removeImageBtn.classList.remove('hidden');
+    showToast('Image selected. Save changes to upload.', 'info');
+  };
+  reader.readAsDataURL(file);
+});
+
+removeImageBtn.addEventListener('click', function() {
+  profileImageInput.value = '';
+  editAvatarPreview.src = defaultAvatarSrc;
+  displayAvatarImg.src = defaultAvatarSrc;
+  detailAvatarImg.src = defaultAvatarSrc;
+  hasCustomImage = false;
+  this.classList.add('hidden');
+  showToast('Image will be removed when you save.', 'info');
+});
+
+/* ───────────────────────────────────────────
+   Profile Form Validation & Submit (frontend only)
+   ─────────────────────────────────────────── */
+const profileForm = document.getElementById('profileForm');
+const saveProfileBtn = document.getElementById('saveProfileBtn');
+
+profileForm.addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const fullName = document.getElementById('full_name').value.trim();
+  const username = document.getElementById('username').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const mobileNumber = document.getElementById('mobile_number').value.trim();
+
+  /* Frontend validation */
+  if (!fullName) { showToast('Full name is required.', 'error'); document.getElementById('full_name').focus(); return; }
+  if (!username) { showToast('Username is required.', 'error'); document.getElementById('username').focus(); return; }
+  if (!email) { showToast('Email address is required.', 'error'); document.getElementById('email').focus(); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showToast('Please enter a valid email address.', 'error'); document.getElementById('email').focus(); return; }
+  if (!mobileNumber) { showToast('Mobile number is required.', 'error'); document.getElementById('mobile_number').focus(); return; }
+
+  /* Simulate save (in production, this would be an actual form submission or fetch) */
+  saveProfileBtn.classList.add('loading');
+  saveProfileBtn.disabled = true;
+
+  setTimeout(() => {
+    saveProfileBtn.classList.remove('loading');
+    saveProfileBtn.disabled = false;
+
+    /* Update displayed info */
+    document.getElementById('displayName').textContent = fullName;
+    document.getElementById('displayUsername').textContent = '@' + username;
+    document.getElementById('displayEmail').textContent = email;
+    document.getElementById('displayMobile').textContent = mobileNumber;
+    document.getElementById('detailFullName').textContent = fullName;
+    document.getElementById('detailUsername').textContent = '@' + username;
+    document.getElementById('detailEmail').textContent = email;
+    document.getElementById('detailMobile').textContent = mobileNumber;
+
+    showToast('Profile updated successfully!', 'success');
+  }, 1200);
+});
+
+/* Cancel button resets form to current displayed values */
+document.getElementById('cancelEditBtn').addEventListener('click', function() {
+  document.getElementById('full_name').value = document.getElementById('displayName').textContent;
+  document.getElementById('username').value = document.getElementById('displayUsername').textContent.replace('@', '');
+  document.getElementById('email').value = document.getElementById('displayEmail').textContent;
+  document.getElementById('mobile_number').value = document.getElementById('displayMobile').textContent;
+  profileImageInput.value = '';
+  showToast('Changes discarded.', 'info');
+});
+
+/* ───────────────────────────────────────────
+   Password Visibility Toggles
+   ─────────────────────────────────────────── */
+document.querySelectorAll('.password-toggle').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const targetId = this.dataset.target;
+    const input = document.getElementById(targetId);
+    const icon = this.querySelector('[data-lucide]');
+
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.setAttribute('data-lucide', 'eye-off');
+    } else {
+      input.type = 'password';
+      icon.setAttribute('data-lucide', 'eye');
+    }
+    lucide.createIcons({ nodes: [this] });
+  });
+});
+
+/* ───────────────────────────────────────────
+   Password Strength Meter
+   ─────────────────────────────────────────── */
+const newPasswordInput = document.getElementById('new_password');
+const strengthBar = document.getElementById('strengthBar');
+const strengthText = document.getElementById('strengthText');
+
+newPasswordInput.addEventListener('input', function() {
+  const val = this.value;
+  let score = 0;
+
+  if (val.length >= 8) score++;
+  if (val.length >= 12) score++;
+  if (/[A-Z]/.test(val)) score++;
+  if (/[a-z]/.test(val)) score++;
+  if (/[0-9]/.test(val)) score++;
+  if (/[^A-Za-z0-9]/.test(val)) score++;
+
+  const levels = [
+    { max: 0, width: '0%', color: 'var(--border)', label: 'Enter a password to see strength' },
+    { max: 2, width: '20%', color: '#e05252', label: 'Very weak' },
+    { max: 3, width: '40%', color: '#e08a52', label: 'Weak' },
+    { max: 4, width: '60%', color: '#e0c852', label: 'Fair' },
+    { max: 5, width: '80%', color: '#8acb4e', label: 'Strong' },
+    { max: 6, width: '100%', color: '#4ecb8d', label: 'Very strong' },
+  ];
+
+  let level = levels[0];
+  for (const l of levels) {
+    if (score <= l.max) { level = l; break; }
+    if (l === levels[levels.length - 1]) level = l;
+  }
+
+  strengthBar.style.width = level.width;
+  strengthBar.style.background = level.color;
+  strengthText.textContent = val.length === 0 ? levels[0].label : level.label;
+  strengthText.style.color = val.length === 0 ? 'var(--muted)' : level.color;
+});
+
+/* ───────────────────────────────────────────
+   Password Change Form (frontend validation only)
+   ─────────────────────────────────────────── */
+const passwordForm = document.getElementById('passwordForm');
+const savePasswordBtn = document.getElementById('savePasswordBtn');
+
+passwordForm.addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const current = document.getElementById('current_password').value;
+  const newPass = document.getElementById('new_password').value;
+  const confirm = document.getElementById('confirm_password').value;
+
+  if (!current) { showToast('Please enter your current password.', 'error'); document.getElementById('current_password').focus(); return; }
+  if (!newPass) { showToast('Please enter a new password.', 'error'); document.getElementById('new_password').focus(); return; }
+  if (newPass.length < 8) { showToast('New password must be at least 8 characters.', 'error'); document.getElementById('new_password').focus(); return; }
+  if (newPass !== confirm) { showToast('New passwords do not match.', 'error'); document.getElementById('confirm_password').focus(); return; }
+  if (current === newPass) { showToast('New password must be different from the current one.', 'error'); document.getElementById('new_password').focus(); return; }
+
+  /* Simulate save */
+  savePasswordBtn.classList.add('loading');
+  savePasswordBtn.disabled = true;
+
+  setTimeout(() => {
+    savePasswordBtn.classList.remove('loading');
+    savePasswordBtn.disabled = false;
+    passwordForm.reset();
+    strengthBar.style.width = '0%';
+    strengthBar.style.background = 'var(--border)';
+    strengthText.textContent = 'Enter a password to see strength';
+    strengthText.style.color = 'var(--muted)';
+    showToast('Password changed successfully!', 'success');
+  }, 1400);
+});
+
+document.getElementById('cancelPasswordBtn').addEventListener('click', function() {
+  passwordForm.reset();
+  strengthBar.style.width = '0%';
+  strengthBar.style.background = 'var(--border)';
+  strengthText.textContent = 'Enter a password to see strength';
+  strengthText.style.color = 'var(--muted)';
+  showToast('Password change cancelled.', 'info');
+});
+</script>
+
+</body>
+</html>
