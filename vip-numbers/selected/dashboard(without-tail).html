@@ -1,0 +1,2563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIP Number Management — Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+    <style>
+        /* ========================================
+           CSS Custom Properties
+        ======================================== */
+        :root {
+            --bg: #0D0D0D;
+            --bg-deep: #080808;
+            --bg-surface: #121212;
+            --bg-elevated: #1A1A1A;
+            --bg-muted: #222222;
+            --fg: #FFFFFF;
+            --fg-muted: #999999;
+            --fg-dim: #555555;
+            --accent-gold: #D4AF37;
+            --accent-gold-light: #E8CC6E;
+            --accent-gold-dark: #B8962E;
+            --accent-gold-subtle: rgba(212,175,55,0.1);
+            --accent-gold-muted: rgba(212,175,55,0.25);
+            --accent-blue: #4A9DFF;
+            --accent-blue-subtle: rgba(74,157,255,0.1);
+            --green: #4ADE80;
+            --green-subtle: rgba(34,197,94,0.1);
+            --red: #F87171;
+            --red-subtle: rgba(239,68,68,0.12);
+            --purple: #A78BFA;
+            --purple-subtle: rgba(168,85,247,0.1);
+            --card-bg: rgba(255,255,255,0.035);
+            --card-bg-hover: rgba(255,255,255,0.065);
+            --border-subtle: rgba(255,255,255,0.06);
+            --border-gold: rgba(212,175,55,0.25);
+            --sidebar-width: 260px;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 18px;
+            --radius-2xl: 20px;
+            --radius-3xl: 24px;
+            --font-display: 'Playfair Display', serif;
+            --font-body: 'DM Sans', sans-serif;
+            --transition-fast: 0.2s ease;
+            --transition-base: 0.25s ease;
+            --transition-smooth: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-reveal: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ========================================
+           Reset & Base
+        ======================================== */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: var(--font-body);
+            line-height: 1.5;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Background atmosphere */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -20%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(212,175,55,0.04) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -15%;
+            left: -5%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(74,157,255,0.03) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+        a { color: inherit; text-decoration: none; }
+        button { font-family: inherit; cursor: pointer; border: none; background: none; }
+        input, select, textarea { font-family: inherit; }
+        table { border-collapse: collapse; }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* ========================================
+           Gold Top Accent Line
+        ======================================== */
+        .gold-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+            z-index: 999;
+        }
+
+        /* ========================================
+           Glass Card
+        ======================================== */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            transition: all var(--transition-smooth);
+        }
+        .glass-card:hover {
+            background: var(--card-bg-hover);
+            border-color: var(--border-gold);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(212,175,55,0.06);
+        }
+        .glass-card--static:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* ========================================
+           Sidebar
+        ======================================== */
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 45;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-base);
+        }
+        .sidebar-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            min-height: 100vh;
+            background: rgba(18,18,18,0.95);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-right: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 50;
+        }
+
+        .sidebar-brand {
+            padding: 24px 24px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .brand-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .brand-logo-letter {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--bg);
+            line-height: 1;
+        }
+
+        .brand-title {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--fg);
+            line-height: 1.2;
+        }
+
+        .brand-subtitle {
+            font-size: 11px;
+            color: rgba(255,255,255,0.3);
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-section-label {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: rgba(255,255,255,0.2);
+            padding: 0 16px;
+            margin-bottom: 12px;
+        }
+        .nav-section-label--spaced {
+            margin-top: 24px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 20px;
+            border-radius: var(--radius-md);
+            color: var(--fg-muted);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+        .sidebar-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 0;
+            background: var(--accent-gold);
+            border-radius: 0 4px 4px 0;
+            transition: height var(--transition-base);
+        }
+        .sidebar-link:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.04);
+        }
+        .sidebar-link.active {
+            color: var(--accent-gold);
+            background: rgba(212,175,55,0.08);
+        }
+        .sidebar-link.active::before {
+            height: 24px;
+        }
+        .sidebar-link svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .sidebar-health-card {
+            padding: 16px;
+            background: var(--accent-gold-subtle) !important;
+            border-color: var(--accent-gold-muted) !important;
+        }
+        .sidebar-health-card:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .sidebar-health-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent-gold);
+            margin-bottom: 4px;
+        }
+
+        .sidebar-health-text {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+            line-height: 1.6;
+        }
+
+        /* ========================================
+           Main Wrapper
+        ======================================== */
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            position: relative;
+        }
+
+        /* ========================================
+           Dashboard Header
+        ======================================== */
+        .dashboard-header {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: rgba(13,13,13,0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 32px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .menu-toggle {
+            display: none;
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background: rgba(255,255,255,0.05);
+            align-items: center;
+            justify-content: center;
+            color: rgba(255,255,255,0.6);
+            transition: all var(--transition-fast);
+        }
+        .menu-toggle:hover {
+            color: var(--fg);
+            background: rgba(255,255,255,0.1);
+        }
+        .menu-toggle svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .page-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--fg);
+            line-height: 1.3;
+        }
+
+        .page-subtitle {
+            font-size: 12px;
+            color: rgba(255,255,255,0.35);
+            margin-top: 2px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border-radius: var(--radius-md);
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            width: 256px;
+            transition: all var(--transition-base);
+        }
+        .search-bar:focus-within {
+            border-color: rgba(212,175,55,0.3);
+        }
+        .search-bar svg {
+            width: 16px;
+            height: 16px;
+            color: rgba(255,255,255,0.3);
+            flex-shrink: 0;
+        }
+
+        .search-input {
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 14px;
+            color: var(--fg);
+            width: 100%;
+        }
+        .search-input::placeholder {
+            color: rgba(255,255,255,0.25);
+        }
+
+        /* Notification Button */
+        .notification-btn {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255,255,255,0.5);
+            transition: all var(--transition-fast);
+        }
+        .notification-btn:hover {
+            color: var(--fg);
+            background: rgba(255,255,255,0.08);
+        }
+        .notification-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-gold);
+            color: var(--bg);
+            font-size: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes pulse-gold {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(212,175,55,0.4); }
+            50% { box-shadow: 0 0 0 6px rgba(212,175,55,0); }
+        }
+        .pulse-dot {
+            animation: pulse-gold 2s infinite;
+        }
+
+        /* Profile Button */
+        .profile-wrapper {
+            position: relative;
+        }
+
+        .profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 4px 12px 4px 4px;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+        }
+        .profile-btn:hover {
+            background: rgba(255,255,255,0.04);
+        }
+
+        .profile-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, rgba(212,175,55,0.8), var(--accent-gold-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .profile-avatar span {
+            color: var(--bg);
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .profile-name {
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            font-weight: 500;
+        }
+
+        .profile-chevron {
+            width: 16px;
+            height: 16px;
+            color: rgba(255,255,255,0.3);
+        }
+
+        /* ========================================
+           Dropdown
+        ======================================== */
+        .dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: #1E1E1E;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 8px;
+            min-width: 200px;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-8px);
+            transition: all var(--transition-base);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+            z-index: 60;
+        }
+        .dropdown.show {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        .dropdown-header {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 4px;
+        }
+        .dropdown-header-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--fg);
+        }
+        .dropdown-header-email {
+            font-size: 11px;
+            color: rgba(255,255,255,0.35);
+            margin-top: 2px;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            color: var(--fg-muted);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        .dropdown-item:hover {
+            background: rgba(255,255,255,0.06);
+            color: #fff;
+        }
+        .dropdown-item svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* ========================================
+           Dashboard Content
+        ======================================== */
+        .dashboard-content {
+            padding: 24px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* ========================================
+           Stats Grid
+        ======================================== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .stat-card {
+            padding: 20px;
+        }
+
+        .stat-card-inner {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: 30px;
+            font-weight: 700;
+            color: var(--fg);
+            margin-top: 8px;
+            line-height: 1.1;
+        }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .stat-trend svg {
+            width: 14px;
+            height: 14px;
+        }
+        .stat-trend-value {
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .stat-trend-period {
+            font-size: 11px;
+            color: rgba(255,255,255,0.25);
+            margin-left: 4px;
+        }
+
+        .stat-trend--up .stat-trend-value,
+        .stat-trend--up svg {
+            color: var(--green);
+        }
+        .stat-trend--up-gold .stat-trend-value,
+        .stat-trend--up-gold svg {
+            color: var(--accent-gold);
+        }
+        .stat-trend--down .stat-trend-value,
+        .stat-trend--down svg {
+            color: var(--red);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .stat-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+        .stat-icon--blue {
+            background: var(--accent-blue-subtle);
+            color: var(--accent-blue);
+        }
+        .stat-icon--green {
+            background: var(--green-subtle);
+            color: var(--green);
+        }
+        .stat-icon--gold {
+            background: var(--accent-gold-subtle);
+            color: var(--accent-gold);
+        }
+        .stat-icon--purple {
+            background: var(--purple-subtle);
+            color: var(--purple);
+        }
+
+        /* ========================================
+           Table Section
+        ======================================== */
+        .table-card {
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 20px 20px 0;
+        }
+
+        .table-header-left {
+            flex: 1;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--fg);
+        }
+
+        .section-subtitle {
+            font-size: 12px;
+            color: rgba(255,255,255,0.3);
+            margin-top: 2px;
+        }
+
+        .table-header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mobile-search {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            width: 192px;
+        }
+        .mobile-search svg {
+            width: 14px;
+            height: 14px;
+            color: rgba(255,255,255,0.3);
+            flex-shrink: 0;
+        }
+        .mobile-search-input {
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 12px;
+            color: var(--fg);
+            width: 100%;
+        }
+        .mobile-search-input::placeholder {
+            color: rgba(255,255,255,0.25);
+        }
+
+        .table-filter {
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #fff;
+            font-size: 12px;
+            font-family: var(--font-body);
+            transition: all var(--transition-base);
+            outline: none;
+            appearance: none;
+            cursor: pointer;
+            width: auto;
+        }
+        .table-filter:focus {
+            border-color: var(--accent-gold);
+            background: rgba(255,255,255,0.07);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 16px;
+        }
+
+        /* Data Table */
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .data-table thead th {
+            padding: 14px 18px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--fg-muted);
+            border-bottom: 1px solid var(--border-subtle);
+            text-align: left;
+            white-space: nowrap;
+        }
+        .data-table tbody tr {
+            transition: background var(--transition-fast);
+        }
+        .data-table tbody tr:hover {
+            background: rgba(255,255,255,0.03);
+        }
+        .data-table tbody td {
+            padding: 14px 18px;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            white-space: nowrap;
+        }
+
+        .cell-number {
+            font-weight: 600;
+            color: var(--fg);
+            letter-spacing: 0.03em;
+        }
+        .cell-category {
+            color: rgba(255,255,255,0.6);
+        }
+        .cell-price {
+            color: rgba(255,255,255,0.8);
+            font-weight: 500;
+        }
+        .cell-date {
+            color: rgba(255,255,255,0.4);
+        }
+        .cell-actions {
+            text-align: right;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .badge-available { background: rgba(34,197,94,0.12); color: var(--green); }
+        .badge-available .badge-dot { background: var(--green); }
+        .badge-sold { background: rgba(239,68,68,0.12); color: var(--red); }
+        .badge-sold .badge-dot { background: var(--red); }
+        .badge-premium { background: rgba(212,175,55,0.15); color: var(--accent-gold-light); }
+        .badge-premium .badge-dot { background: var(--accent-gold-light); }
+        .badge-reserved { background: rgba(74,157,255,0.12); color: #60B5FF; }
+        .badge-reserved .badge-dot { background: #60B5FF; }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 6px;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid transparent;
+            color: var(--fg-muted);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        .action-btn:hover {
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            border-color: rgba(255,255,255,0.1);
+        }
+        .action-btn--danger:hover {
+            background: rgba(239,68,68,0.15);
+            color: var(--red);
+            border-color: rgba(239,68,68,0.2);
+        }
+        .action-btn svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        /* Table Footer */
+        .table-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .table-footer-info {
+            font-size: 12px;
+            color: rgba(255,255,255,0.3);
+        }
+
+        .table-footer-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .pagination-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            width: 320px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            background: rgba(255,255,255,0.04);
+            justify-content: center;
+            color: rgba(255,255,255,0.3);
+            font-size: 12px;
+            transition: all var(--transition-fast);
+        }
+        .pagination-btn:hover {
+            color: var(--fg);
+            background: rgba(255,255,255,0.08);
+        }
+        .pagination-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* ========================================
+           Charts
+        ======================================== */
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .chart-card {
+            padding: 20px;
+        }
+
+        .chart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--fg);
+        }
+
+        .chart-subtitle {
+            font-size: 12px;
+            color: rgba(255,255,255,0.3);
+            margin-top: 2px;
+        }
+
+        .chart-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .chart-icon svg {
+            width: 16px;
+            height: 16px;
+        }
+        .chart-icon--gold {
+            background: var(--accent-gold-subtle);
+            color: var(--accent-gold);
+        }
+        .chart-icon--blue {
+            background: var(--accent-blue-subtle);
+            color: var(--accent-blue);
+        }
+
+        .chart-body {
+            position: relative;
+            height: 260px;
+        }
+        .chart-body--tall {
+            height: 280px;
+        }
+
+        /* Donut Charts */
+        .donut-wrapper {
+            position: relative;
+            max-width: 220px;
+            height: 220px;
+            margin: 0 auto;
+        }
+        .donut-wrapper canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .donut-center {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .donut-center-value {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--fg);
+            line-height: 1.2;
+        }
+
+        .donut-center-label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.3);
+        }
+
+        /* Legend */
+        .legend-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .legend-dot--green { background: var(--green); }
+        .legend-dot--red { background: var(--red); }
+        .legend-dot--gold { background: var(--accent-gold); }
+        .legend-dot--blue { background: var(--accent-blue); }
+
+        .legend-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* ========================================
+           Inventory Overview
+        ======================================== */
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        .inventory-item-label {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .inventory-item-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--fg);
+        }
+
+        .inventory-item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .inventory-item-note {
+            font-size: 11px;
+            color: rgba(255,255,255,0.25);
+            margin-top: 6px;
+        }
+
+        /* Progress Bars */
+        .progress-track {
+            width: 100%;
+            height: 10px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.06);
+            overflow: hidden;
+        }
+        .progress-track--compact {
+            height: 6px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0;
+        }
+        .progress-fill--gold {
+            background: linear-gradient(to right, var(--accent-gold-dark), var(--accent-gold));
+        }
+        .progress-fill--green { background: var(--green); }
+        .progress-fill--red { background: var(--red); }
+        .progress-fill--blue { background: #60B5FF; }
+
+        /* ========================================
+           Bottom Row (Activity + Quick Actions)
+        ======================================== */
+        .bottom-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        /* Timeline */
+        .timeline-item {
+            position: relative;
+            padding-left: 32px;
+            padding-bottom: 24px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 24px;
+            bottom: 0;
+            width: 1px;
+            background: rgba(255,255,255,0.06);
+        }
+        .timeline-item:last-child::before {
+            display: none;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 0;
+            top: 6px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2px solid;
+            background: var(--bg);
+        }
+        .timeline-dot--green { border-color: var(--green); }
+        .timeline-dot--gold { border-color: var(--accent-gold); }
+        .timeline-dot--blue { border-color: #60B5FF; }
+        .timeline-dot--red { border-color: var(--red); }
+        .timeline-dot--gold-light { border-color: var(--accent-gold-light); }
+        .timeline-dot--purple { border-color: var(--purple); }
+
+        .timeline-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--fg);
+        }
+        .timeline-description {
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+            margin-top: 2px;
+        }
+        .timeline-time {
+            font-size: 11px;
+            color: rgba(255,255,255,0.2);
+            margin-top: 4px;
+        }
+
+        /* Quick Actions */
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .quick-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 20px 12px;
+            border-radius: var(--radius-lg);
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--fg-muted);
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+            text-decoration: none;
+        }
+        .quick-btn:hover {
+            background: rgba(212,175,55,0.08);
+            border-color: var(--border-gold);
+            color: var(--accent-gold);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 24px rgba(212,175,55,0.08);
+        }
+
+        .quick-btn .icon-wrap {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.04);
+            transition: all 0.3s ease;
+        }
+        .quick-btn:hover .icon-wrap {
+            background: rgba(212,175,55,0.15);
+        }
+        .quick-btn .icon-wrap svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* ========================================
+           Modal
+        ======================================== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-base);
+        }
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: var(--bg-elevated);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius-2xl);
+            padding: 32px;
+            width: 90%;
+            max-width: 500px;
+            transform: translateY(20px) scale(0.97);
+            transition: transform var(--transition-smooth);
+        }
+        .modal-overlay.show .modal-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--fg);
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--fg-muted);
+            transition: all var(--transition-fast);
+        }
+        .modal-close:hover {
+            background: rgba(255,255,255,0.08);
+            color: var(--fg);
+        }
+        .modal-close svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 6px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #fff;
+            font-size: 14px;
+            font-family: var(--font-body);
+            transition: all var(--transition-base);
+            outline: none;
+        }
+        .input-field:focus {
+            border-color: var(--accent-gold);
+            background: rgba(255,255,255,0.07);
+        }
+        .input-field::placeholder {
+            color: var(--fg-dim);
+        }
+
+        select.input-field {
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            border: none;
+        }
+        .btn-primary {
+            background: var(--accent-gold);
+            color: var(--bg);
+        }
+        .btn-primary:hover {
+            background: var(--accent-gold-light);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(212,175,55,0.3);
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.06);
+            color: var(--fg-muted);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+            color: var(--fg);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        /* ========================================
+           Scroll Reveal
+        ======================================== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: all var(--transition-reveal);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ========================================
+           System Cards (if needed)
+        ======================================== */
+        .sys-card {
+            padding: 16px 18px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+        }
+        .sys-card:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        /* ========================================
+           Responsive Breakpoints
+        ======================================== */
+        @media (min-width: 640px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .table-header {
+                flex-direction: row;
+                align-items: center;
+            }
+            .inventory-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap-x: 40px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .search-bar {
+                display: flex;
+            }
+            .charts-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .bottom-row {
+                grid-template-columns: 3fr 2fr;
+            }
+        }
+
+        @media (min-width: 1280px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            .header-inner {
+                padding: 16px 32px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-wrapper {
+                margin-left: 0 !important;
+            }
+            .menu-toggle {
+                display: flex;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .dashboard-content {
+                padding: 16px;
+                gap: 24px;
+            }
+            .header-inner {
+                padding: 12px 16px;
+            }
+            .data-table {
+                font-size: 12px;
+            }
+            .data-table thead th,
+            .data-table tbody td {
+                padding: 10px 12px;
+            }
+            .mobile-search {
+                display: flex;
+            }
+            .profile-name {
+                display: none;
+            }
+            .quick-actions-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .pagination-btn {
+                width: auto;
+                padding: 0 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+            .bottom-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Gold top accent line -->
+    <div class="gold-line"></div>
+
+    <!-- Mobile sidebar overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <!-- Logo area -->
+        <div class="sidebar-brand">
+            <div class="brand-row">
+                <div class="brand-logo">
+                    <span class="brand-logo-letter">V</span>
+                </div>
+                <div>
+                    <h1 class="brand-title">VIP Numbers</h1>
+                    <p class="brand-subtitle">Admin Panel</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="sidebar-nav" aria-label="Main navigation">
+            <p class="nav-section-label">Main</p>
+            <a href="dashboard.html" class="sidebar-link active" data-section="stats">
+                <i data-lucide="layout-dashboard"></i> Dashboard
+            </a>
+            <a href="addnumbers.html" class="sidebar-link" data-section="numbers">
+                <i data-lucide="phone"></i>Add Numbers
+            </a>
+            <a href="numberlist.html" class="sidebar-link" data-section="numberStatus">
+                <i data-lucide="check-circle"></i> Number List & Status
+            </a>
+            <p class="nav-section-label nav-section-label--spaced">Settings</p>
+            <a href="profile.html" class="sidebar-link" data-section="profile">
+                <i data-lucide="user"></i> Profile
+            </a>
+            <a href="logout.php" class="sidebar-link">
+                <i data-lucide="log-out"></i> Logout
+            </a>
+        </nav>
+
+        <!-- Sidebar footer -->
+        <div class="sidebar-footer">
+            <div class="glass-card sidebar-health-card">
+                <p class="sidebar-health-title">Inventory Health</p>
+                <p class="sidebar-health-text">8,432 numbers available across 5 categories</p>
+                <div class="progress-track progress-track--compact" style="margin-top:12px;">
+                    <div class="progress-fill progress-fill--gold" data-width="65" style="width:65%"></div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main content wrapper -->
+    <div class="main-wrapper" id="mainWrapper">
+        <!-- Top header -->
+        <header class="dashboard-header">
+            <div class="header-inner">
+                <!-- Left: hamburger (mobile) + title -->
+                <div class="header-left">
+                    <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <div>
+                        <h2 class="page-title">Dashboard</h2>
+                        <p class="page-subtitle">Welcome back, Admin</p>
+                    </div>
+                </div>
+
+                <!-- Right: search, notifications, profile -->
+                <div class="header-right">
+                    <!-- Search -->
+                    <div class="search-bar">
+                        <i data-lucide="search"></i>
+                        <input type="text" id="globalSearch" placeholder="Search numbers..." class="search-input" oninput="filterTable(this.value)">
+                    </div>
+
+                    <!-- Notification -->
+                    <button class="notification-btn" onclick="toggleDropdown('notifDropdown')" aria-label="Notifications">
+                        <i data-lucide="bell"></i>
+                        <span class="notification-badge pulse-dot">3</span>
+                    </button>
+
+                    <!-- Profile -->
+                    <div class="profile-wrapper">
+                        <button class="profile-btn" onclick="toggleDropdown('profileDropdown')" aria-label="Profile menu">
+                            <div class="profile-avatar">
+                                <span>A</span>
+                            </div>
+                            <span class="profile-name">Admin</span>
+                            <i data-lucide="chevron-down" class="profile-chevron"></i>
+                        </button>
+                        <div class="dropdown" id="profileDropdown">
+                            <div class="dropdown-header">
+                                <p class="dropdown-header-name">Admin User</p>
+                                <p class="dropdown-header-email">admin@vipnumbers.com</p>
+                            </div>
+                            <a href="profile.html" class="dropdown-item">
+                                <i data-lucide="user"></i> My Profile
+                            </a>
+                            <a href="logout.php" class="dropdown-item">
+                                <i data-lucide="log-out"></i> Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main content -->
+        <main class="dashboard-content">
+
+            <!-- Statistics Cards -->
+            <section id="stats" class="stats-grid reveal">
+                <!-- Total Numbers -->
+                <div class="glass-card stat-card">
+                    <div class="stat-card-inner">
+                        <div class="stat-info">
+                            <p class="stat-label">Total Numbers</p>
+                            <p class="stat-value">1,000</p>
+                            <div class="stat-trend stat-trend--up">
+                                <i data-lucide="trending-up"></i>
+                                <span class="stat-trend-value">+12.5%</span>
+                                <span class="stat-trend-period">vs last month</span>
+                            </div>
+                        </div>
+                        <div class="stat-icon stat-icon--blue">
+                            <i data-lucide="phone"></i>
+                        </div>
+                    </div>
+                </div>
+                <!-- Available -->
+                <div class="glass-card stat-card">
+                    <div class="stat-card-inner">
+                        <div class="stat-info">
+                            <p class="stat-label">Available Numbers</p>
+                            <p class="stat-value">800</p>
+                            <div class="stat-trend stat-trend--up">
+                                <i data-lucide="trending-up"></i>
+                                <span class="stat-trend-value">+8.3%</span>
+                                <span class="stat-trend-period">vs last month</span>
+                            </div>
+                        </div>
+                        <div class="stat-icon stat-icon--green">
+                            <i data-lucide="check-circle"></i>
+                        </div>
+                    </div>
+                </div>
+                <!-- Premium -->
+                <div class="glass-card stat-card">
+                    <div class="stat-card-inner">
+                        <div class="stat-info">
+                            <p class="stat-label">Premium Numbers</p>
+                            <p class="stat-value">356</p>
+                            <div class="stat-trend stat-trend--up-gold">
+                                <i data-lucide="trending-up"></i>
+                                <span class="stat-trend-value">+18.2%</span>
+                                <span class="stat-trend-period">vs last month</span>
+                            </div>
+                        </div>
+                        <div class="stat-icon stat-icon--gold">
+                            <i data-lucide="crown"></i>
+                        </div>
+                    </div>
+                </div>
+                <!-- Reserved -->
+                <div class="glass-card stat-card">
+                    <div class="stat-card-inner">
+                        <div class="stat-info">
+                            <p class="stat-label">Reserved / Featured</p>
+                            <p class="stat-value">159</p>
+                            <div class="stat-trend stat-trend--down">
+                                <i data-lucide="trending-down"></i>
+                                <span class="stat-trend-value">-3.1%</span>
+                                <span class="stat-trend-period">vs last month</span>
+                            </div>
+                        </div>
+                        <div class="stat-icon stat-icon--purple">
+                            <i data-lucide="bookmark"></i>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recently Added Numbers -->
+            <section id="numbers" class="reveal">
+                <div class="glass-card glass-card--static table-card">
+                    <div class="table-header">
+                        <div class="table-header-left">
+                            <h3 class="section-title">Recently Added Numbers</h3>
+                            <p class="section-subtitle">Latest VIP numbers in the inventory</p>
+                        </div>
+                        <div class="table-header-right">
+                            <div class="mobile-search">
+                                <i data-lucide="search"></i>
+                                <input type="text" placeholder="Search..." class="mobile-search-input" oninput="filterTable(this.value)">
+                            </div>
+                            <select class="table-filter" onchange="filterByStatus(this.value)">
+                                <option value="all">All Status</option>
+                                <option value="Available">Available</option>
+                                <option value="Sold">Sold</option>
+                                <option value="Premium">Premium</option>
+                                <option value="Reserved">Reserved</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table" id="numbersTable">
+                            <thead>
+                                <tr>
+                                    <th>VIP Number</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Status</th>
+                                    <th>Date Added</th>
+                                    <th class="cell-actions">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <tr data-status="Available" data-number="9999001122" data-category="Fancy" data-price="45000" data-date="2025-01-15">
+                                    <td class="cell-number">9999001122</td>
+                                    <td class="cell-category">Fancy</td>
+                                    <td class="cell-price">₹45,000</td>
+                                    <td><span class="badge badge-available"><span class="badge-dot"></span>Available</span></td>
+                                    <td class="cell-date">Jan 15, 2025</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="action-btn" onclick="viewNumber(this)" aria-label="View number"><i data-lucide="eye"></i></button>
+                                            <a href="#" class="action-btn" aria-label="Edit number"><i data-lucide="edit-3"></i></a>
+                                            <a href="delete.php?id=1" class="action-btn action-btn--danger" aria-label="Delete number"><i data-lucide="trash-2"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-status="Sold" data-number="8888777766" data-category="Premium" data-price="125000" data-date="2025-01-14">
+                                    <td class="cell-number">8888777766</td>
+                                    <td class="cell-category">Premium</td>
+                                    <td class="cell-price">₹1,25,000</td>
+                                    <td><span class="badge badge-sold"><span class="badge-dot"></span>Sold</span></td>
+                                    <td class="cell-date">Jan 14, 2025</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="action-btn" onclick="viewNumber(this)" aria-label="View number"><i data-lucide="eye"></i></button>
+                                            <a href="#" class="action-btn" aria-label="Edit number"><i data-lucide="edit-3"></i></a>
+                                            <a href="delete.php?id=2" class="action-btn action-btn--danger" aria-label="Delete number"><i data-lucide="trash-2"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-status="Available" data-number="7777666655" data-category="Business" data-price="78000" data-date="2025-01-14">
+                                    <td class="cell-number">7777666655</td>
+                                    <td class="cell-category">Business</td>
+                                    <td class="cell-price">₹78,000</td>
+                                    <td><span class="badge badge-available"><span class="badge-dot"></span>Available</span></td>
+                                    <td class="cell-date">Jan 14, 2025</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="action-btn" onclick="viewNumber(this)" aria-label="View number"><i data-lucide="eye"></i></button>
+                                            <a href="#" class="action-btn" aria-label="Edit number"><i data-lucide="edit-3"></i></a>
+                                            <a href="delete.php?id=3" class="action-btn action-btn--danger" aria-label="Delete number"><i data-lucide="trash-2"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-status="Premium" data-number="9999111222" data-category="Lucky" data-price="55000" data-date="2025-01-13">
+                                    <td class="cell-number">9999111222</td>
+                                    <td class="cell-category">Lucky</td>
+                                    <td class="cell-price">₹55,000</td>
+                                    <td><span class="badge badge-premium"><span class="badge-dot"></span>Premium</span></td>
+                                    <td class="cell-date">Jan 13, 2025</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="action-btn" onclick="viewNumber(this)" aria-label="View number"><i data-lucide="eye"></i></button>
+                                            <a href="#" class="action-btn" aria-label="Edit number"><i data-lucide="edit-3"></i></a>
+                                            <a href="delete.php?id=4" class="action-btn action-btn--danger" aria-label="Delete number"><i data-lucide="trash-2"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-status="Available" data-number="8888000099" data-category="VIP" data-price="210000" data-date="2025-01-13">
+                                    <td class="cell-number">8888000099</td>
+                                    <td class="cell-category">VIP</td>
+                                    <td class="cell-price">₹2,10,000</td>
+                                    <td><span class="badge badge-available"><span class="badge-dot"></span>Available</span></td>
+                                    <td class="cell-date">Jan 13, 2025</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="action-btn" onclick="viewNumber(this)" aria-label="View number"><i data-lucide="eye"></i></button>
+                                            <a href="#" class="action-btn" aria-label="Edit number"><i data-lucide="edit-3"></i></a>
+                                            <a href="delete.php?id=5" class="action-btn action-btn--danger" aria-label="Delete number"><i data-lucide="trash-2"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-footer">
+                        <p class="table-footer-info">Showing <span id="showingCount">5</span> of 1,000 numbers</p>
+                        <div class="table-footer-actions">
+                            <button class="pagination-btn" aria-label="Next page">
+                                Show All<i data-lucide="chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Row 1: Monthly Added + Monthly Sold -->
+            <section id="numberStatus" class="charts-row">
+                <div class="glass-card chart-card reveal">
+                    <div class="chart-header">
+                        <div>
+                            <h3 class="chart-title">Monthly Numbers Added</h3>
+                            <p class="chart-subtitle">New inventory added each month</p>
+                        </div>
+                        <div class="chart-icon chart-icon--gold">
+                            <i data-lucide="trending-up"></i>
+                        </div>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="monthlyAddedChart"></canvas>
+                    </div>
+                </div>
+                <div class="glass-card chart-card reveal">
+                    <div class="chart-header">
+                        <div>
+                            <h3 class="chart-title">Numbers Sold (Monthly)</h3>
+                            <p class="chart-subtitle">Monthly sales tracking</p>
+                        </div>
+                        <div class="chart-icon chart-icon--blue">
+                            <i data-lucide="bar-chart-3"></i>
+                        </div>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="monthlySoldChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Row 2: Donuts + Comparison -->
+            <section class="charts-row" style="grid-template-columns: 1fr;">
+                <div style="display:grid; grid-template-columns: 1fr; gap:20px;">
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
+                        <!-- Status Distribution Donut -->
+                        <div class="glass-card chart-card reveal">
+                            <div style="margin-bottom:16px;">
+                                <h3 class="chart-title">Status Distribution</h3>
+                                <p class="chart-subtitle">Number status breakdown</p>
+                            </div>
+                            <div class="donut-wrapper">
+                                <canvas id="statusDonutChart"></canvas>
+                                <div class="donut-center">
+                                    <p class="donut-center-value">1,000</p>
+                                    <p class="donut-center-label">Total</p>
+                                </div>
+                            </div>
+                            <div class="legend-grid">
+                                <div class="legend-item">
+                                    <span class="legend-dot legend-dot--green"></span>
+                                    <span class="legend-label">Available</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-dot legend-dot--red"></span>
+                                    <span class="legend-label">Sold</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-dot legend-dot--gold"></span>
+                                    <span class="legend-label">Premium</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-dot legend-dot--blue"></span>
+                                    <span class="legend-label">Reserved</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Category Distribution Donut -->
+                        <div class="glass-card chart-card reveal">
+                            <div style="margin-bottom:16px;">
+                                <h3 class="chart-title">Category Distribution</h3>
+                                <p class="chart-subtitle">Numbers by category</p>
+                            </div>
+                            <div class="donut-wrapper">
+                                <canvas id="categoryDonutChart"></canvas>
+                                <div class="donut-center">
+                                    <p class="donut-center-value">5</p>
+                                    <p class="donut-center-label">Categories</p>
+                                </div>
+                            </div>
+                            <div class="legend-grid">
+                                <div class="legend-item">
+                                    <span class="legend-dot" style="background:#E8CC6E;"></span>
+                                    <span class="legend-label">Fancy</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-dot" style="background:#D4AF37;"></span>
+                                    <span class="legend-label">Premium</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-dot" style="background:#4A9DFF;"></span>
+                                    <span class="legend-label">Business</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-dot" style="background:#A78BFA;"></span>
+                                    <span class="legend-label">Lucky</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-dot" style="background:#F472B6;"></span>
+                                    <span class="legend-label">VIP</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Available vs Sold Bar -->
+                    <div class="glass-card chart-card reveal">
+                        <div class="chart-header">
+                            <div>
+                                <h3 class="chart-title">Available vs Sold</h3>
+                                <p class="chart-subtitle">Monthly comparison</p>
+                            </div>
+                        </div>
+                        <div class="chart-body chart-body--tall">
+                            <canvas id="comparisonChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Inventory Overview -->
+            <section class="reveal">
+                <div class="glass-card glass-card--static" style="padding:20px;">
+                    <div style="margin-bottom:20px;">
+                        <h3 class="section-title">Inventory Overview</h3>
+                        <p class="section-subtitle">Current stock status across all categories</p>
+                    </div>
+                    <div class="inventory-grid">
+                        <!-- Available Numbers -->
+                        <div class="inventory-item">
+                            <div class="inventory-item-header">
+                                <span class="inventory-item-label">Available Numbers</span>
+                                <span class="inventory-item-value">8,432</span>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill progress-fill--green" data-width="65.6"></div>
+                            </div>
+                            <p class="inventory-item-note">65.6% of total inventory</p>
+                        </div>
+                        <!-- Sold Numbers -->
+                        <div class="inventory-item">
+                            <div class="inventory-item-header">
+                                <span class="inventory-item-label">Sold Numbers</span>
+                                <span class="inventory-item-value">3,156</span>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill progress-fill--red" data-width="24.6"></div>
+                            </div>
+                            <p class="inventory-item-note">24.6% of total inventory</p>
+                        </div>
+                        <!-- Premium Numbers -->
+                        <div class="inventory-item">
+                            <div class="inventory-item-header">
+                                <span class="inventory-item-label">Premium Numbers</span>
+                                <span class="inventory-item-value">3,156</span>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill progress-fill--gold" data-width="24.6"></div>
+                            </div>
+                            <p class="inventory-item-note">24.6% of total inventory</p>
+                        </div>
+                        <!-- Reserved Numbers -->
+                        <div class="inventory-item">
+                            <div class="inventory-item-header">
+                                <span class="inventory-item-label">Reserved Numbers</span>
+                                <span class="inventory-item-value">1,259</span>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill progress-fill--blue" data-width="9.8"></div>
+                            </div>
+                            <p class="inventory-item-note">9.8% of total inventory</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Activity + Quick Actions -->
+            <section class="bottom-row">
+                <!-- Recent Activity -->
+                <div class="glass-card glass-card--static" style="padding:20px;">
+                    <div style="margin-bottom:20px;">
+                        <h3 class="section-title">Recent Activity</h3>
+                        <p class="section-subtitle">Latest administrative actions</p>
+                    </div>
+                    <div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot timeline-dot--green"></div>
+                            <div>
+                                <p class="timeline-title">New Number Added</p>
+                                <p class="timeline-description">9999001122 added to Fancy</p>
+                                <p class="timeline-time">2 min ago</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot timeline-dot--gold"></div>
+                            <div>
+                                <p class="timeline-title">Number Updated</p>
+                                <p class="timeline-description">8888777766 price changed to 1,25,000</p>
+                                <p class="timeline-time">15 min ago</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot timeline-dot--blue"></div>
+                            <div>
+                                <p class="timeline-title">Status Changed</p>
+                                <p class="timeline-description">9999111222 marked as Premium</p>
+                                <p class="timeline-time">32 min ago</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot timeline-dot--red"></div>
+                            <div>
+                                <p class="timeline-title">Number Deleted</p>
+                                <p class="timeline-description">5555444433 removed from inventory</p>
+                                <p class="timeline-time">1 hr ago</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot timeline-dot--gold-light"></div>
+                            <div>
+                                <p class="timeline-title">Price Changed</p>
+                                <p class="timeline-description">7777666655 updated to 78,000</p>
+                                <p class="timeline-time">2 hr ago</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot timeline-dot--purple"></div>
+                            <div>
+                                <p class="timeline-title">Admin Login</p>
+                                <p class="timeline-description">Admin logged in from 192.168.1.1</p>
+                                <p class="timeline-time">3 hr ago</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="glass-card glass-card--static" style="padding:20px;">
+                    <div style="margin-bottom:20px;">
+                        <h3 class="section-title">Quick Actions</h3>
+                        <p class="section-subtitle">Common management tasks</p>
+                    </div>
+                    <div class="quick-actions-grid">
+                        <div class="quick-btn" onclick="openModal('addModal')">
+                            <div class="icon-wrap"><i data-lucide="plus"></i></div>
+                            <span>Add New Number</span>
+                        </div>
+                        <a href="import.php" class="quick-btn">
+                            <div class="icon-wrap"><i data-lucide="upload"></i></div>
+                            <span>Import Numbers</span>
+                        </a>
+                        <a href="export.php" class="quick-btn">
+                            <div class="icon-wrap"><i data-lucide="download"></i></div>
+                            <span>Export Numbers</span>
+                        </a>
+                        <a href="bulkedit.php" class="quick-btn">
+                            <div class="icon-wrap"><i data-lucide="pencil"></i></div>
+                            <span>Bulk Edit</span>
+                        </a>
+                        <a href="reports.php" class="quick-btn">
+                            <div class="icon-wrap"><i data-lucide="file-bar-chart"></i></div>
+                            <span>Reports</span>
+                        </a>
+                        <a href="settings.html" class="quick-btn">
+                            <div class="icon-wrap"><i data-lucide="settings"></i></div>
+                            <span>Settings</span>
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Add Number Modal -->
+    <div class="modal-overlay" id="addModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Number</h3>
+                <button class="modal-close" onclick="closeModal('addModal')" aria-label="Close modal">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <form onsubmit="handleAddNumber(event)">
+                <div class="form-group">
+                    <label class="form-label" for="addNumber">VIP Number</label>
+                    <input type="text" id="addNumber" class="input-field" placeholder="e.g. 9999001122" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="addCategory">Category</label>
+                        <select id="addCategory" class="input-field" required>
+                            <option value="">Select category</option>
+                            <option value="Fancy">Fancy</option>
+                            <option value="Premium">Premium</option>
+                            <option value="Business">Business</option>
+                            <option value="Lucky">Lucky</option>
+                            <option value="VIP">VIP</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="addPrice">Price (₹)</label>
+                        <input type="number" id="addPrice" class="input-field" placeholder="e.g. 45000" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="addStatus">Status</label>
+                        <select id="addStatus" class="input-field" required>
+                            <option value="Available">Available</option>
+                            <option value="Premium">Premium</option>
+                            <option value="Reserved">Reserved</option>
+                            <option value="Sold">Sold</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="addDate">Date Added</label>
+                        <input type="date" id="addDate" class="input-field" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('addModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Number</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Number Modal -->
+    <div class="modal-overlay" id="viewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Number Details</h3>
+                <button class="modal-close" onclick="closeModal('viewModal')" aria-label="Close modal">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div id="viewModalBody"></div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('viewModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // Initialize Lucide Icons
+        // ========================================
+        lucide.createIcons();
+
+        // ========================================
+        // Sidebar Toggle
+        // ========================================
+        function toggleSidebar() {
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+        }
+
+        // ========================================
+        // Dropdown Toggle
+        // ========================================
+        function toggleDropdown(id) {
+            var dropdown = document.getElementById(id);
+            // Close all other dropdowns first
+            document.querySelectorAll('.dropdown.show').forEach(function(d) {
+                if (d.id !== id) d.classList.remove('show');
+            });
+            dropdown.classList.toggle('show');
+        }
+
+        // Close dropdowns on outside click
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.profile-wrapper') && !e.target.closest('.notification-btn')) {
+                document.querySelectorAll('.dropdown.show').forEach(function(d) {
+                    d.classList.remove('show');
+                });
+            }
+        });
+
+        // ========================================
+        // Table Filtering
+        // ========================================
+        function filterTable(query) {
+            query = query.toLowerCase().trim();
+            var rows = document.querySelectorAll('#tableBody tr');
+            var visibleCount = 0;
+            rows.forEach(function(row) {
+                var number = (row.dataset.number || '').toLowerCase();
+                var category = (row.dataset.category || '').toLowerCase();
+                var status = (row.dataset.status || '').toLowerCase();
+                var match = !query || number.includes(query) || category.includes(query) || status.includes(query);
+                row.style.display = match ? '' : 'none';
+                if (match) visibleCount++;
+            });
+            var countEl = document.getElementById('showingCount');
+            if (countEl) countEl.textContent = visibleCount;
+        }
+
+        function filterByStatus(status) {
+            var rows = document.querySelectorAll('#tableBody tr');
+            var visibleCount = 0;
+            rows.forEach(function(row) {
+                var match = status === 'all' || row.dataset.status === status;
+                row.style.display = match ? '' : 'none';
+                if (match) visibleCount++;
+            });
+            var countEl = document.getElementById('showingCount');
+            if (countEl) countEl.textContent = visibleCount;
+        }
+
+        // ========================================
+        // Modal Functions
+        // ========================================
+        function openModal(id) {
+            document.getElementById(id).classList.add('show');
+            document.body.style.overflow = 'hidden';
+            lucide.createIcons();
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        // Close modal on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) {
+                    overlay.classList.remove('show');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+
+        // ========================================
+        // View Number Details
+        // ========================================
+        function viewNumber(btn) {
+            var row = btn.closest('tr');
+            var number = row.dataset.number;
+            var category = row.dataset.category;
+            var price = row.dataset.price;
+            var status = row.dataset.status;
+            var date = row.dataset.date;
+
+            var statusClass = 'badge-' + status.toLowerCase();
+            var formattedPrice = '₹' + parseInt(price).toLocaleString('en-IN');
+
+            var body = document.getElementById('viewModalBody');
+            body.innerHTML = '<div style="text-align:center; margin-bottom:24px;">' +
+                '<p style="font-family:var(--font-display); font-size:32px; font-weight:700; letter-spacing:0.05em;">' + number + '</p>' +
+                '<span class="badge ' + statusClass + '" style="margin-top:12px;"><span class="badge-dot"></span>' + status + '</span>' +
+                '</div>' +
+                '<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">' +
+                '<div style="padding:12px 16px; border-radius:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05);">' +
+                '<p style="font-size:11px; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:0.05em;">Category</p>' +
+                '<p style="font-size:15px; font-weight:600; color:#fff; margin-top:4px;">' + category + '</p>' +
+                '</div>' +
+                '<div style="padding:12px 16px; border-radius:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05);">' +
+                '<p style="font-size:11px; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:0.05em;">Price</p>' +
+                '<p style="font-size:15px; font-weight:600; color:#fff; margin-top:4px;">' + formattedPrice + '</p>' +
+                '</div>' +
+                '<div style="padding:12px 16px; border-radius:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); grid-column:1/-1;">' +
+                '<p style="font-size:11px; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:0.05em;">Date Added</p>' +
+                '<p style="font-size:15px; font-weight:600; color:#fff; margin-top:4px;">' + date + '</p>' +
+                '</div>' +
+                '</div>';
+
+            openModal('viewModal');
+        }
+
+        // ========================================
+        // Handle Add Number Form
+        // ========================================
+        function handleAddNumber(e) {
+            e.preventDefault();
+            closeModal('addModal');
+            // In a real app, this would submit to a server
+            alert('Number added successfully! (Demo)');
+            e.target.reset();
+        }
+
+        // ========================================
+        // Scroll Reveal Animation
+        // ========================================
+        var revealObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+        document.querySelectorAll('.reveal').forEach(function(el) {
+            revealObserver.observe(el);
+        });
+
+        // ========================================
+        // Progress Bar Animation
+        // ========================================
+        var progressObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    var fills = entry.target.querySelectorAll('.progress-fill[data-width]');
+                    fills.forEach(function(fill) {
+                        var width = fill.dataset.width;
+                        setTimeout(function() {
+                            fill.style.width = width + '%';
+                        }, 200);
+                    });
+                }
+            });
+        }, { threshold: 0.2 });
+
+        document.querySelectorAll('.progress-track').forEach(function(track) {
+            progressObserver.observe(track);
+        });
+
+        // ========================================
+        // Set today's date as default for add form
+        // ========================================
+        var dateInput = document.getElementById('addDate');
+        if (dateInput) {
+            var today = new Date().toISOString().split('T')[0];
+            dateInput.value = today;
+        }
+
+        // ========================================
+        // Chart.js Configuration & Initialization
+        // ========================================
+        Chart.defaults.color = 'rgba(255,255,255,0.3)';
+        Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+        Chart.defaults.font.family = "'DM Sans', sans-serif";
+
+        var months = ['Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan'];
+
+        // Monthly Numbers Added — Line Chart
+        new Chart(document.getElementById('monthlyAddedChart'), {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: 'Numbers Added',
+                    data: [120, 145, 132, 168, 155, 180],
+                    borderColor: '#D4AF37',
+                    backgroundColor: 'rgba(212,175,55,0.08)',
+                    borderWidth: 2.5,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#D4AF37',
+                    pointBorderColor: '#0D0D0D',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1A1A1A',
+                        borderColor: 'rgba(255,255,255,0.1)',
+                        borderWidth: 1,
+                        titleColor: '#fff',
+                        bodyColor: 'rgba(255,255,255,0.7)',
+                        padding: 12,
+                        cornerRadius: 10,
+                        displayColors: false
+                    }
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+                    y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { font: { size: 11 } }, beginAtZero: true }
+                }
+            }
+        });
+
+        // Monthly Sold — Bar Chart
+        new Chart(document.getElementById('monthlySoldChart'), {
+            type: 'bar',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: 'Numbers Sold',
+                    data: [85, 92, 78, 110, 98, 125],
+                    backgroundColor: 'rgba(74,157,255,0.6)',
+                    borderColor: '#4A9DFF',
+                    borderWidth: 1,
+                    borderRadius: 6,
+                    borderSkipped: false,
+                    hoverBackgroundColor: 'rgba(74,157,255,0.8)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1A1A1A',
+                        borderColor: 'rgba(255,255,255,0.1)',
+                        borderWidth: 1,
+                        titleColor: '#fff',
+                        bodyColor: 'rgba(255,255,255,0.7)',
+                        padding: 12,
+                        cornerRadius: 10,
+                        displayColors: false
+                    }
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+                    y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { font: { size: 11 } }, beginAtZero: true }
+                }
+            }
+        });
+
+        // Status Distribution — Donut
+        new Chart(document.getElementById('statusDonutChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Available', 'Sold', 'Premium', 'Reserved'],
+                datasets: [{
+                    data: [800, 85, 356, 159],
+                    backgroundColor: ['#4ADE80', '#F87171', '#D4AF37', '#4A9DFF'],
+                    borderColor: '#0D0D0D',
+                    borderWidth: 3,
+                    hoverOffset: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '72%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1A1A1A',
+                        borderColor: 'rgba(255,255,255,0.1)',
+                        borderWidth: 1,
+                        titleColor: '#fff',
+                        bodyColor: 'rgba(255,255,255,0.7)',
+                        padding: 12,
+                        cornerRadius: 10
+                    }
+                }
+            }
+        });
+
+        // Category Distribution — Donut
+        new Chart(document.getElementById('categoryDonutChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Fancy', 'Premium', 'Business', 'Lucky', 'VIP'],
+                datasets: [{
+                    data: [280, 220, 200, 180, 120],
+                    backgroundColor: ['#E8CC6E', '#D4AF37', '#4A9DFF', '#A78BFA', '#F472B6'],
+                    borderColor: '#0D0D0D',
+                    borderWidth: 3,
+                    hoverOffset: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '72%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1A1A1A',
+                        borderColor: 'rgba(255,255,255,0.1)',
+                        borderWidth: 1,
+                        titleColor: '#fff',
+                        bodyColor: 'rgba(255,255,255,0.7)',
+                        padding: 12,
+                        cornerRadius: 10
+                    }
+                }
+            }
+        });
+
+        // Available vs Sold — Grouped Bar
+        new Chart(document.getElementById('comparisonChart'), {
+            type: 'bar',
+            data: {
+                labels: months,
+                datasets: [
+                    {
+                        label: 'Available',
+                        data: [120, 145, 132, 168, 155, 180],
+                        backgroundColor: 'rgba(74,157,255,0.5)',
+                        borderColor: '#4A9DFF',
+                        borderWidth: 1,
+                        borderRadius: 5,
+                        borderSkipped: false
+                    },
+                    {
+                        label: 'Sold',
+                        data: [85, 92, 78, 110, 98, 125],
+                        backgroundColor: 'rgba(212,175,55,0.5)',
+                        borderColor: '#D4AF37',
+                        borderWidth: 1,
+                        borderRadius: 5,
+                        borderSkipped: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'end',
+                        labels: {
+                            boxWidth: 10,
+                            boxHeight: 10,
+                            borderRadius: 3,
+                            useBorderRadius: true,
+                            padding: 16,
+                            font: { size: 12 },
+                            color: 'rgba(255,255,255,0.5)'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#1A1A1A',
+                        borderColor: 'rgba(255,255,255,0.1)',
+                        borderWidth: 1,
+                        titleColor: '#fff',
+                        bodyColor: 'rgba(255,255,255,0.7)',
+                        padding: 12,
+                        cornerRadius: 10
+                    }
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+                    y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { font: { size: 11 } }, beginAtZero: true }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

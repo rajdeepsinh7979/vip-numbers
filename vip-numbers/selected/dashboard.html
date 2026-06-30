@@ -219,6 +219,19 @@
         }
         .modal-overlay.show .modal-content { transform: translateY(0) scale(1); }
 
+        /* Toast */
+        .toast-container { position: fixed; top: 24px; right: 24px; z-index: 200; display: flex; flex-direction: column; gap: 10px; }
+        .toast {
+            padding: 14px 20px; border-radius: 12px;
+            background: #222; border: 1px solid rgba(255,255,255,0.08);
+            font-size: 13px; color: #fff; min-width: 280px;
+            display: flex; align-items: center; gap: 10px;
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        .toast.show { transform: translateX(0); }
+
         /* Dropdown */
         .dropdown {
             position: absolute; top: calc(100% + 8px); right: 0;
@@ -313,6 +326,9 @@
     <!-- Gold top accent line -->
     <div class="gold-line"></div>
 
+    <!-- Toast container -->
+    <div class="toast-container" id="toastContainer"></div>
+
     <!-- Mobile sidebar overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
@@ -347,7 +363,7 @@
             <a href="profile.html" class="sidebar-link" data-section="profile">
                 <i data-lucide="user"></i> Profile
             </a>
-            <a href="logout.php" class="sidebar-link">
+            <a href="#" class="sidebar-link" onclick="event.preventDefault(); showToast('Logged out successfully', 'success')">
                 <i data-lucide="log-out"></i> Logout
             </a>
         </nav>
@@ -410,12 +426,13 @@
                                 <p class="text-sm font-semibold text-white">Admin User</p>
                                 <p class="text-[11px] text-white/35 mt-0.5">admin@vipnumbers.com</p>
                             </div>
-                            <a href="profile.html" class="dropdown-item">
+                            <div class="dropdown-item" onclick="showToast('Opening profile...', 'info')">
                                 <i data-lucide="user"></i> My Profile
-                            </a>
-                            <a href="logout.php" class="dropdown-item">
+                            </div>
+                            
+                            <div class="dropdown-item" onclick="showToast('Logged out successfully', 'success')">
                                 <i data-lucide="log-out"></i> Logout
-                            </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -432,7 +449,7 @@
                     <div class="flex items-start justify-between">
                         <div>
                             <p class="text-xs font-medium text-white/40 uppercase tracking-wider">Total Numbers</p>
-                            <p class="text-3xl font-bold text-white mt-2 font-display">1,000</p>
+                            <p class="text-3xl font-bold text-white mt-2 font-display">12,847</p>
                             <div class="flex items-center gap-1.5 mt-2">
                                 <i data-lucide="trending-up" class="w-3.5 h-3.5 text-green-400"></i>
                                 <span class="text-xs font-semibold text-green-400">+12.5%</span>
@@ -449,7 +466,7 @@
                     <div class="flex items-start justify-between">
                         <div>
                             <p class="text-xs font-medium text-white/40 uppercase tracking-wider">Available Numbers</p>
-                            <p class="text-3xl font-bold text-white mt-2 font-display">800</p>
+                            <p class="text-3xl font-bold text-white mt-2 font-display">8,432</p>
                             <div class="flex items-center gap-1.5 mt-2">
                                 <i data-lucide="trending-up" class="w-3.5 h-3.5 text-green-400"></i>
                                 <span class="text-xs font-semibold text-green-400">+8.3%</span>
@@ -466,7 +483,7 @@
                     <div class="flex items-start justify-between">
                         <div>
                             <p class="text-xs font-medium text-white/40 uppercase tracking-wider">Premium Numbers</p>
-                            <p class="text-3xl font-bold text-white mt-2 font-display">356</p>
+                            <p class="text-3xl font-bold text-white mt-2 font-display">3,156</p>
                             <div class="flex items-center gap-1.5 mt-2">
                                 <i data-lucide="trending-up" class="w-3.5 h-3.5 text-gold"></i>
                                 <span class="text-xs font-semibold text-gold">+18.2%</span>
@@ -483,7 +500,7 @@
                     <div class="flex items-start justify-between">
                         <div>
                             <p class="text-xs font-medium text-white/40 uppercase tracking-wider">Reserved / Featured</p>
-                            <p class="text-3xl font-bold text-white mt-2 font-display">159</p>
+                            <p class="text-3xl font-bold text-white mt-2 font-display">1,259</p>
                             <div class="flex items-center gap-1.5 mt-2">
                                 <i data-lucide="trending-down" class="w-3.5 h-3.5 text-red-400"></i>
                                 <span class="text-xs font-semibold text-red-400">-3.1%</span>
@@ -532,85 +549,23 @@
                                 </tr>
                             </thead>
                             <tbody id="tableBody">
-                                <tr data-status="Available" data-number="9999001122" data-category="Fancy" data-price="45000" data-date="2025-01-15">
-                                    <td><span class="font-semibold text-white tracking-wide">9999001122</span></td>
-                                    <td class="text-white/60">Fancy</td>
-                                    <td class="text-white/80 font-medium">₹45,000</td>
-                                    <td><span class="badge badge-available"><span class="w-1.5 h-1.5 rounded-full" style="background:#4ADE80"></span>Available</span></td>
-                                    <td class="text-white/40">Jan 15, 2025</td>
-                                    <td class="text-right">
-                                        <div class="flex items-center justify-end gap-1.5">
-                                            <button class="action-btn" onclick="viewNumber(this)" aria-label="View number"><i data-lucide="eye"></i></button>
-                                            <a href="#" class="action-btn" aria-label="Edit number"><i data-lucide="edit-3"></i></a>
-                                            <a href="delete.php?id=1" class="action-btn danger" aria-label="Delete number"><i data-lucide="trash-2"></i></a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr data-status="Sold" data-number="8888777766" data-category="Premium" data-price="125000" data-date="2025-01-14">
-                                    <td><span class="font-semibold text-white tracking-wide">8888777766</span></td>
-                                    <td class="text-white/60">Premium</td>
-                                    <td class="text-white/80 font-medium">₹1,25,000</td>
-                                    <td><span class="badge badge-sold"><span class="w-1.5 h-1.5 rounded-full" style="background:#F87171"></span>Sold</span></td>
-                                    <td class="text-white/40">Jan 14, 2025</td>
-                                    <td class="text-right">
-                                        <div class="flex items-center justify-end gap-1.5">
-                                            <button class="action-btn" onclick="viewNumber(this)" aria-label="View number"><i data-lucide="eye"></i></button>
-                                            <a href="#" class="action-btn" aria-label="Edit number"><i data-lucide="edit-3"></i></a>
-                                            <a href="delete.php?id=2" class="action-btn danger" aria-label="Delete number"><i data-lucide="trash-2"></i></a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr data-status="Available" data-number="7777666655" data-category="Business" data-price="78000" data-date="2025-01-14">
-                                    <td><span class="font-semibold text-white tracking-wide">7777666655</span></td>
-                                    <td class="text-white/60">Business</td>
-                                    <td class="text-white/80 font-medium">₹78,000</td>
-                                    <td><span class="badge badge-available"><span class="w-1.5 h-1.5 rounded-full" style="background:#4ADE80"></span>Available</span></td>
-                                    <td class="text-white/40">Jan 14, 2025</td>
-                                    <td class="text-right">
-                                        <div class="flex items-center justify-end gap-1.5">
-                                            <button class="action-btn" onclick="viewNumber(this)" aria-label="View number"><i data-lucide="eye"></i></button>
-                                            <a href="#" class="action-btn" aria-label="Edit number"><i data-lucide="edit-3"></i></a>
-                                            <a href="delete.php?id=3" class="action-btn danger" aria-label="Delete number"><i data-lucide="trash-2"></i></a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr data-status="Premium" data-number="9999111222" data-category="Lucky" data-price="55000" data-date="2025-01-13">
-                                    <td><span class="font-semibold text-white tracking-wide">9999111222</span></td>
-                                    <td class="text-white/60">Lucky</td>
-                                    <td class="text-white/80 font-medium">₹55,000</td>
-                                    <td><span class="badge badge-premium"><span class="w-1.5 h-1.5 rounded-full" style="background:#E8CC6E"></span>Premium</span></td>
-                                    <td class="text-white/40">Jan 13, 2025</td>
-                                    <td class="text-right">
-                                        <div class="flex items-center justify-end gap-1.5">
-                                            <button class="action-btn" onclick="viewNumber(this)" aria-label="View number"><i data-lucide="eye"></i></button>
-                                            <a href="#" class="action-btn" aria-label="Edit number"><i data-lucide="edit-3"></i></a>
-                                            <a href="delete.php?id=4" class="action-btn danger" aria-label="Delete number"><i data-lucide="trash-2"></i></a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr data-status="Available" data-number="8888000099" data-category="VIP" data-price="210000" data-date="2025-01-13">
-                                    <td><span class="font-semibold text-white tracking-wide">8888000099</span></td>
-                                    <td class="text-white/60">VIP</td>
-                                    <td class="text-white/80 font-medium">₹2,10,000</td>
-                                    <td><span class="badge badge-available"><span class="w-1.5 h-1.5 rounded-full" style="background:#4ADE80"></span>Available</span></td>
-                                    <td class="text-white/40">Jan 13, 2025</td>
-                                    <td class="text-right">
-                                        <div class="flex items-center justify-end gap-1.5">
-                                            <button class="action-btn" onclick="viewNumber(this)" aria-label="View number"><i data-lucide="eye"></i></button>
-                                            <a href="#" class="action-btn" aria-label="Edit number"><i data-lucide="edit-3"></i></a>
-                                            <a href="delete.php?id=5" class="action-btn danger" aria-label="Delete number"><i data-lucide="trash-2"></i></a>
-                                        </div>
-                                    </td>
-                                </tr>
+                                <!-- Populated by JS -->
                             </tbody>
                         </table>
                     </div>
                     <div class="flex items-center justify-between px-5 py-4 border-t border-white/5">
-                        <p class="text-xs text-white/30">Showing <span id="showingCount">5</span> of 1,000 numbers</p>
+                        <p class="text-xs text-white/30">Showing <span id="showingCount">8</span> of 12,847 numbers</p>
                         <div class="flex items-center gap-1">
-                            
-                            <button class="w-80 h-8 rounded-lg bg-white/[0.04] flex items-center justify-center text-white/30 hover:text-white hover:bg-white/[0.08] transition-all text-xs" aria-label="Next page">
-                                Show All<i data-lucide="chevron-right" class="w-4 h-4"></i>
+                            <button class="w-8 h-8 rounded-lg bg-white/[0.04] flex items-center justify-center text-white/30 hover:text-white hover:bg-white/[0.08] transition-all text-xs" aria-label="Previous page">
+                                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                            </button>
+                            <button class="w-8 h-8 rounded-lg bg-gold/20 flex items-center justify-center text-gold text-xs font-semibold">1</button>
+                            <button class="w-8 h-8 rounded-lg bg-white/[0.04] flex items-center justify-center text-white/40 hover:text-white hover:bg-white/[0.08] transition-all text-xs">2</button>
+                            <button class="w-8 h-8 rounded-lg bg-white/[0.04] flex items-center justify-center text-white/40 hover:text-white hover:bg-white/[0.08] transition-all text-xs">3</button>
+                            <span class="text-white/20 text-xs px-1">...</span>
+                            <button class="w-8 h-8 rounded-lg bg-white/[0.04] flex items-center justify-center text-white/40 hover:text-white hover:bg-white/[0.08] transition-all text-xs">48</button>
+                            <button class="w-8 h-8 rounded-lg bg-white/[0.04] flex items-center justify-center text-white/30 hover:text-white hover:bg-white/[0.08] transition-all text-xs" aria-label="Next page">
+                                <i data-lucide="chevron-right" class="w-4 h-4"></i>
                             </button>
                         </div>
                     </div>
@@ -660,7 +615,7 @@
                     <div class="relative mx-auto" style="max-width:220px; height:220px;">
                         <canvas id="statusDonutChart"></canvas>
                         <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                            <p class="text-2xl font-bold text-white font-display">1,000</p>
+                            <p class="text-2xl font-bold text-white font-display">12,847</p>
                             <p class="text-[11px] text-white/30">Total</p>
                         </div>
                     </div>
@@ -713,51 +668,8 @@
                         <h3 class="text-base font-semibold text-white">Inventory Overview</h3>
                         <p class="text-xs text-white/30 mt-0.5">Current stock status across all categories</p>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6">
-                        <!-- Available Numbers -->
-                        <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-sm text-white/60">Available Numbers</span>
-                                <span class="text-sm font-semibold text-white">8,432</span>
-                            </div>
-                            <div class="progress-track">
-                                <div class="progress-fill" data-width="65.6" style="background:#4ADE80;"></div>
-                            </div>
-                            <p class="text-[11px] text-white/25 mt-1.5">65.6% of total inventory</p>
-                        </div>
-                        <!-- Sold Numbers -->
-                        <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-sm text-white/60">Sold Numbers</span>
-                                <span class="text-sm font-semibold text-white">3,156</span>
-                            </div>
-                            <div class="progress-track">
-                                <div class="progress-fill" data-width="24.6" style="background:#F87171;"></div>
-                            </div>
-                            <p class="text-[11px] text-white/25 mt-1.5">24.6% of total inventory</p>
-                        </div>
-                        <!-- Premium Numbers -->
-                        <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-sm text-white/60">Premium Numbers</span>
-                                <span class="text-sm font-semibold text-white">3,156</span>
-                            </div>
-                            <div class="progress-track">
-                                <div class="progress-fill" data-width="24.6" style="background:#D4AF37;"></div>
-                            </div>
-                            <p class="text-[11px] text-white/25 mt-1.5">24.6% of total inventory</p>
-                        </div>
-                        <!-- Reserved Numbers -->
-                        <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-sm text-white/60">Reserved Numbers</span>
-                                <span class="text-sm font-semibold text-white">1,259</span>
-                            </div>
-                            <div class="progress-track">
-                                <div class="progress-fill" data-width="9.8" style="background:#60B5FF;"></div>
-                            </div>
-                            <p class="text-[11px] text-white/25 mt-1.5">9.8% of total inventory</p>
-                        </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6" id="inventoryBars">
+                        <!-- Populated by JS -->
                     </div>
                 </div>
             </section>
@@ -770,55 +682,8 @@
                         <h3 class="text-base font-semibold text-white">Recent Activity</h3>
                         <p class="text-xs text-white/30 mt-0.5">Latest administrative actions</p>
                     </div>
-                    <div class="space-y-0">
-                        <div class="timeline-item">
-                            <div class="timeline-dot" style="border-color:#4ADE80;"></div>
-                            <div>
-                                <p class="text-sm font-medium text-white">New Number Added</p>
-                                <p class="text-xs text-white/40 mt-0.5">9999001122 added to Fancy</p>
-                                <p class="text-[11px] text-white/20 mt-1">2 min ago</p>
-                            </div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-dot" style="border-color:#D4AF37;"></div>
-                            <div>
-                                <p class="text-sm font-medium text-white">Number Updated</p>
-                                <p class="text-xs text-white/40 mt-0.5">8888777766 price changed to 1,25,000</p>
-                                <p class="text-[11px] text-white/20 mt-1">15 min ago</p>
-                            </div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-dot" style="border-color:#60B5FF;"></div>
-                            <div>
-                                <p class="text-sm font-medium text-white">Status Changed</p>
-                                <p class="text-xs text-white/40 mt-0.5">9999111222 marked as Premium</p>
-                                <p class="text-[11px] text-white/20 mt-1">32 min ago</p>
-                            </div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-dot" style="border-color:#F87171;"></div>
-                            <div>
-                                <p class="text-sm font-medium text-white">Number Deleted</p>
-                                <p class="text-xs text-white/40 mt-0.5">5555444433 removed from inventory</p>
-                                <p class="text-[11px] text-white/20 mt-1">1 hr ago</p>
-                            </div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-dot" style="border-color:#E8CC6E;"></div>
-                            <div>
-                                <p class="text-sm font-medium text-white">Price Changed</p>
-                                <p class="text-xs text-white/40 mt-0.5">7777666655 updated to 78,000</p>
-                                <p class="text-[11px] text-white/20 mt-1">2 hr ago</p>
-                            </div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-dot" style="border-color:#A78BFA;"></div>
-                            <div>
-                                <p class="text-sm font-medium text-white">Admin Login</p>
-                                <p class="text-xs text-white/40 mt-0.5">Admin logged in from 192.168.1.1</p>
-                                <p class="text-[11px] text-white/20 mt-1">3 hr ago</p>
-                            </div>
-                        </div>
+                    <div class="space-y-0" id="activityTimeline">
+                        <!-- Populated by JS -->
                     </div>
                 </div>
 
@@ -828,27 +693,8 @@
                         <h3 class="text-base font-semibold text-white">Quick Actions</h3>
                         <p class="text-xs text-white/30 mt-0.5">Common management tasks</p>
                     </div>
-                    <div class="grid grid-cols-3 gap-3">
-                        <div class="quick-btn" onclick="openModal('addModal')">
-                            <div class="icon-wrap"><i data-lucide="plus" class="w-5 h-5"></i></div>
-                            <span>Add New Number</span>
-                        </div>
-                        <a href="import.php" class="quick-btn">
-                            <div class="icon-wrap"><i data-lucide="upload" class="w-5 h-5"></i></div>
-                            <span>Import Numbers</span>
-                        </a>
-                        <a href="export.php" class="quick-btn">
-                            <div class="icon-wrap"><i data-lucide="download" class="w-5 h-5"></i></div>
-                            <span>Export Numbers</span>
-                        </a>
-                        <a href="categories.php" class="quick-btn">
-                            <div class="icon-wrap"><i data-lucide="tag" class="w-5 h-5"></i></div>
-                            <span>Manage Categories</span>
-                        </a>
-                        <a href="bulk-status.php" class="quick-btn">
-                            <div class="icon-wrap"><i data-lucide="refresh-cw" class="w-5 h-5"></i></div>
-                            <span>Update Status</span>
-                        </a>
+                    <div class="grid grid-cols-3 gap-3" id="quickActions">
+                        <!-- Populated by JS -->
                     </div>
                 </div>
             </section>
@@ -860,42 +706,8 @@
                         <h3 class="text-base font-semibold text-white">System Overview</h3>
                         <p class="text-xs text-white/30 mt-0.5">System status and information</p>
                     </div>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-                        <div class="sys-card">
-                            <div class="flex items-center gap-2.5 mb-2">
-                                <i data-lucide="plus-circle" class="w-4 h-4" style="color:#4ADE80;"></i>
-                                <span class="text-[11px] text-white/30 uppercase tracking-wider font-medium">Last Number Added</span>
-                            </div>
-                            <p class="text-sm font-semibold text-white">9999001122</p>
-                        </div>
-                        <div class="sys-card">
-                            <div class="flex items-center gap-2.5 mb-2">
-                                <i data-lucide="edit-3" class="w-4 h-4" style="color:#D4AF37;"></i>
-                                <span class="text-[11px] text-white/30 uppercase tracking-wider font-medium">Last Updated</span>
-                            </div>
-                            <p class="text-sm font-semibold text-white">8888777766</p>
-                        </div>
-                        <div class="sys-card">
-                            <div class="flex items-center gap-2.5 mb-2">
-                                <i data-lucide="layers" class="w-4 h-4" style="color:#60B5FF;"></i>
-                                <span class="text-[11px] text-white/30 uppercase tracking-wider font-medium">Total Categories</span>
-                            </div>
-                            <p class="text-sm font-semibold text-white">5</p>
-                        </div>
-                        <div class="sys-card">
-                            <div class="flex items-center gap-2.5 mb-2">
-                                <i data-lucide="heart-pulse" class="w-4 h-4" style="color:#4ADE80;"></i>
-                                <span class="text-[11px] text-white/30 uppercase tracking-wider font-medium">Database Health</span>
-                            </div>
-                            <p class="text-sm font-semibold text-white">Healthy</p>
-                        </div>
-                        <div class="sys-card">
-                            <div class="flex items-center gap-2.5 mb-2">
-                                <i data-lucide="shield-check" class="w-4 h-4" style="color:#A78BFA;"></i>
-                                <span class="text-[11px] text-white/30 uppercase tracking-wider font-medium">Last Backup</span>
-                            </div>
-                            <p class="text-sm font-semibold text-white">Jan 15, 08:00</p>
-                        </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4" id="systemCards">
+                        <!-- Populated by JS -->
                     </div>
                 </div>
             </section>
@@ -943,15 +755,15 @@
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
-            <form action="add_number.php" method="POST" class="space-y-4">
+            <form onsubmit="handleAddNumber(event)" class="space-y-4">
                 <div>
                     <label class="text-xs font-medium text-white/50 mb-1.5 block">VIP Number</label>
-                    <input type="text" name="number" class="input-field" placeholder="e.g. 9999001122" required id="newNumber">
+                    <input type="text" class="input-field" placeholder="e.g. 9999001122" required id="newNumber">
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="text-xs font-medium text-white/50 mb-1.5 block">Category</label>
-                        <select name="category" class="input-field" required id="newCategory">
+                        <select class="input-field" required id="newCategory">
                             <option value="">Select</option>
                             <option value="Fancy">Fancy</option>
                             <option value="Premium">Premium</option>
@@ -962,7 +774,7 @@
                     </div>
                     <div>
                         <label class="text-xs font-medium text-white/50 mb-1.5 block">Status</label>
-                        <select name="status" class="input-field" required id="newStatus">
+                        <select class="input-field" required id="newStatus">
                             <option value="Available">Available</option>
                             <option value="Premium">Premium</option>
                             <option value="Reserved">Reserved</option>
@@ -971,7 +783,7 @@
                 </div>
                 <div>
                     <label class="text-xs font-medium text-white/50 mb-1.5 block">Price (INR)</label>
-                    <input type="number" name="price" class="input-field" placeholder="e.g. 50000" required id="newPrice" min="0">
+                    <input type="number" class="input-field" placeholder="e.g. 50000" required id="newPrice" min="0">
                 </div>
                 <div class="flex items-center gap-3 pt-2">
                     <button type="submit" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-gold-dark to-gold text-charcoal-900 font-semibold text-sm hover:shadow-lg hover:shadow-gold/20 transition-all active:scale-[0.98]">
@@ -987,34 +799,291 @@
 
     <script>
         /* =========================================
-           UI INTERACTIONS ONLY
+           DATA
         ========================================= */
+        const numbersData = [
+            { number:'9999001122', category:'Fancy', price:45000, status:'Available', date:'2025-01-15' },
+            { number:'8888777766', category:'Premium', price:125000, status:'Sold', date:'2025-01-14' },
+            { number:'7777666655', category:'Business', price:78000, status:'Available', date:'2025-01-14' },
+            { number:'9999111222', category:'Lucky', price:55000, status:'Premium', date:'2025-01-13' },
+            { number:'8888000099', category:'VIP', price:210000, status:'Available', date:'2025-01-13' },
+            { number:'6666555544', category:'Fancy', price:32000, status:'Sold', date:'2025-01-12' },
+            { number:'9999888877', category:'Premium', price:185000, status:'Available', date:'2025-01-12' },
+            { number:'7777000088', category:'Business', price:65000, status:'Reserved', date:'2025-01-11' },
+        ];
 
-        // Sidebar toggle (mobile)
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('sidebarOverlay').classList.toggle('show');
+        const inventoryData = [
+            { label:'Available Numbers', count:8432, total:12847, color:'#4ADE80', bg:'rgba(34,197,94,0.15)' },
+            { label:'Sold Numbers', count:3156, total:12847, color:'#F87171', bg:'rgba(239,68,68,0.15)' },
+            { label:'Premium Numbers', count:3156, total:12847, color:'#D4AF37', bg:'rgba(212,175,55,0.15)' },
+            { label:'Reserved Numbers', count:1259, total:12847, color:'#60B5FF', bg:'rgba(74,157,255,0.15)' },
+        ];
+
+        const activityData = [
+            { action:'New Number Added', detail:'9999001122 added to Fancy', time:'2 min ago', color:'#4ADE80', icon:'plus-circle' },
+            { action:'Number Updated', detail:'8888777766 price changed to 1,25,000', time:'15 min ago', color:'#D4AF37', icon:'edit-3' },
+            { action:'Status Changed', detail:'9999111222 marked as Premium', time:'32 min ago', color:'#60B5FF', icon:'refresh-cw' },
+            { action:'Number Deleted', detail:'5555444433 removed from inventory', time:'1 hr ago', color:'#F87171', icon:'trash-2' },
+            { action:'Price Changed', detail:'7777666655 updated to 78,000', time:'2 hr ago', color:'#E8CC6E', icon:'dollar-sign' },
+            { action:'Admin Login', detail:'Admin logged in from 192.168.1.1', time:'3 hr ago', color:'#A78BFA', icon:'log-in' },
+        ];
+
+        const quickActionsData = [
+            { label:'Add New Number', icon:'plus', action:()=>openModal('addModal') },
+            { label:'Import Numbers', icon:'upload', action:()=>showToast('Import wizard opened — ready for Excel/CSV', 'info') },
+            { label:'Export Numbers', icon:'download', action:()=>showToast('Exporting 12,847 numbers to CSV...', 'success') },
+            { label:'Manage Categories', icon:'tag', action:()=>showToast('Category manager opened', 'info') },
+            { label:'Update Status', icon:'refresh-cw', action:()=>showToast('Bulk status update panel opened', 'info') },
+        ];
+
+        const systemData = [
+            { label:'Last Number Added', value:'9999001122', icon:'plus-circle', color:'#4ADE80' },
+            { label:'Last Updated', value:'8888777766', icon:'edit-3', color:'#D4AF37' },
+            { label:'Total Categories', value:'5', icon:'layers', color:'#60B5FF' },
+            { label:'Database Health', value:'Healthy', icon:'heart-pulse', color:'#4ADE80' },
+            { label:'Last Backup', value:'Jan 15, 08:00', icon:'shield-check', color:'#A78BFA' },
+        ];
+
+        /* =========================================
+           RENDER FUNCTIONS
+        ========================================= */
+        function renderTable(data) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = data.map((n, i) => {
+                const badgeClass = n.status === 'Available' ? 'badge-available' :
+                                   n.status === 'Sold' ? 'badge-sold' :
+                                   n.status === 'Premium' ? 'badge-premium' : 'badge-reserved';
+                const dotColor = n.status === 'Available' ? '#4ADE80' :
+                                 n.status === 'Sold' ? '#F87171' :
+                                 n.status === 'Premium' ? '#E8CC6E' : '#60B5FF';
+                return `<tr>
+                    <td><span class="font-semibold text-white tracking-wide">${n.number}</span></td>
+                    <td class="text-white/60">${n.category}</td>
+                    <td class="text-white/80 font-medium">${formatPrice(n.price)}</td>
+                    <td><span class="badge ${badgeClass}"><span class="w-1.5 h-1.5 rounded-full" style="background:${dotColor}"></span>${n.status}</span></td>
+                    <td class="text-white/40">${formatDate(n.date)}</td>
+                    <td class="text-right">
+                        <div class="flex items-center justify-end gap-1.5">
+                            <button class="action-btn" onclick="viewNumber(${i})" aria-label="View number"><i data-lucide="eye"></i></button>
+                            <button class="action-btn" onclick="editNumber(${i})" aria-label="Edit number"><i data-lucide="edit-3"></i></button>
+                            <button class="action-btn danger" onclick="deleteNumber(${i})" aria-label="Delete number"><i data-lucide="trash-2"></i></button>
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('');
+            document.getElementById('showingCount').textContent = data.length;
+            lucide.createIcons();
         }
 
-        // Dropdown toggle
-        function toggleDropdown(id) {
-            const dropdown = document.getElementById(id);
-            if (!dropdown) return;
-            // Close all other dropdowns first
-            document.querySelectorAll('.dropdown.show').forEach(d => {
-                if (d.id !== id) d.classList.remove('show');
+        function renderInventory() {
+            const container = document.getElementById('inventoryBars');
+            container.innerHTML = inventoryData.map(item => {
+                const pct = ((item.count / item.total) * 100).toFixed(1);
+                return `<div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-white/70 font-medium">${item.label}</span>
+                        <span class="text-sm font-semibold text-white">${item.count.toLocaleString()} <span class="text-white/25 font-normal">(${pct}%)</span></span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" data-width="${pct}" style="background:${item.color}; box-shadow:0 0 12px ${item.bg};"></div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function renderActivity() {
+            const container = document.getElementById('activityTimeline');
+            container.innerHTML = activityData.map(item => `
+                <div class="timeline-item">
+                    <div class="timeline-dot" style="border-color:${item.color}"></div>
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-white">${item.action}</p>
+                            <p class="text-xs text-white/35 mt-0.5">${item.detail}</p>
+                        </div>
+                        <span class="text-[11px] text-white/20 flex-shrink-0 ml-4">${item.time}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderQuickActions() {
+            const container = document.getElementById('quickActions');
+            container.innerHTML = quickActionsData.map(item => `
+                <button class="quick-btn" onclick="quickActionsData[${quickActionsData.indexOf(item)}].action()">
+                    <div class="icon-wrap"><i data-lucide="${item.icon}" class="w-5 h-5"></i></div>
+                    ${item.label}
+                </button>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function renderSystem() {
+            const container = document.getElementById('systemCards');
+            container.innerHTML = systemData.map(item => `
+                <div class="sys-card">
+                    <div class="flex items-center gap-2 mb-2.5">
+                        <i data-lucide="${item.icon}" class="w-4 h-4" style="color:${item.color}"></i>
+                        <span class="text-[11px] text-white/35 font-medium uppercase tracking-wider">${item.label}</span>
+                    </div>
+                    <p class="text-sm font-semibold text-white">${item.value}</p>
+                </div>
+            `).join('');
+        }
+
+        /* =========================================
+           UTILITY FUNCTIONS
+        ========================================= */
+        function formatPrice(p) {
+            return '₹' + p.toLocaleString('en-IN');
+        }
+
+        function formatDate(d) {
+            const date = new Date(d);
+            return date.toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+        }
+
+        /* =========================================
+           TABLE ACTIONS
+        ========================================= */
+        function viewNumber(idx) {
+            const n = numbersData[idx];
+            if (!n) return;
+            const dotColor = n.status === 'Available' ? '#4ADE80' :
+                             n.status === 'Sold' ? '#F87171' :
+                             n.status === 'Premium' ? '#E8CC6E' : '#60B5FF';
+            document.getElementById('viewModalContent').innerHTML = `
+                <div class="text-center py-4">
+                    <p class="text-4xl font-display font-bold text-gold tracking-widest mb-4">${n.number}</p>
+                    <div class="flex items-center justify-center gap-2 mb-6">
+                        <span class="w-2 h-2 rounded-full" style="background:${dotColor}"></span>
+                        <span class="text-sm font-medium" style="color:${dotColor}">${n.status}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 text-left">
+                        <div class="sys-card">
+                            <p class="text-[11px] text-white/35 uppercase tracking-wider mb-1">Category</p>
+                            <p class="text-sm font-semibold text-white">${n.category}</p>
+                        </div>
+                        <div class="sys-card">
+                            <p class="text-[11px] text-white/35 uppercase tracking-wider mb-1">Price</p>
+                            <p class="text-sm font-semibold text-gold">${formatPrice(n.price)}</p>
+                        </div>
+                        <div class="sys-card col-span-2">
+                            <p class="text-[11px] text-white/35 uppercase tracking-wider mb-1">Date Added</p>
+                            <p class="text-sm font-semibold text-white">${formatDate(n.date)}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            openModal('viewModal');
+        }
+
+        function editNumber(idx) {
+            const n = numbersData[idx];
+            if (!n) return;
+            document.getElementById('viewModalContent').innerHTML = `
+                <form onsubmit="handleEditNumber(event, ${idx})" class="space-y-4">
+                    <div>
+                        <label class="text-xs font-medium text-white/50 mb-1.5 block">VIP Number</label>
+                        <input type="text" class="input-field" value="${n.number}" required id="editNumber">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs font-medium text-white/50 mb-1.5 block">Category</label>
+                            <select class="input-field" required id="editCategory">
+                                ${['Fancy','Premium','Business','Lucky','VIP'].map(c => `<option value="${c}" ${c===n.category?'selected':''}>${c}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-white/50 mb-1.5 block">Status</label>
+                            <select class="input-field" required id="editStatus">
+                                ${['Available','Sold','Premium','Reserved'].map(s => `<option value="${s}" ${s===n.status?'selected':''}>${s}</option>`).join('')}
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs font-medium text-white/50 mb-1.5 block">Price (INR)</label>
+                        <input type="number" class="input-field" value="${n.price}" required id="editPrice" min="0">
+                    </div>
+                    <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-gold-dark to-gold text-charcoal-900 font-semibold text-sm hover:shadow-lg hover:shadow-gold/20 transition-all active:scale-[0.98]">
+                        Save Changes
+                    </button>
+                </form>
+            `;
+            openModal('viewModal');
+        }
+
+        function handleEditNumber(e, idx) {
+            e.preventDefault();
+            numbersData[idx].number = document.getElementById('editNumber').value;
+            numbersData[idx].category = document.getElementById('editCategory').value;
+            numbersData[idx].status = document.getElementById('editStatus').value;
+            numbersData[idx].price = parseInt(document.getElementById('editPrice').value);
+            renderTable(getFilteredData());
+            closeModal('viewModal');
+            showToast('Number updated successfully', 'success');
+        }
+
+        function deleteNumber(idx) {
+            const n = numbersData[idx];
+            if (!n) return;
+            numbersData.splice(idx, 1);
+            renderTable(getFilteredData());
+            showToast(`${n.number} has been removed`, 'error');
+        }
+
+        function handleAddNumber(e) {
+            e.preventDefault();
+            const newNum = {
+                number: document.getElementById('newNumber').value,
+                category: document.getElementById('newCategory').value,
+                status: document.getElementById('newStatus').value,
+                price: parseInt(document.getElementById('newPrice').value),
+                date: new Date().toISOString().split('T')[0],
+            };
+            numbersData.unshift(newNum);
+            renderTable(getFilteredData());
+            closeModal('addModal');
+            document.getElementById('newNumber').value = '';
+            document.getElementById('newCategory').value = '';
+            document.getElementById('newPrice').value = '';
+            showToast(`${newNum.number} added successfully`, 'success');
+        }
+
+        /* =========================================
+           FILTER & SEARCH
+        ========================================= */
+        let currentStatusFilter = 'all';
+        let currentSearchTerm = '';
+
+        function getFilteredData() {
+            return numbersData.filter(n => {
+                const matchStatus = currentStatusFilter === 'all' || n.status === currentStatusFilter;
+                const matchSearch = !currentSearchTerm ||
+                    n.number.includes(currentSearchTerm) ||
+                    n.category.toLowerCase().includes(currentSearchTerm.toLowerCase()) ||
+                    n.status.toLowerCase().includes(currentSearchTerm.toLowerCase());
+                return matchStatus && matchSearch;
             });
-            dropdown.classList.toggle('show');
         }
 
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.relative')) {
-                document.querySelectorAll('.dropdown.show').forEach(d => d.classList.remove('show'));
-            }
-        });
+        function filterTable(term) {
+            currentSearchTerm = term;
+            // Sync both search inputs
+            document.querySelectorAll('input[type="text"][oninput*="filterTable"]').forEach(el => {
+                if (el.value !== term) el.value = term;
+            });
+            renderTable(getFilteredData());
+        }
 
-        // Modal open/close
+        function filterByStatus(status) {
+            currentStatusFilter = status;
+            renderTable(getFilteredData());
+        }
+
+        /* =========================================
+           MODAL
+        ========================================= */
         function openModal(id) {
             document.getElementById(id).classList.add('show');
             document.body.style.overflow = 'hidden';
@@ -1027,276 +1096,285 @@
 
         // Close modal on overlay click
         document.querySelectorAll('.modal-overlay').forEach(overlay => {
-            overlay.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.classList.remove('show');
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('show');
                     document.body.style.overflow = '';
                 }
             });
         });
 
-        // Close modal on Escape key
-        document.addEventListener('keydown', function(e) {
+        /* =========================================
+           DROPDOWN
+        ========================================= */
+        function toggleDropdown(id) {
+            const dd = document.getElementById(id);
+            const isShown = dd.classList.contains('show');
+            // Close all dropdowns first
+            document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
+            if (!isShown) dd.classList.add('show');
+        }
+
+        // Close dropdowns on outside click
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.relative')) {
+                document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
+            }
+        });
+
+        /* =========================================
+           SIDEBAR
+        ========================================= */
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('show');
+        }
+
+        // Sidebar link active state + scroll
+        document.querySelectorAll('.sidebar-link[data-section]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                // Close mobile sidebar
+                if (window.innerWidth < 1024) toggleSidebar();
+            });
+        });
+
+        /* =========================================
+           TOAST
+        ========================================= */
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+
+            const iconColor = type === 'success' ? '#4ADE80' : type === 'error' ? '#F87171' : '#60B5FF';
+            const iconName = type === 'success' ? 'check-circle' : type === 'error' ? 'x-circle' : 'info';
+            toast.innerHTML = `<i data-lucide="${iconName}" style="color:${iconColor}; width:18px; height:18px; flex-shrink:0;"></i><span>${message}</span>`;
+
+            container.appendChild(toast);
+            lucide.createIcons({ nodes: [toast] });
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => toast.classList.add('show'));
+            });
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 3500);
+        }
+
+        /* =========================================
+           CHARTS
+        ========================================= */
+        function initCharts() {
+            const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            const addedData = [820, 932, 1100, 980, 1250, 1400, 1180, 1320, 1500, 1380, 1450, 1535];
+            const soldData = [180, 220, 310, 260, 340, 380, 290, 350, 410, 370, 390, 426];
+
+            // Chart.js global defaults for dark theme
+            Chart.defaults.color = '#666';
+            Chart.defaults.font.family = "'DM Sans', sans-serif";
+            Chart.defaults.font.size = 11;
+
+            // Monthly Numbers Added — Line Chart
+            const addedCtx = document.getElementById('monthlyAddedChart').getContext('2d');
+            const addedGradient = addedCtx.createLinearGradient(0, 0, 0, 260);
+            addedGradient.addColorStop(0, 'rgba(212,175,55,0.25)');
+            addedGradient.addColorStop(1, 'rgba(212,175,55,0.0)');
+
+            new Chart(addedCtx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Numbers Added',
+                        data: addedData,
+                        borderColor: '#D4AF37',
+                        backgroundColor: addedGradient,
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 2.5,
+                        pointBackgroundColor: '#D4AF37',
+                        pointBorderColor: '#0D0D0D',
+                        pointBorderWidth: 2,
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color:'rgba(255,255,255,0.03)', drawBorder:false }, ticks: { color:'#555' } },
+                        y: { grid: { color:'rgba(255,255,255,0.03)', drawBorder:false }, ticks: { color:'#555' }, beginAtZero: true }
+                    },
+                    interaction: { intersect: false, mode: 'index' }
+                }
+            });
+
+            // Monthly Sold — Bar Chart
+            const soldCtx = document.getElementById('monthlySoldChart').getContext('2d');
+            new Chart(soldCtx, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Numbers Sold',
+                        data: soldData,
+                        backgroundColor: 'rgba(74,157,255,0.6)',
+                        hoverBackgroundColor: 'rgba(74,157,255,0.85)',
+                        borderRadius: 6,
+                        borderSkipped: false,
+                        barPercentage: 0.6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display:false }, ticks: { color:'#555' } },
+                        y: { grid: { color:'rgba(255,255,255,0.03)', drawBorder:false }, ticks: { color:'#555' }, beginAtZero: true }
+                    }
+                }
+            });
+
+            // Status Donut
+            new Chart(document.getElementById('statusDonutChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Available','Sold','Premium','Reserved'],
+                    datasets: [{
+                        data: [8432, 3156, 3156, 1259],
+                        backgroundColor: ['#4ADE80','#F87171','#D4AF37','#4A9DFF'],
+                        borderColor: '#121212',
+                        borderWidth: 3,
+                        hoverOffset: 6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '72%',
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // Category Donut
+            new Chart(document.getElementById('categoryDonutChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Fancy','Premium','Business','Lucky','VIP'],
+                    datasets: [{
+                        data: [3420, 3156, 2890, 1950, 1431],
+                        backgroundColor: ['#E8CC6E','#D4AF37','#4A9DFF','#A78BFA','#F472B6'],
+                        borderColor: '#121212',
+                        borderWidth: 3,
+                        hoverOffset: 6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '72%',
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // Available vs Sold comparison
+            new Chart(document.getElementById('comparisonChart'), {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [
+                        {
+                            label: 'Available',
+                            data: [640, 712, 790, 720, 910, 1020, 890, 970, 1090, 1010, 1060, 1109],
+                            backgroundColor: 'rgba(74,222,128,0.5)',
+                            hoverBackgroundColor: 'rgba(74,222,128,0.8)',
+                            borderRadius: 4,
+                            borderSkipped: false,
+                            barPercentage: 0.7,
+                            categoryPercentage: 0.7,
+                        },
+                        {
+                            label: 'Sold',
+                            data: [180, 220, 310, 260, 340, 380, 290, 350, 410, 370, 390, 426],
+                            backgroundColor: 'rgba(212,175,55,0.5)',
+                            hoverBackgroundColor: 'rgba(212,175,55,0.8)',
+                            borderRadius: 4,
+                            borderSkipped: false,
+                            barPercentage: 0.7,
+                            categoryPercentage: 0.7,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color:'#888', usePointStyle:true, pointStyle:'circle', padding:16, font:{ size:11 } }
+                        }
+                    },
+                    scales: {
+                        x: { grid: { display:false }, ticks: { color:'#555' } },
+                        y: { grid: { color:'rgba(255,255,255,0.03)', drawBorder:false }, ticks: { color:'#555' }, beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        /* =========================================
+           SCROLL REVEAL + PROGRESS BAR ANIMATION
+        ========================================= */
+        function initScrollReveal() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        // Animate progress bars inside this element
+                        entry.target.querySelectorAll('.progress-fill[data-width]').forEach(bar => {
+                            setTimeout(() => {
+                                bar.style.width = bar.dataset.width + '%';
+                            }, 200);
+                        });
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        }
+
+        /* =========================================
+           INITIALIZE
+        ========================================= */
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTable(numbersData);
+            renderInventory();
+            renderActivity();
+            renderQuickActions();
+            renderSystem();
+            initCharts();
+            initScrollReveal();
+            lucide.createIcons();
+        });
+
+        // Keyboard: Escape closes modals/dropdowns
+        document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 document.querySelectorAll('.modal-overlay.show').forEach(m => {
                     m.classList.remove('show');
+                    document.body.style.overflow = '';
                 });
-                document.body.style.overflow = '';
+                document.querySelectorAll('.dropdown.show').forEach(d => d.classList.remove('show'));
             }
         });
-
-        // View number modal — reads data attributes from the table row
-        function viewNumber(btn) {
-            const row = btn.closest('tr');
-            if (!row) return;
-
-            const number = row.dataset.number;
-            const category = row.dataset.category;
-            const price = Number(row.dataset.price).toLocaleString('en-IN');
-            const status = row.dataset.status;
-            const date = row.dataset.date;
-
-            const badgeClass = status === 'Available' ? 'badge-available' :
-                               status === 'Sold' ? 'badge-sold' :
-                               status === 'Premium' ? 'badge-premium' : 'badge-reserved';
-
-            // Format date for display
-            const dateObj = new Date(date + 'T00:00:00');
-            const formattedDate = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-
-            document.getElementById('viewModalContent').innerHTML =
-                '<div class="space-y-4">' +
-                    '<div class="flex items-center gap-3">' +
-                        '<span class="text-2xl font-bold text-white font-display tracking-wider">' + number + '</span>' +
-                        '<span class="badge ' + badgeClass + '">' + status + '</span>' +
-                    '</div>' +
-                    '<div class="grid grid-cols-2 gap-4">' +
-                        '<div class="sys-card">' +
-                            '<p class="text-[11px] text-white/30">Category</p>' +
-                            '<p class="text-sm font-medium text-white mt-1">' + category + '</p>' +
-                        '</div>' +
-                        '<div class="sys-card">' +
-                            '<p class="text-[11px] text-white/30">Price</p>' +
-                            '<p class="text-sm font-medium text-white mt-1">₹' + price + '</p>' +
-                        '</div>' +
-                        '<div class="sys-card">' +
-                            '<p class="text-[11px] text-white/30">Date Added</p>' +
-                            '<p class="text-sm font-medium text-white mt-1">' + formattedDate + '</p>' +
-                        '</div>' +
-                        '<div class="sys-card">' +
-                            '<p class="text-[11px] text-white/30">Status</p>' +
-                            '<p class="text-sm font-medium text-white mt-1">' + status + '</p>' +
-                        '</div>' +
-                    '</div>' +
-                '</div>';
-
-            openModal('viewModal');
-        }
-
-        // Table filtering — combines search text and status filter
-        let currentStatusFilter = 'all';
-        let currentSearchQuery = '';
-
-        function applyFilters() {
-            const rows = document.querySelectorAll('#tableBody tr');
-            let visible = 0;
-            rows.forEach(function(row) {
-                const matchesStatus = currentStatusFilter === 'all' || row.dataset.status === currentStatusFilter;
-                const matchesSearch = !currentSearchQuery || row.textContent.toLowerCase().includes(currentSearchQuery.toLowerCase());
-                const show = matchesStatus && matchesSearch;
-                row.style.display = show ? '' : 'none';
-                if (show) visible++;
-            });
-            document.getElementById('showingCount').textContent = visible;
-        }
-
-        function filterTable(query) {
-            currentSearchQuery = query;
-            applyFilters();
-        }
-
-        function filterByStatus(status) {
-            currentStatusFilter = status;
-            applyFilters();
-        }
-
-        /* =========================================
-           CHARTS (canvas-based, require JS)
-        ========================================= */
-        const chartDefaults = {
-            color: 'rgba(255,255,255,0.3)',
-            borderColor: 'rgba(255,255,255,0.06)',
-            font: { family: "'DM Sans', sans-serif" }
-        };
-        Chart.defaults.color = chartDefaults.color;
-        Chart.defaults.font.family = chartDefaults.font.family;
-
-        const months = ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan'];
-
-        // Monthly Numbers Added
-        new Chart(document.getElementById('monthlyAddedChart'), {
-            type: 'bar',
-            data: {
-                labels: months,
-                datasets: [{
-                    label: 'Numbers Added',
-                    data: [980, 1250, 1100, 1450, 1380, 1687, 1000],
-                    backgroundColor: 'rgba(212,175,55,0.6)',
-                    borderColor: '#D4AF37',
-                    borderWidth: 1,
-                    borderRadius: 6,
-                    borderSkipped: false
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: { grid: { display: false }, border: { display: false } },
-                    y: { grid: { color: 'rgba(255,255,255,0.04)' }, border: { display: false }, ticks: { maxTicksLimit: 5 } }
-                }
-            }
-        });
-
-        // Monthly Numbers Sold
-        new Chart(document.getElementById('monthlySoldChart'), {
-            type: 'bar',
-            data: {
-                labels: months,
-                datasets: [{
-                    label: 'Numbers Sold',
-                    data: [420, 580, 510, 690, 640, 780, 536],
-                    backgroundColor: 'rgba(74,157,255,0.6)',
-                    borderColor: '#4A9DFF',
-                    borderWidth: 1,
-                    borderRadius: 6,
-                    borderSkipped: false
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: { grid: { display: false }, border: { display: false } },
-                    y: { grid: { color: 'rgba(255,255,255,0.04)' }, border: { display: false }, ticks: { maxTicksLimit: 5 } }
-                }
-            }
-        });
-
-        // Status Distribution Donut
-        new Chart(document.getElementById('statusDonutChart'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Available', 'Sold', 'Premium', 'Reserved'],
-                datasets: [{
-                    data: [8432, 3156, 3156, 1259],
-                    backgroundColor: ['#4ADE80', '#F87171', '#D4AF37', '#4A9DFF'],
-                    borderColor: '#1A1A1A',
-                    borderWidth: 3,
-                    hoverOffset: 6
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: '70%',
-                plugins: { legend: { display: false } }
-            }
-        });
-
-        // Category Distribution Donut
-        new Chart(document.getElementById('categoryDonutChart'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Fancy', 'Premium', 'Business', 'Lucky', 'VIP'],
-                datasets: [{
-                    data: [3200, 2800, 2500, 2247, 2100],
-                    backgroundColor: ['#E8CC6E', '#D4AF37', '#4A9DFF', '#A78BFA', '#F472B6'],
-                    borderColor: '#1A1A1A',
-                    borderWidth: 3,
-                    hoverOffset: 6
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: '70%',
-                plugins: { legend: { display: false } }
-            }
-        });
-
-        // Available vs Sold Comparison
-        new Chart(document.getElementById('comparisonChart'), {
-            type: 'bar',
-            data: {
-                labels: months,
-                datasets: [
-                    {
-                        label: 'Available',
-                        data: [560, 670, 590, 760, 740, 907, 464],
-                        backgroundColor: 'rgba(74,222,128,0.5)',
-                        borderColor: '#4ADE80',
-                        borderWidth: 1,
-                        borderRadius: 5,
-                        borderSkipped: false
-                    },
-                    {
-                        label: 'Sold',
-                        data: [420, 580, 510, 690, 640, 780, 536],
-                        backgroundColor: 'rgba(248,113,113,0.5)',
-                        borderColor: '#F87171',
-                        borderWidth: 1,
-                        borderRadius: 5,
-                        borderSkipped: false
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: { boxWidth: 10, boxHeight: 10, borderRadius: 3, useBorderRadius: true, padding: 16, font: { size: 11 } }
-                    }
-                },
-                scales: {
-                    x: { grid: { display: false }, border: { display: false } },
-                    y: { grid: { color: 'rgba(255,255,255,0.04)' }, border: { display: false }, ticks: { maxTicksLimit: 5 } }
-                }
-            }
-        });
-
-        /* =========================================
-           ANIMATIONS
-        ========================================= */
-
-        // Progress bar fill animation
-        document.querySelectorAll('.progress-fill').forEach(function(bar) {
-            const w = bar.dataset.width;
-            if (w) {
-                setTimeout(function() { bar.style.width = w + '%'; }, 300);
-            }
-        });
-
-        // Scroll reveal
-        const revealObserver = new IntersectionObserver(function(entries) {
-            entries.forEach(function(entry) {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    revealObserver.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1 });
-
-        document.querySelectorAll('.reveal').forEach(function(el) {
-            revealObserver.observe(el);
-        });
-
-        // Initialize Lucide icons
-        lucide.createIcons();
     </script>
 </body>
 </html>

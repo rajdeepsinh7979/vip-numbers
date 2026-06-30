@@ -594,7 +594,7 @@
                 <div class="flex-1 min-w-0 space-y-6">
 
                     <!-- Basic Information -->
-                    <section class="glass-card no-hover p-6 lg:p-8 reveal">
+                    <section class="glass-card no-hover p-6 lg:p-8">
                         <div class="section-divider">
                             <div class="icon-wrap bg-gold-subtle"><i data-lucide="info" class="w-4 h-4 text-gold"></i></div>
                             <h3>Basic Information</h3>
@@ -649,7 +649,7 @@
                     </section>
 
                     <!-- Highlight Ranges -->
-                    <section class="glass-card no-hover p-6 lg:p-8 reveal">
+                    <section class="glass-card no-hover p-6 lg:p-8">
                         <div class="section-divider">
                             <div class="icon-wrap" style="background:rgba(244,114,182,0.1);"><i data-lucide="sparkles" class="w-4 h-4 text-pink-400"></i></div>
                             <h3>Highlight Ranges</h3>
@@ -671,7 +671,7 @@
                     </section>
 
                     <!-- Pricing -->
-                    <section class="glass-card no-hover p-6 lg:p-8 reveal">
+                    <section class="glass-card no-hover p-6 lg:p-8">
                         <div class="section-divider">
                             <div class="icon-wrap" style="background:rgba(34,197,94,0.1);"><i data-lucide="indian-rupee" class="w-4 h-4 text-green-400"></i></div>
                             <h3>Pricing</h3>
@@ -943,6 +943,11 @@
             initScrollReveal();
             // Add one default empty highlight row
             addHighlightRow();
+            // Focus the first input in Basic Information
+    const mobileInput = document.getElementById('mobileNumber');
+    if (mobileInput) {
+        mobileInput.focus();
+    }
         });
 
         /* ============================================
@@ -1044,7 +1049,6 @@
             // Focus the start input of the new row
             setTimeout(() => {
                 const startInput = document.querySelector(`[data-range-id="${id}"] .hl-start`);
-                if (startInput) startInput.focus();
             }, 50);
         }
 

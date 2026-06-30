@@ -1,0 +1,1834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update VIP Number — Admin Dashboard</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== CSS Variables & Reset ===== */
+        :root {
+            --bg: #0D0D0D;
+            --fg: #FFFFFF;
+            --muted: #999999;
+            --accent: #D4AF37;
+            --accent-light: #E8CC6E;
+            --accent-dark: #B8962E;
+            --accent-subtle: rgba(212,175,55,0.1);
+            --accent-muted: rgba(212,175,55,0.25);
+            --accent-blue: #4A9DFF;
+            --accent-blue-subtle: rgba(74,157,255,0.1);
+            --card: rgba(255,255,255,0.035);
+            --card-hover: rgba(255,255,255,0.065);
+            --border: rgba(255,255,255,0.06);
+            --border-gold: rgba(212,175,55,0.25);
+            --charcoal-800: #121212;
+            --charcoal-700: #1A1A1A;
+            --charcoal-600: #222222;
+            --sidebar-width: 260px;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        /* ===== Ambient Background Glows ===== */
+        body::before {
+            content: '';
+            position: fixed; top: -20%; right: -10%;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(212,175,55,0.04) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
+        }
+        body::after {
+            content: '';
+            position: fixed; bottom: -15%; left: -5%;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(74,157,255,0.03) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
+        }
+
+        /* ===== Scrollbar ===== */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+        /* ===== Gold Top Line ===== */
+        .gold-line {
+            position: fixed; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            z-index: 999;
+        }
+
+        /* ===== Layout ===== */
+        .main-wrapper { margin-left: var(--sidebar-width); position: relative; z-index: 1; }
+
+        /* ===== Sidebar ===== */
+        .sidebar {
+            width: var(--sidebar-width); min-height: 100vh;
+            background: rgba(18,18,18,0.95);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-right: 1px solid var(--border);
+            position: fixed; left: 0; top: 0;
+            display: flex; flex-direction: column;
+            transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+            z-index: 50;
+        }
+        .sidebar-header {
+            padding: 24px 24px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .sidebar-brand {
+            display: flex; align-items: center; gap: 12px;
+        }
+        .sidebar-logo {
+            width: 40px; height: 40px; border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .sidebar-logo-text {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700; font-size: 18px;
+            color: var(--bg);
+        }
+        .sidebar-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700; font-size: 16px;
+            color: #fff; line-height: 1.2;
+        }
+        .sidebar-subtitle {
+            font-size: 11px; color: rgba(255,255,255,0.3);
+            font-weight: 500; letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+        .sidebar-nav { flex: 1; padding: 16px; }
+        .sidebar-nav-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+        .sidebar-section-label {
+            font-size: 10px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.12em;
+            color: rgba(255,255,255,0.2);
+            padding: 0 16px; margin-bottom: 12px;
+        }
+        .sidebar-section-label + .sidebar-nav-list { margin-top: 0; }
+        .sidebar-nav-spacer { height: 24px; }
+        .sidebar-link {
+            display: flex; align-items: center; gap: 12px;
+            padding: 11px 20px; border-radius: 12px;
+            color: var(--muted); font-size: 14px; font-weight: 500;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            position: relative; overflow: hidden;
+        }
+        .sidebar-link::before {
+            content: ''; position: absolute; left: 0; top: 50%;
+            transform: translateY(-50%); width: 3px; height: 0;
+            background: var(--accent); border-radius: 0 4px 4px 0;
+            transition: height 0.25s ease;
+        }
+        .sidebar-link:hover { color: #fff; background: rgba(255,255,255,0.04); }
+        .sidebar-link.active { color: var(--accent); background: rgba(212,175,55,0.08); }
+        .sidebar-link.active::before { height: 24px; }
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid var(--border);
+        }
+        .sidebar-footer-card {
+            padding: 16px;
+            background: var(--accent-subtle);
+            border: 1px solid var(--accent-muted);
+            border-radius: 18px;
+        }
+        .sidebar-footer-title { font-size: 12px; font-weight: 600; color: var(--accent); margin-bottom: 4px; }
+        .sidebar-footer-desc { font-size: 11px; color: rgba(255,255,255,0.4); line-height: 1.5; }
+
+        /* Sidebar overlay (mobile) */
+        .sidebar-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            z-index: 45; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .sidebar-overlay.show { opacity: 1; pointer-events: auto; }
+
+        /* ===== Top Header ===== */
+        .top-header {
+            position: sticky; top: 0; z-index: 40;
+            border-bottom: 1px solid var(--border);
+            background: rgba(13,13,13,0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .top-header-inner {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px 24px;
+        }
+        .header-left { display: flex; align-items: center; gap: 16px; }
+        .menu-toggle {
+            display: none;
+            width: 36px; height: 36px; border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+            border: none; cursor: pointer;
+            color: rgba(255,255,255,0.6);
+            align-items: center; justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .menu-toggle:hover { color: #fff; background: rgba(255,255,255,0.1); }
+        .header-title { font-size: 18px; font-weight: 600; color: #fff; }
+        .breadcrumb { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+        .breadcrumb-link {
+            font-size: 12px; color: rgba(255,255,255,0.3);
+            text-decoration: none; transition: color 0.2s ease;
+        }
+        .breadcrumb-link:hover { color: var(--accent); }
+        .breadcrumb-separator { color: rgba(255,255,255,0.15); }
+        .breadcrumb-current { font-size: 12px; color: var(--accent); font-weight: 500; }
+        .header-right { display: flex; align-items: center; gap: 12px; }
+
+        /* Notification button */
+        .notif-btn {
+            position: relative;
+            width: 40px; height: 40px; border-radius: 12px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.5);
+            cursor: pointer; transition: all 0.2s ease;
+        }
+        .notif-btn:hover { color: #fff; background: rgba(255,255,255,0.08); }
+        .notif-badge {
+            position: absolute; top: -4px; right: -4px;
+            width: 20px; height: 20px; border-radius: 50%;
+            background: var(--accent); color: var(--bg);
+            font-size: 10px; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            animation: pulse-gold 2s infinite;
+        }
+        @keyframes pulse-gold {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(212,175,55,0.4); }
+            50% { box-shadow: 0 0 0 6px rgba(212,175,55,0); }
+        }
+
+        /* Profile button */
+        .profile-btn {
+            display: flex; align-items: center; gap: 10px;
+            padding: 4px 4px 4px 4px; border-radius: 12px;
+            background: transparent; border: none;
+            cursor: pointer; transition: background 0.2s ease;
+        }
+        .profile-btn:hover { background: rgba(255,255,255,0.04); }
+        .profile-avatar {
+            width: 36px; height: 36px; border-radius: 12px;
+            background: linear-gradient(135deg, rgba(212,175,55,0.8), var(--accent-dark));
+            display: flex; align-items: center; justify-content: center;
+            color: var(--bg); font-weight: 700; font-size: 14px;
+            flex-shrink: 0;
+        }
+        .profile-name { font-size: 14px; color: rgba(255,255,255,0.7); font-weight: 500; }
+        .profile-chevron { color: rgba(255,255,255,0.3); }
+
+        /* ===== Dropdowns ===== */
+        .dropdown {
+            position: absolute; top: calc(100% + 8px); right: 0;
+            background: #1E1E1E; border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px; padding: 8px; min-width: 200px;
+            opacity: 0; pointer-events: none; transform: translateY(-8px);
+            transition: all 0.25s ease;
+            box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+            z-index: 60;
+        }
+        .dropdown.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .dropdown-header {
+            padding: 8px 12px 10px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 4px;
+        }
+        .dropdown-label {
+            font-size: 11px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.3);
+        }
+        .dropdown-user-name { font-size: 14px; font-weight: 600; color: #fff; }
+        .dropdown-user-email { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+        .dropdown-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 14px; border-radius: 10px;
+            font-size: 13px; color: var(--muted); cursor: pointer;
+            transition: all 0.2s ease; text-decoration: none;
+        }
+        .dropdown-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
+        .dropdown-item-icon {
+            width: 32px; height: 32px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .dropdown-item-text { font-size: 12px; font-weight: 500; color: #fff; }
+        .dropdown-item-time { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 2px; }
+
+        /* ===== Page Content ===== */
+        .page-content { padding: 24px; position: relative; z-index: 10; }
+        .page-top {
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 12px; margin-bottom: 24px;
+        }
+
+        /* ===== Record ID Badge ===== */
+        .record-id-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 4px 12px; border-radius: 8px;
+            background: rgba(74,157,255,0.08);
+            border: 1px solid rgba(74,157,255,0.15);
+            font-size: 11px; font-weight: 600;
+            color: #60B5FF;
+            font-family: 'DM Sans', monospace;
+        }
+
+        /* ===== Form Layout ===== */
+        .form-layout {
+            display: flex; gap: 24px;
+        }
+        .form-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 24px; }
+        .form-sidebar { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px; }
+
+        /* ===== Glass Card ===== */
+        .glass-card {
+            background: var(--card);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+        }
+        .glass-card:hover { background: var(--card-hover); border-color: rgba(255,255,255,0.1); box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+        .glass-card.static { transition: none; }
+        .glass-card.static:hover { transform: none; background: var(--card); border-color: var(--border); box-shadow: none; }
+        .glass-card-body { padding: 24px; }
+        .glass-card-body-lg { padding: 24px 32px; }
+
+        /* ===== Section Divider ===== */
+        .section-divider {
+            display: flex; align-items: center; gap: 14px;
+            margin-bottom: 24px;
+        }
+        .section-divider-icon {
+            width: 32px; height: 32px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .section-divider-title {
+            font-size: 14px; font-weight: 600;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase; letter-spacing: 0.08em;
+            white-space: nowrap;
+        }
+        .section-divider-line {
+            flex: 1; height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.06), transparent);
+        }
+
+        /* ===== Form Grid ===== */
+        .form-grid { display: grid; gap: 24px; }
+        .form-grid-2 { grid-template-columns: 1fr 1fr; }
+        .form-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+        .form-grid-full { grid-column: 1 / -1; }
+
+        /* ===== Form Elements ===== */
+        .form-group { position: relative; }
+        .form-label {
+            display: flex; align-items: center; gap: 4px;
+            font-size: 12px; font-weight: 600;
+            color: rgba(255,255,255,0.45); margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 0.06em;
+        }
+        .form-label-icon { opacity: 0.7; }
+        .input-field {
+            width: 100%; padding: 12px 16px; border-radius: 12px;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+            color: #fff; font-size: 14px; font-family: 'DM Sans', sans-serif;
+            transition: all 0.25s ease; outline: none;
+        }
+        .input-field:focus {
+            border-color: var(--accent);
+            background: rgba(255,255,255,0.06);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.08);
+        }
+        .input-field::placeholder { color: rgba(255,255,255,0.2); }
+        .input-field.error { border-color: #EF4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.1); }
+        .input-field.readonly-gold {
+            border-color: rgba(212,175,55,0.2);
+            background: rgba(212,175,55,0.03);
+        }
+        .error-msg { font-size: 11px; color: #F87171; margin-top: 6px; display: none; }
+        .error-msg.show { display: block; }
+
+        /* Input with prefix */
+        .input-with-prefix { position: relative; }
+        .input-prefix {
+            position: absolute; left: 16px; top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255,255,255,0.2); font-weight: 600; font-size: 14px;
+            pointer-events: none; z-index: 1;
+        }
+        .input-with-prefix .input-field { padding-left: 56px; }
+        .input-with-prefix.prefix-short .input-field { padding-left: 40px; }
+        .input-with-prefix .input-prefix-gold { color: rgba(212,175,55,0.5); }
+
+        /* Select */
+        select.input-field {
+            appearance: none; cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 40px;
+        }
+
+        /* ===== Segment Control ===== */
+        .segment-group {
+            display: flex; gap: 4px; padding: 4px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
+        }
+        .segment-btn {
+            flex: 1; padding: 10px 16px; border-radius: 10px;
+            font-size: 13px; font-weight: 600;
+            color: rgba(255,255,255,0.4); background: transparent;
+            border: none; cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            font-family: 'DM Sans', sans-serif;
+        }
+        .segment-btn:hover { color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.04); }
+        .segment-btn.active {
+            color: #0D0D0D; background: var(--accent);
+            box-shadow: 0 2px 12px rgba(212,175,55,0.3);
+        }
+
+        /* ===== Pricing Calc Bar ===== */
+        .pricing-calc-bar {
+            display: flex; align-items: center; gap: 12px;
+            padding: 16px; border-radius: 12px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .pricing-calc-text { font-size: 12px; color: rgba(255,255,255,0.3); font-family: monospace; }
+
+        /* ===== Highlight Rows ===== */
+        .highlight-rows-container { display: flex; flex-direction: column; gap: 12px; }
+        .highlight-row {
+            padding: 16px; border-radius: 14px;
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            animation: rowSlideIn 0.35s cubic-bezier(0.4,0,0.2,1);
+        }
+        .highlight-row:hover {
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(255,255,255,0.08);
+        }
+        .highlight-row.has-error {
+            border-color: rgba(239,68,68,0.2);
+            background: rgba(239,68,68,0.02);
+        }
+        @keyframes rowSlideIn {
+            from { opacity: 0; transform: translateY(-10px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes rowSlideOut {
+            from { opacity: 1; transform: translateY(0) scale(1); max-height: 200px; margin-bottom: 12px; }
+            to { opacity: 0; transform: translateY(-10px) scale(0.95); max-height: 0; margin-bottom: 0; padding: 0 16px; overflow: hidden; }
+        }
+        .highlight-row.removing {
+            animation: rowSlideOut 0.3s cubic-bezier(0.4,0,0.2,1) forwards;
+            pointer-events: none;
+        }
+        .highlight-row-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1.5fr auto;
+            gap: 12px;
+            align-items: start;
+        }
+        .highlight-input {
+            width: 100%; padding: 10px 12px; border-radius: 10px;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+            color: #fff; font-size: 14px; font-family: 'DM Sans', sans-serif;
+            transition: all 0.25s ease; outline: none; text-align: center;
+        }
+        .highlight-input:focus {
+            border-color: var(--accent);
+            background: rgba(255,255,255,0.06);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.08);
+        }
+        .highlight-input::placeholder { color: rgba(255,255,255,0.15); }
+        .highlight-input.input-error { border-color: #EF4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.08); }
+        .range-label {
+            font-size: 10px; font-weight: 600;
+            color: rgba(255,255,255,0.3);
+            text-transform: uppercase; letter-spacing: 0.06em;
+            margin-bottom: 6px;
+        }
+        .range-preview {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px; font-weight: 900;
+            letter-spacing: 2px;
+            color: var(--accent);
+            min-height: 42px;
+            display: flex; align-items: center;
+        }
+        .range-preview.empty {
+            color: rgba(255,255,255,0.12);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px; font-weight: 500;
+            letter-spacing: 0;
+        }
+        .range-error { font-size: 10px; color: #F87171; margin-top: 4px; display: none; }
+        .range-error.show { display: block; }
+        .delete-row-btn {
+            width: 38px; height: 38px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.3); cursor: pointer;
+            transition: all 0.25s ease; flex-shrink: 0;
+        }
+        .delete-row-btn:hover {
+            background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.2);
+            color: #F87171;
+        }
+        .add-highlight-btn {
+            margin-top: 16px; width: 100%; padding: 12px;
+            border-radius: 12px;
+            border: 1px dashed rgba(212,175,55,0.25);
+            background: rgba(212,175,55,0.03);
+            color: var(--accent); font-size: 14px; font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            cursor: pointer; transition: all 0.25s ease;
+        }
+        .add-highlight-btn:hover {
+            background: rgba(212,175,55,0.08);
+            border-color: rgba(212,175,55,0.4);
+        }
+        .add-highlight-btn:active { transform: scale(0.99); }
+
+        /* ===== Preview Card ===== */
+        .preview-card {
+            position: relative; overflow: hidden;
+            background: linear-gradient(145deg, rgba(212,175,55,0.06) 0%, rgba(26,26,26,0.9) 40%, rgba(26,26,26,0.95) 100%);
+            border: 1px solid rgba(212,175,55,0.15);
+            border-radius: 20px;
+            padding: 32px 40px;
+        }
+        .preview-card::before {
+            content: '';
+            position: absolute; top: -50%; right: -30%;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .preview-card::after {
+            content: '';
+            position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(212,175,55,0.3), transparent);
+        }
+        .preview-inner { position: relative; z-index: 1; }
+        .preview-top {
+            display: flex; flex-wrap: wrap; align-items: center;
+            justify-content: space-between; gap: 12px; margin-bottom: 32px;
+        }
+        .preview-label {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 12px; color: rgba(255,255,255,0.3);
+            font-weight: 500; text-transform: uppercase; letter-spacing: 0.12em;
+        }
+        .preview-number { margin-bottom: 32px; }
+        .preview-number-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px; font-weight: 900;
+            letter-spacing: 4px; line-height: 1.1;
+        }
+        .preview-digit {
+            display: inline-block;
+            background: linear-gradient(135deg, #fff 0%, #E8CC6E 50%, #D4AF37 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: all 0.3s ease;
+        }
+        .preview-digit.highlighted {
+            -webkit-text-fill-color: #D4AF37;
+            background: linear-gradient(135deg, #E8CC6E, #D4AF37, #B8962E);
+            -webkit-background-clip: text; background-clip: text;
+            transform: scale(1.08);
+            filter: drop-shadow(0 0 8px rgba(212,175,55,0.4));
+        }
+        .preview-prices {
+            display: flex; flex-wrap: wrap; align-items: flex-end; gap: 24px;
+        }
+        .preview-price-label {
+            font-size: 10px; color: rgba(255,255,255,0.25);
+            text-transform: uppercase; letter-spacing: 0.12em;
+            font-weight: 600; margin-bottom: 4px;
+        }
+        .preview-price-original {
+            font-size: 18px; font-weight: 600;
+            text-decoration: line-through;
+            text-decoration-color: rgba(239,68,68,0.5);
+            color: rgba(255,255,255,0.35);
+        }
+        .preview-price-discount { font-size: 18px; font-weight: 600; color: #F87171; }
+        .preview-price-selling { font-size: 24px; font-weight: 700; font-family: 'Playfair Display', serif; }
+        .preview-price-selling-wrap { margin-left: auto; text-align: right; }
+        .preview-highlights-section {
+            margin-top: 24px; padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .preview-highlights-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+        .price-original { text-decoration: line-through; text-decoration-color: rgba(239,68,68,0.5); color: rgba(255,255,255,0.35); }
+
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        .shimmer-text {
+            background: linear-gradient(90deg, #D4AF37, #E8CC6E, #fff, #E8CC6E, #D4AF37);
+            background-size: 200% auto;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s linear infinite;
+        }
+
+        /* ===== Badges ===== */
+        .badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 12px; border-radius: 20px;
+            font-size: 12px; font-weight: 600;
+        }
+        .badge-available { background: rgba(34,197,94,0.12); color: #4ADE80; }
+        .badge-sold { background: rgba(239,68,68,0.12); color: #F87171; }
+        .badge-premium { background: rgba(212,175,55,0.15); color: #E8CC6E; }
+        .badge-vip { background: rgba(244,114,182,0.12); color: #F472B6; }
+        .badge-fancy { background: rgba(232,204,110,0.15); color: #E8CC6E; }
+        .badge-muted { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.25); font-size: 11px; }
+        .badge-highlight {
+            background: rgba(212,175,55,0.1);
+            border: 1px solid rgba(212,175,55,0.2);
+            color: var(--accent-light); font-size: 11px; padding: 3px 10px;
+        }
+
+        /* ===== Progress Bar ===== */
+        .progress-track {
+            width: 100%; height: 10px; border-radius: 10px;
+            background: rgba(255,255,255,0.06); overflow: hidden;
+        }
+        .progress-track-sm { height: 6px; }
+        .progress-fill {
+            height: 100%; border-radius: 10px;
+            background: linear-gradient(90deg, var(--accent-dark), var(--accent));
+            transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        /* ===== Buttons ===== */
+        .btn-gold {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px 28px; border-radius: 12px;
+            background: linear-gradient(135deg, #B8962E, #D4AF37, #E8CC6E);
+            color: #0D0D0D; font-size: 14px; font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            border: none; cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: 0 4px 16px rgba(212,175,55,0.2);
+        }
+        .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(212,175,55,0.35); }
+        .btn-gold:active { transform: translateY(0) scale(0.98); }
+
+        .btn-outline {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px 24px; border-radius: 12px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer; transition: all 0.25s ease; text-decoration: none;
+        }
+        .btn-outline:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color: #fff; }
+        .btn-outline:active { transform: scale(0.98); }
+
+        .btn-ghost {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px 20px; border-radius: 12px;
+            background: transparent; border: none;
+            color: rgba(255,255,255,0.4); font-size: 14px; font-weight: 500;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer; transition: all 0.25s ease;
+        }
+        .btn-ghost:hover { color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.03); }
+
+        .btn-back {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 16px; border-radius: 10px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 500;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer; transition: all 0.25s ease; text-decoration: none;
+        }
+        .btn-back:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); color: #fff; }
+
+        /* Action bar */
+        .action-bar {
+            display: flex; flex-wrap: wrap; align-items: center;
+            justify-content: flex-end; gap: 12px;
+            padding-bottom: 32px;
+        }
+
+        /* ===== Right Sidebar Cards ===== */
+        .sidebar-card-header {
+            display: flex; align-items: center; gap: 8px; margin-bottom: 20px;
+        }
+        .sidebar-card-icon {
+            width: 32px; height: 32px; border-radius: 8px;
+            background: var(--accent-subtle);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .sidebar-card-title { font-size: 14px; font-weight: 600; color: #fff; }
+        .detail-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 8px 0;
+        }
+        .detail-row + .detail-row { border-top: 1px solid rgba(255,255,255,0.04); }
+        .detail-label { font-size: 12px; color: rgba(255,255,255,0.35); }
+        .detail-value { font-size: 12px; color: rgba(255,255,255,0.7); font-weight: 600; }
+        .detail-value-mono { font-family: monospace; }
+        .detail-value-gold { color: var(--accent); }
+        .detail-value-dim { color: rgba(255,255,255,0.5); }
+
+        /* Summary item */
+        .summary-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px; border-radius: 12px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .summary-item-left { display: flex; align-items: center; gap: 10px; }
+        .summary-item-icon {
+            width: 32px; height: 32px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .summary-item-label { font-size: 12px; color: rgba(255,255,255,0.4); }
+        .summary-item-value { font-size: 13px; color: #fff; font-weight: 600; }
+
+        /* Recent changes */
+        .recent-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            transition: all 0.2s ease;
+        }
+        .recent-item:last-child { border-bottom: none; }
+        .recent-item:hover { padding-left: 6px; }
+        .recent-item-text { font-size: 12px; color: rgba(255,255,255,0.6); }
+        .recent-item-time { font-size: 11px; color: rgba(255,255,255,0.25); white-space: nowrap; margin-left: 12px; }
+
+        /* Tips card */
+        .tip-item {
+            display: flex; gap: 10px; padding: 8px 0;
+        }
+        .tip-bullet {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--accent); margin-top: 6px; flex-shrink: 0;
+        }
+        .tip-text { font-size: 12px; color: rgba(255,255,255,0.4); line-height: 1.5; }
+
+        /* ===== Toasts ===== */
+        .toast-container { position: fixed; top: 24px; right: 24px; z-index: 200; display: flex; flex-direction: column; gap: 10px; }
+        .toast {
+            padding: 14px 20px; border-radius: 12px;
+            background: #222; border: 1px solid rgba(255,255,255,0.08);
+            font-size: 13px; color: #fff; min-width: 300px;
+            display: flex; align-items: center; gap: 10px;
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        .toast.show { transform: translateX(0); }
+        .toast.success { border-color: rgba(34,197,94,0.3); }
+        .toast.error { border-color: rgba(239,68,68,0.3); }
+        .toast.info { border-color: rgba(74,157,255,0.3); }
+
+        /* ===== Reveal Animation ===== */
+        .reveal {
+            opacity: 0; transform: translateY(24px);
+            transition: all 0.6s cubic-bezier(0.4,0,0.2,1);
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* ===== Responsive ===== */
+        @media (min-width: 1025px) {
+            .page-content { padding: 24px 32px; }
+        }
+        @media (max-width: 1024px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-wrapper { margin-left: 0 !important; }
+            .menu-toggle { display: flex; }
+            .profile-name { display: none; }
+            .preview-number-text { font-size: 30px; letter-spacing: 2px; }
+            .preview-card { padding: 24px; }
+        }
+        @media (max-width: 1280px) {
+            .form-layout { flex-direction: column; }
+            .form-sidebar { width: 100%; }
+        }
+        @media (max-width: 640px) {
+            .page-content { padding: 16px; }
+            .top-header-inner { padding: 12px 16px; }
+            .preview-number-text { font-size: 24px; letter-spacing: 1px; }
+            .action-bar { flex-direction: column; }
+            .action-bar .btn-gold,
+            .action-bar .btn-outline,
+            .action-bar .btn-ghost { width: 100%; }
+            .form-grid-2 { grid-template-columns: 1fr; }
+            .form-grid-3 { grid-template-columns: 1fr; }
+            .form-grid-full { grid-column: auto; }
+            .highlight-row-grid { grid-template-columns: 1fr 1fr !important; }
+            .highlight-row-grid .range-preview-col { display: none; }
+            .highlight-row-grid .delete-col { grid-column: span 2; display: flex; justify-content: flex-end; }
+            .glass-card-body, .glass-card-body-lg { padding: 20px; }
+            .preview-prices { gap: 16px; }
+            .preview-price-selling-wrap { margin-left: 0; text-align: left; width: 100%; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="gold-line"></div>
+    <div class="toast-container" id="toastContainer"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand">
+                <div class="sidebar-logo">
+                    <span class="sidebar-logo-text">V</span>
+                </div>
+                <div>
+                    <h1 class="sidebar-title">VIP Numbers</h1>
+                    <p class="sidebar-subtitle">Admin Panel</p>
+                </div>
+            </div>
+        </div>
+        <nav class="sidebar-nav" aria-label="Main navigation">
+            <p class="sidebar-section-label">Main</p>
+            <ul class="sidebar-nav-list">
+                <li><a href="dashboard.php" class="sidebar-link"><i data-lucide="layout-dashboard" width="18" height="18"></i> Dashboard</a></li>
+                <li><a href="numbers.php" class="sidebar-link active"><i data-lucide="phone" width="18" height="18"></i> Numbers</a></li>
+                <li><a href="number-status.php" class="sidebar-link"><i data-lucide="check-circle" width="18" height="18"></i> Number Status</a></li>
+            </ul>
+            <div class="sidebar-nav-spacer"></div>
+            <p class="sidebar-section-label">Settings</p>
+            <ul class="sidebar-nav-list">
+                <li><a href="profile.php" class="sidebar-link"><i data-lucide="user" width="18" height="18"></i> Profile</a></li>
+                <li><a href="settings.php" class="sidebar-link"><i data-lucide="settings" width="18" height="18"></i> Settings</a></li>
+                <li><a href="logout.php" class="sidebar-link"><i data-lucide="log-out" width="18" height="18"></i> Logout</a></li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="sidebar-footer-card">
+                <p class="sidebar-footer-title">Inventory Health</p>
+                <p class="sidebar-footer-desc">8,432 numbers available across 5 categories</p>
+                <div class="progress-track progress-track-sm" style="margin-top:12px;">
+                    <div class="progress-fill" style="width:65%"></div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-wrapper" id="mainWrapper">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="top-header-inner">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                        <i data-lucide="menu" width="20" height="20"></i>
+                    </button>
+                    <div>
+                        <h2 class="header-title">Update VIP Number</h2>
+                        <div class="breadcrumb">
+                            <a href="dashboard.php" class="breadcrumb-link">Dashboard</a>
+                            <i data-lucide="chevron-right" width="12" height="12" class="breadcrumb-separator"></i>
+                            <a href="numbers.php" class="breadcrumb-link">Numbers</a>
+                            <i data-lucide="chevron-right" width="12" height="12" class="breadcrumb-separator"></i>
+                            <span class="breadcrumb-current">Update Number</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <!-- Notifications -->
+                    <div style="position:relative;">
+                        <button class="notif-btn" id="notifBtn" aria-label="Notifications">
+                            <i data-lucide="bell" width="18" height="18"></i>
+                            <span class="notif-badge">3</span>
+                        </button>
+                        <div class="dropdown" id="notifDropdown" style="min-width:280px;">
+                            <p class="dropdown-label" style="padding:8px 12px 10px;">Notifications</p>
+                            <a href="#" class="dropdown-item">
+                                <div class="dropdown-item-icon" style="background:rgba(34,197,94,0.1);">
+                                    <i data-lucide="plus-circle" width="16" height="16" style="color:#4ADE80;"></i>
+                                </div>
+                                <div>
+                                    <p class="dropdown-item-text">New number added</p>
+                                    <p class="dropdown-item-time">2 minutes ago</p>
+                                </div>
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <div class="dropdown-item-icon" style="background:rgba(212,175,55,0.1);">
+                                    <i data-lucide="star" width="16" height="16" style="color:#D4AF37;"></i>
+                                </div>
+                                <div>
+                                    <p class="dropdown-item-text">Premium number tagged</p>
+                                    <p class="dropdown-item-time">15 minutes ago</p>
+                                </div>
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <div class="dropdown-item-icon" style="background:rgba(239,68,68,0.1);">
+                                    <i data-lucide="alert-circle" width="16" height="16" style="color:#F87171;"></i>
+                                </div>
+                                <div>
+                                    <p class="dropdown-item-text">Duplicate number detected</p>
+                                    <p class="dropdown-item-time">1 hour ago</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Profile -->
+                    <div style="position:relative;">
+                        <button class="profile-btn" id="profileBtn" aria-label="Profile menu">
+                            <div class="profile-avatar">A</div>
+                            <span class="profile-name">Admin</span>
+                            <i data-lucide="chevron-down" width="16" height="16" class="profile-chevron"></i>
+                        </button>
+                        <div class="dropdown" id="profileDropdown">
+                            <div class="dropdown-header">
+                                <p class="dropdown-user-name">Admin User</p>
+                                <p class="dropdown-user-email">admin@vipnumbers.com</p>
+                            </div>
+                            <a href="profile.php" class="dropdown-item"><i data-lucide="user" width="16" height="16"></i> My Profile</a>
+                            <a href="settings.php" class="dropdown-item"><i data-lucide="settings" width="16" height="16"></i> Settings</a>
+                            <a href="logout.php" class="dropdown-item"><i data-lucide="log-out" width="16" height="16"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <main class="page-content">
+            <!-- Back Button + Record ID -->
+            <div class="page-top reveal">
+                <a href="numbers.php" class="btn-back">
+                    <i data-lucide="arrow-left" width="16" height="16"></i>
+                    Back to Numbers
+                </a>
+                <div class="record-id-badge">
+                    <i data-lucide="fingerprint" width="14" height="14"></i>
+                    Record ID: <span id="recordIdDisplay">VN-001247</span>
+                </div>
+            </div>
+
+            <!-- Update Form -->
+            <!-- PHP: Add action="update_number.php" and populate values with PHP echoes -->
+            <form method="POST" action="" id="updateForm">
+                <input type="hidden" name="record_id" value="VN-001247">
+                <input type="hidden" name="status" id="statusInput" value="Available">
+
+                <div class="form-layout">
+                    <!-- Left: Main Form -->
+                    <div class="form-main">
+
+                        <!-- Basic Information -->
+                        <section class="glass-card static reveal">
+                            <div class="glass-card-body-lg">
+                                <div class="section-divider">
+                                    <div class="section-divider-icon" style="background:var(--accent-subtle);">
+                                        <i data-lucide="info" width="16" height="16" style="color:var(--accent);"></i>
+                                    </div>
+                                    <h3 class="section-divider-title">Basic Information</h3>
+                                    <div class="section-divider-line"></div>
+                                </div>
+
+                                <div class="form-grid form-grid-2">
+                                    <!-- Mobile Number -->
+                                    <div class="form-group form-grid-full">
+                                        <label class="form-label" for="mobileNumber">
+                                            <i data-lucide="smartphone" width="14" height="14" class="form-label-icon"></i>
+                                            Mobile Number
+                                        </label>
+                                        <div class="input-with-prefix">
+                                            <span class="input-prefix">+91</span>
+                                            <input
+                                                type="text" id="mobileNumber" name="mobile_number"
+                                                class="input-field" placeholder="Enter Mobile Number" maxlength="10"
+                                                value="9876543210"
+                                                aria-describedby="numberError"
+                                            >
+                                        </div>
+                                        <p class="error-msg" id="numberError">Please enter a valid 10-digit mobile number</p>
+                                        <p class="error-msg" id="duplicateError">This number already exists in the system</p>
+                                    </div>
+
+                                    <!-- Category -->
+                                    <div class="form-group">
+                                        <label class="form-label" for="category">
+                                            <i data-lucide="tag" width="14" height="14" class="form-label-icon"></i>
+                                            Category
+                                        </label>
+                                        <select id="category" name="category" class="input-field">
+                                            <option value="">Select Category</option>
+                                            <option value="VIP" selected>VIP</option>
+                                            <option value="Premium">Premium</option>
+                                            <option value="Fancy">Fancy</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Status -->
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                            <i data-lucide="activity" width="14" height="14" class="form-label-icon"></i>
+                                            Status
+                                        </label>
+                                        <div class="segment-group" role="radiogroup" aria-label="Number status">
+                                            <button type="button" class="segment-btn active" role="radio" aria-checked="true" data-value="Available">Available</button>
+                                            <button type="button" class="segment-btn" role="radio" aria-checked="false" data-value="Sold">Sold</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Pricing -->
+                        <section class="glass-card static reveal">
+                            <div class="glass-card-body-lg">
+                                <div class="section-divider">
+                                    <div class="section-divider-icon" style="background:rgba(34,197,94,0.1);">
+                                        <i data-lucide="indian-rupee" width="16" height="16" style="color:#4ADE80;"></i>
+                                    </div>
+                                    <h3 class="section-divider-title">Pricing</h3>
+                                    <div class="section-divider-line"></div>
+                                </div>
+
+                                <div class="form-grid form-grid-3" style="margin-bottom:24px;">
+                                    <div class="form-group">
+                                        <label class="form-label" for="originalPrice">
+                                            <i data-lucide="banknote" width="14" height="14" class="form-label-icon"></i>
+                                            Original Price (INR)
+                                        </label>
+                                        <div class="input-with-prefix prefix-short">
+                                            <span class="input-prefix">₹</span>
+                                            <input type="number" id="originalPrice" name="original_price" class="input-field" placeholder="e.g. 50000" min="0" value="75000">
+                                        </div>
+                                        <p class="error-msg" id="originalPriceError">Price cannot be negative</p>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="discount">
+                                            <i data-lucide="percent" width="14" height="14" class="form-label-icon"></i>
+                                            Discount (%)
+                                        </label>
+                                        <input type="number" id="discount" name="discount" class="input-field" style="text-align:center;" placeholder="e.g. 10" min="0" max="100" value="15">
+                                        <p class="error-msg" id="discountError">Discount must be between 0 and 100</p>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="sellingPrice">
+                                            <i data-lucide="circle-dollar-sign" width="14" height="14" class="form-label-icon"></i>
+                                            Selling Price (INR)
+                                        </label>
+                                        <div class="input-with-prefix prefix-short">
+                                            <span class="input-prefix input-prefix-gold">₹</span>
+                                            <input type="text" id="sellingPrice" name="selling_price" class="input-field readonly-gold" placeholder="Auto-calculated" readonly>
+                                        </div>
+                                        <p class="error-msg" id="sellingPriceError">Selling price cannot be negative</p>
+                                    </div>
+                                </div>
+
+                                <div class="pricing-calc-bar">
+                                    <i data-lucide="equal" width="16" height="16" style="color:rgba(255,255,255,0.2); flex-shrink:0;"></i>
+                                    <p class="pricing-calc-text" id="pricingFormula">Enter original price and discount to see calculation</p>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Highlight Ranges -->
+                        <section class="glass-card static reveal">
+                            <div class="glass-card-body-lg">
+                                <div class="section-divider">
+                                    <div class="section-divider-icon" style="background:rgba(244,114,182,0.1);">
+                                        <i data-lucide="sparkles" width="16" height="16" style="color:#F472B6;"></i>
+                                    </div>
+                                    <h3 class="section-divider-title">Highlight Ranges</h3>
+                                    <div class="section-divider-line"></div>
+                                </div>
+
+                                <p style="font-size:12px; color:rgba(255,255,255,0.3); margin-bottom:20px;">Define position ranges to highlight specific digit sequences in the preview. Positions are 1-based (max 10).</p>
+
+                                <div class="highlight-rows-container" id="highlightRowsContainer">
+                                    <div class="highlight-row" data-row-index="0">
+                                        <div class="highlight-row-grid">
+                                            <div class="form-group">
+                                                <label class="range-label">Start Position</label>
+                                                <input type="number" name="highlight_start[]" class="highlight-input" min="1" max="10" placeholder="1" value="1">
+                                                <p class="range-error">Invalid position (1–10)</p>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="range-label">End Position</label>
+                                                <input type="number" name="highlight_end[]" class="highlight-input" min="1" max="10" placeholder="3" value="3">
+                                                <p class="range-error">Invalid position (1–10)</p>
+                                            </div>
+                                            <div class="range-preview-col">
+                                                <label class="range-label">Preview</label>
+                                                <div class="range-preview" data-preview="0">—</div>
+                                            </div>
+                                            <div class="delete-col">
+                                                <label class="range-label">&nbsp;</label>
+                                                <button type="button" class="delete-row-btn" aria-label="Remove highlight range">
+                                                    <i data-lucide="trash-2" width="16" height="16"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="button" class="add-highlight-btn" id="addHighlightBtn">
+                                    <i data-lucide="plus" width="16" height="16"></i>
+                                    Add Highlight Range
+                                </button>
+                            </div>
+                        </section>
+
+                        <!-- Live Preview -->
+                        <section class="reveal">
+                            <div class="section-divider" style="padding:0 8px;">
+                                <div class="section-divider-icon" style="background:rgba(212,175,55,0.12);">
+                                    <i data-lucide="eye" width="16" height="16" style="color:var(--accent);"></i>
+                                </div>
+                                <h3 class="section-divider-title">Live VIP Number Preview</h3>
+                                <div class="section-divider-line"></div>
+                            </div>
+
+                            <div class="preview-card">
+                                <div class="preview-inner">
+                                    <div class="preview-top">
+                                        <div class="preview-label">
+                                            <i data-lucide="smartphone" width="20" height="20" style="color:rgba(212,175,55,0.6);"></i>
+                                            <span>VIP Number</span>
+                                        </div>
+                                        <div class="preview-badges" id="previewBadges" style="display:flex; align-items:center; gap:8px;">
+                                            <span class="badge badge-muted" id="previewCategoryBadge">No Category</span>
+                                            <span class="badge badge-available" id="previewStatusBadge">Available</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="preview-number" id="previewNumberWrap">
+                                        <div class="preview-number-text" id="previewNumber"></div>
+                                    </div>
+
+                                    <div class="preview-prices">
+                                        <div>
+                                            <p class="preview-price-label">Original Price</p>
+                                            <p class="preview-price-original" id="previewOriginalPrice">₹0</p>
+                                        </div>
+                                        <div id="previewDiscountWrap" style="display:none;">
+                                            <p class="preview-price-label">Discount</p>
+                                            <p class="preview-price-discount" id="previewDiscount">-0%</p>
+                                        </div>
+                                        <div class="preview-price-selling-wrap">
+                                            <p class="preview-price-label">Selling Price</p>
+                                            <p class="preview-price-selling shimmer-text" id="previewSellingPrice">₹0</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="preview-highlights-section" id="previewHighlightsWrap" style="display:none;">
+                                        <p class="preview-price-label">Active Highlights</p>
+                                        <div class="preview-highlights-list" id="previewHighlights"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Action Buttons -->
+                        <section class="reveal">
+                            <div class="action-bar">
+                                <button type="button" class="btn-ghost" id="resetBtn">
+                                    <i data-lucide="rotate-ccw" width="16" height="16"></i> Reset Changes
+                                </button>
+                                <a href="numbers.php" class="btn-outline">
+                                    <i data-lucide="x" width="16" height="16"></i> Cancel
+                                </a>
+                                <button type="submit" class="btn-gold">
+                                    <i data-lucide="save" width="16" height="16"></i> Save Changes
+                                </button>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- Right Sidebar -->
+                    <div class="form-sidebar">
+                        <!-- Record Info Card -->
+                        <div class="glass-card static reveal">
+                            <div class="glass-card-body">
+                                <div class="sidebar-card-header">
+                                    <div class="sidebar-card-icon"><i data-lucide="file-text" width="16" height="16" style="color:var(--accent);"></i></div>
+                                    <h4 class="sidebar-card-title">Record Details</h4>
+                                </div>
+                                <div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Record ID</span>
+                                        <span class="detail-value detail-value-mono" id="sideRecordId">VN-001247</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Created</span>
+                                        <span class="detail-value detail-value-dim" id="sideCreated">2025-01-15 10:30 AM</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Last Updated</span>
+                                        <span class="detail-value detail-value-dim" id="sideUpdated">2025-06-24 03:45 PM</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Highlights</span>
+                                        <span class="detail-value detail-value-gold" id="sideHighlightCount">1 range</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Summary Card -->
+                        <div class="glass-card static reveal">
+                            <div class="glass-card-body">
+                                <div class="sidebar-card-header">
+                                    <div class="sidebar-card-icon"><i data-lucide="bar-chart-3" width="16" height="16" style="color:var(--accent);"></i></div>
+                                    <h4 class="sidebar-card-title">Quick Summary</h4>
+                                </div>
+                                <div style="display:flex; flex-direction:column; gap:12px;">
+                                    <div class="summary-item">
+                                        <div class="summary-item-left">
+                                            <div class="summary-item-icon" style="background:var(--accent-subtle);">
+                                                <i data-lucide="tag" width="16" height="16" style="color:var(--accent);"></i>
+                                            </div>
+                                            <span class="summary-item-label">Category</span>
+                                        </div>
+                                        <span class="summary-item-value" id="summaryCategory">VIP</span>
+                                    </div>
+                                    <div class="summary-item">
+                                        <div class="summary-item-left">
+                                            <div class="summary-item-icon" style="background:rgba(34,197,94,0.1);">
+                                                <i data-lucide="check-circle" width="16" height="16" style="color:#4ADE80;"></i>
+                                            </div>
+                                            <span class="summary-item-label">Status</span>
+                                        </div>
+                                        <span class="summary-item-value" id="summaryStatus">Available</span>
+                                    </div>
+                                    <div class="summary-item">
+                                        <div class="summary-item-left">
+                                            <div class="summary-item-icon" style="background:var(--accent-blue-subtle);">
+                                                <i data-lucide="indian-rupee" width="16" height="16" style="color:var(--accent-blue);"></i>
+                                            </div>
+                                            <span class="summary-item-label">Selling Price</span>
+                                        </div>
+                                        <span class="summary-item-value" id="summaryPrice">₹63,750</span>
+                                    </div>
+                                    <div class="summary-item">
+                                        <div class="summary-item-left">
+                                            <div class="summary-item-icon" style="background:rgba(244,114,182,0.1);">
+                                                <i data-lucide="sparkles" width="16" height="16" style="color:#F472B6;"></i>
+                                            </div>
+                                            <span class="summary-item-label">Highlights</span>
+                                        </div>
+                                        <span class="summary-item-value" id="summaryHighlights">1 active</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Changes Card -->
+                        <div class="glass-card static reveal">
+                            <div class="glass-card-body">
+                                <div class="sidebar-card-header">
+                                    <div class="sidebar-card-icon"><i data-lucide="clock" width="16" height="16" style="color:var(--accent);"></i></div>
+                                    <h4 class="sidebar-card-title">Recent Changes</h4>
+                                </div>
+                                <div>
+                                    <div class="recent-item">
+                                        <span class="recent-item-text">Price updated to ₹75,000</span>
+                                        <span class="recent-item-time">2h ago</span>
+                                    </div>
+                                    <div class="recent-item">
+                                        <span class="recent-item-text">Category set to VIP</span>
+                                        <span class="recent-item-time">1d ago</span>
+                                    </div>
+                                    <div class="recent-item">
+                                        <span class="recent-item-text">Highlight range added</span>
+                                        <span class="recent-item-time">3d ago</span>
+                                    </div>
+                                    <div class="recent-item">
+                                        <span class="recent-item-text">Record created</span>
+                                        <span class="recent-item-time">Jan 15</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tips Card -->
+                        <div class="glass-card static reveal">
+                            <div class="glass-card-body">
+                                <div class="sidebar-card-header">
+                                    <div class="sidebar-card-icon"><i data-lucide="lightbulb" width="16" height="16" style="color:var(--accent);"></i></div>
+                                    <h4 class="sidebar-card-title">Quick Tips</h4>
+                                </div>
+                                <div>
+                                    <div class="tip-item">
+                                        <div class="tip-bullet"></div>
+                                        <p class="tip-text">Use highlight ranges to emphasize repeating or special digit sequences.</p>
+                                    </div>
+                                    <div class="tip-item">
+                                        <div class="tip-bullet"></div>
+                                        <p class="tip-text">The selling price updates automatically based on original price and discount.</p>
+                                    </div>
+                                    <div class="tip-item">
+                                        <div class="tip-bullet"></div>
+                                        <p class="tip-text">Only 10-digit Indian mobile numbers are accepted.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <script>
+        /* ===== Sidebar Toggle ===== */
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const menuToggle = document.getElementById('menuToggle');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+            sidebarOverlay.classList.toggle('show');
+        }
+
+        menuToggle.addEventListener('click', toggleSidebar);
+        sidebarOverlay.addEventListener('click', toggleSidebar);
+
+        /* ===== Dropdown Toggle ===== */
+        const dropdowns = {
+            notifDropdown: document.getElementById('notifBtn'),
+            profileDropdown: document.getElementById('profileBtn')
+        };
+
+        function toggleDropdown(id) {
+            const el = document.getElementById(id);
+            const isOpen = el.classList.contains('show');
+            // Close all dropdowns first
+            document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
+            if (!isOpen) el.classList.add('show');
+        }
+
+        Object.keys(dropdowns).forEach(function(id) {
+            dropdowns[id].addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleDropdown(id);
+            });
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.dropdown') && !e.target.closest('[id$="Btn"]')) {
+                document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
+            }
+        });
+
+        /* ===== Segment Control (Status) ===== */
+        const segmentBtns = document.querySelectorAll('.segment-btn');
+        const statusInput = document.getElementById('statusInput');
+
+        segmentBtns.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                segmentBtns.forEach(function(b) {
+                    b.classList.remove('active');
+                    b.setAttribute('aria-checked', 'false');
+                });
+                btn.classList.add('active');
+                btn.setAttribute('aria-checked', 'true');
+                statusInput.value = btn.dataset.value;
+                updatePreview();
+            });
+        });
+
+        /* ===== Number Input Validation ===== */
+        const mobileInput = document.getElementById('mobileNumber');
+        const numberError = document.getElementById('numberError');
+
+        mobileInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (this.value.length === 10) {
+                this.classList.remove('error');
+                numberError.classList.remove('show');
+            }
+            updatePreview();
+            refreshAllHighlightPreviews();
+        });
+
+        /* ===== Price Calculation ===== */
+        const originalPriceInput = document.getElementById('originalPrice');
+        const discountInput = document.getElementById('discount');
+        const sellingPriceInput = document.getElementById('sellingPrice');
+        const pricingFormula = document.getElementById('pricingFormula');
+
+        function calculatePricing() {
+            var original = parseFloat(originalPriceInput.value) || 0;
+            var disc = parseFloat(discountInput.value) || 0;
+            var selling = 0;
+            var formula = 'Enter original price and discount to see calculation';
+
+            // Validate discount range
+            var discountError = document.getElementById('discountError');
+            var originalError = document.getElementById('originalPriceError');
+            var sellingError = document.getElementById('sellingPriceError');
+
+            originalError.classList.remove('show');
+            discountError.classList.remove('show');
+            sellingError.classList.remove('show');
+            originalPriceInput.classList.remove('error');
+            discountInput.classList.remove('error');
+
+            if (original < 0) {
+                originalError.classList.add('show');
+                originalPriceInput.classList.add('error');
+            }
+            if (disc < 0 || disc > 100) {
+                discountError.classList.add('show');
+                discountInput.classList.add('error');
+            }
+
+            disc = Math.max(0, Math.min(100, disc));
+            original = Math.max(0, original);
+            selling = original - (original * disc / 100);
+
+            if (selling < 0) {
+                sellingError.classList.add('show');
+            }
+
+            sellingPriceInput.value = selling > 0 ? Math.round(selling).toLocaleString('en-IN') : '';
+
+            if (original > 0) {
+                formula = '₹' + original.toLocaleString('en-IN') + ' − ' + disc + '% = ₹' + Math.round(selling).toLocaleString('en-IN');
+            }
+            pricingFormula.textContent = formula;
+        }
+
+        originalPriceInput.addEventListener('input', function() { calculatePricing(); updatePreview(); });
+        discountInput.addEventListener('input', function() { calculatePricing(); updatePreview(); });
+
+        /* ===== Preview Update ===== */
+        var categorySelect = document.getElementById('category');
+
+        function updatePreview() {
+            var number = mobileInput.value || '';
+            var category = categorySelect.value || '';
+            var status = statusInput.value || 'Available';
+            var original = parseFloat(originalPriceInput.value) || 0;
+            var disc = parseFloat(discountInput.value) || 0;
+            var selling = original - (original * disc / 100);
+
+            // Number digits with highlight
+            var previewEl = document.getElementById('previewNumber');
+            var digits = getHighlightedDigits(number);
+            if (number.length > 0) {
+                previewEl.innerHTML = '+91 ' + digits;
+            } else {
+                previewEl.innerHTML = '<span style="color:rgba(255,255,255,0.12); font-family:\'DM Sans\',sans-serif; font-size:16px; font-weight:400; letter-spacing:0;">Enter a number to preview</span>';
+            }
+
+            // Category badge
+            var catBadge = document.getElementById('previewCategoryBadge');
+            if (category) {
+                catBadge.textContent = category;
+                catBadge.className = 'badge badge-' + category.toLowerCase();
+            } else {
+                catBadge.textContent = 'No Category';
+                catBadge.className = 'badge badge-muted';
+            }
+
+            // Status badge
+            var statusBadge = document.getElementById('previewStatusBadge');
+            statusBadge.textContent = status;
+            statusBadge.className = 'badge badge-' + status.toLowerCase();
+
+            // Prices
+            document.getElementById('previewOriginalPrice').textContent = original > 0 ? '₹' + original.toLocaleString('en-IN') : '₹0';
+
+            var discountWrap = document.getElementById('previewDiscountWrap');
+            if (disc > 0) {
+                discountWrap.style.display = '';
+                document.getElementById('previewDiscount').textContent = '-' + disc + '%';
+            } else {
+                discountWrap.style.display = 'none';
+            }
+
+            document.getElementById('previewSellingPrice').textContent = '₹' + Math.round(Math.max(0, selling)).toLocaleString('en-IN');
+
+            // Highlights preview badges
+            updateHighlightsBadges();
+
+            // Side summary
+            document.getElementById('summaryCategory').textContent = category || '—';
+            document.getElementById('summaryStatus').textContent = status;
+            document.getElementById('summaryPrice').textContent = selling > 0 ? '₹' + Math.round(selling).toLocaleString('en-IN') : '—';
+
+            updateHighlightCount();
+        }
+
+        function getHighlightedDigits(number) {
+            var ranges = getHighlightRanges();
+            var html = '';
+            for (var i = 0; i < number.length; i++) {
+                var pos = i + 1;
+                var isHighlighted = false;
+                for (var r = 0; r < ranges.length; r++) {
+                    if (pos >= ranges[r].start && pos <= ranges[r].end) {
+                        isHighlighted = true;
+                        break;
+                    }
+                }
+                html += '<span class="preview-digit' + (isHighlighted ? ' highlighted' : '') + '">' + number[i] + '</span>';
+            }
+            return html;
+        }
+
+        function getHighlightRanges() {
+            var rows = document.querySelectorAll('.highlight-row');
+            var ranges = [];
+            rows.forEach(function(row) {
+                var inputs = row.querySelectorAll('.highlight-input');
+                var start = parseInt(inputs[0].value);
+                var end = parseInt(inputs[1].value);
+                if (!isNaN(start) && !isNaN(end) && start >= 1 && end <= 10 && start <= end) {
+                    ranges.push({ start: start, end: end });
+                }
+            });
+            return ranges;
+        }
+
+        function updateHighlightsBadges() {
+            var ranges = getHighlightRanges();
+            var wrap = document.getElementById('previewHighlightsWrap');
+            var container = document.getElementById('previewHighlights');
+            if (ranges.length === 0) {
+                wrap.style.display = 'none';
+                return;
+            }
+            wrap.style.display = '';
+            var html = '';
+            var number = mobileInput.value || '';
+            ranges.forEach(function(r) {
+                var digits = number.substring(r.start - 1, r.end);
+                var label = digits ? digits : ('Pos ' + r.start + '–' + r.end);
+                html += '<span class="badge badge-highlight">' + label + '</span>';
+            });
+            container.innerHTML = html;
+        }
+
+        function updateHighlightCount() {
+            var count = document.querySelectorAll('.highlight-row').length;
+            var validCount = getHighlightRanges().length;
+            document.getElementById('sideHighlightCount').textContent = count + (count === 1 ? ' range' : ' ranges');
+            document.getElementById('summaryHighlights').textContent = validCount + ' active';
+        }
+
+        /* ===== Highlight Rows ===== */
+        var highlightContainer = document.getElementById('highlightRowsContainer');
+        var addHighlightBtn = document.getElementById('addHighlightBtn');
+        var rowIndex = 1;
+
+        addHighlightBtn.addEventListener('click', addHighlightRow);
+
+        highlightContainer.addEventListener('click', function(e) {
+            var deleteBtn = e.target.closest('.delete-row-btn');
+            if (deleteBtn) {
+                var row = deleteBtn.closest('.highlight-row');
+                row.classList.add('removing');
+                setTimeout(function() {
+                    row.remove();
+                    refreshAllHighlightPreviews();
+                    updateHighlightCount();
+                }, 300);
+            }
+        });
+
+        highlightContainer.addEventListener('input', function(e) {
+            if (e.target.classList.contains('highlight-input')) {
+                refreshRowPreview(e.target.closest('.highlight-row'));
+                updatePreview();
+            }
+        });
+
+        function addHighlightRow() {
+            var idx = rowIndex++;
+            var row = document.createElement('div');
+            row.className = 'highlight-row';
+            row.dataset.rowIndex = idx;
+            row.innerHTML =
+                '<div class="highlight-row-grid">' +
+                    '<div class="form-group">' +
+                        '<label class="range-label">Start Position</label>' +
+                        '<input type="number" name="highlight_start[]" class="highlight-input" min="1" max="10" placeholder="1">' +
+                        '<p class="range-error">Invalid position (1–10)</p>' +
+                    '</div>' +
+                    '<div class="form-group">' +
+                        '<label class="range-label">End Position</label>' +
+                        '<input type="number" name="highlight_end[]" class="highlight-input" min="1" max="10" placeholder="3">' +
+                        '<p class="range-error">Invalid position (1–10)</p>' +
+                    '</div>' +
+                    '<div class="range-preview-col">' +
+                        '<label class="range-label">Preview</label>' +
+                        '<div class="range-preview empty" data-preview="' + idx + '">Enter positions</div>' +
+                    '</div>' +
+                    '<div class="delete-col">' +
+                        '<label class="range-label">&nbsp;</label>' +
+                        '<button type="button" class="delete-row-btn" aria-label="Remove highlight range">' +
+                            '<i data-lucide="trash-2" width="16" height="16"></i>' +
+                        '</button>' +
+                    '</div>' +
+                '</div>';
+            highlightContainer.appendChild(row);
+            lucide.createIcons({ attrs: { width: 16, height: 16 } });
+            updateHighlightCount();
+        }
+
+        function refreshRowPreview(row) {
+            var inputs = row.querySelectorAll('.highlight-input');
+            var start = parseInt(inputs[0].value);
+            var end = parseInt(inputs[1].value);
+            var previewEl = row.querySelector('.range-preview');
+            var errors = row.querySelectorAll('.range-error');
+            var hasError = false;
+
+            // Validate
+            errors.forEach(function(e) { e.classList.remove('show'); });
+            inputs.forEach(function(inp) { inp.classList.remove('input-error'); });
+            row.classList.remove('has-error');
+
+            if (inputs[0].value !== '' && (isNaN(start) || start < 1 || start > 10)) {
+                errors[0].classList.add('show');
+                inputs[0].classList.add('input-error');
+                hasError = true;
+            }
+            if (inputs[1].value !== '' && (isNaN(end) || end < 1 || end > 10)) {
+                errors[1].classList.add('show');
+                inputs[1].classList.add('input-error');
+                hasError = true;
+            }
+            if (!hasError && !isNaN(start) && !isNaN(end) && start > end) {
+                errors[1].textContent = 'End must be ≥ start';
+                errors[1].classList.add('show');
+                inputs[1].classList.add('input-error');
+                hasError = true;
+            }
+
+            if (hasError) {
+                row.classList.add('has-error');
+                previewEl.className = 'range-preview empty';
+                previewEl.textContent = 'Invalid range';
+                return;
+            }
+
+            // Reset error text
+            errors[1].textContent = 'Invalid position (1–10)';
+
+            var number = mobileInput.value || '';
+            if (!isNaN(start) && !isNaN(end) && number.length > 0) {
+                var digits = number.substring(start - 1, end);
+                if (digits) {
+                    previewEl.className = 'range-preview';
+                    previewEl.textContent = digits;
+                } else {
+                    previewEl.className = 'range-preview empty';
+                    previewEl.textContent = 'Out of range';
+                }
+            } else if (!isNaN(start) && !isNaN(end)) {
+                previewEl.className = 'range-preview empty';
+                previewEl.textContent = 'Pos ' + start + '–' + end;
+            } else {
+                previewEl.className = 'range-preview empty';
+                previewEl.textContent = 'Enter positions';
+            }
+        }
+
+        function refreshAllHighlightPreviews() {
+            document.querySelectorAll('.highlight-row').forEach(function(row) {
+                refreshRowPreview(row);
+            });
+            updatePreview();
+        }
+
+        /* ===== Form Validation & Submit ===== */
+        var updateForm = document.getElementById('updateForm');
+
+        updateForm.addEventListener('submit', function(e) {
+            var valid = true;
+            var number = mobileInput.value.trim();
+
+            // Validate mobile number
+            if (number.length !== 10 || !/^\d{10}$/.test(number)) {
+                mobileInput.classList.add('error');
+                numberError.classList.add('show');
+                valid = false;
+            } else {
+                mobileInput.classList.remove('error');
+                numberError.classList.remove('show');
+            }
+
+            // Validate original price
+            var orig = parseFloat(originalPriceInput.value);
+            if (isNaN(orig) || orig < 0) {
+                originalPriceInput.classList.add('error');
+                document.getElementById('originalPriceError').classList.add('show');
+                valid = false;
+            }
+
+            // Validate discount
+            var disc = parseFloat(discountInput.value);
+            if (!isNaN(disc) && (disc < 0 || disc > 100)) {
+                discountInput.classList.add('error');
+                document.getElementById('discountError').classList.add('show');
+                valid = false;
+            }
+
+            if (!valid) {
+                e.preventDefault();
+                showToast('Please fix the errors in the form before saving.', 'error');
+                // Scroll to first error
+                var firstError = updateForm.querySelector('.error, .input-error');
+                if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            // If valid, form submits normally to PHP
+        });
+
+        /* ===== Reset Form ===== */
+        var resetBtn = document.getElementById('resetBtn');
+
+        resetBtn.addEventListener('click', function() {
+            // Reset to original values (would be PHP-populated values)
+            mobileInput.value = '9876543210';
+            categorySelect.value = 'VIP';
+            originalPriceInput.value = '75000';
+            discountInput.value = '15';
+            sellingPriceInput.value = '';
+
+            // Reset status
+            segmentBtns.forEach(function(b) {
+                b.classList.remove('active');
+                b.setAttribute('aria-checked', 'false');
+            });
+            segmentBtns[0].classList.add('active');
+            segmentBtns[0].setAttribute('aria-checked', 'true');
+            statusInput.value = 'Available';
+
+            // Reset highlights to single row
+            highlightContainer.innerHTML =
+                '<div class="highlight-row" data-row-index="0">' +
+                    '<div class="highlight-row-grid">' +
+                        '<div class="form-group">' +
+                            '<label class="range-label">Start Position</label>' +
+                            '<input type="number" name="highlight_start[]" class="highlight-input" min="1" max="10" placeholder="1" value="1">' +
+                            '<p class="range-error">Invalid position (1–10)</p>' +
+                        '</div>' +
+                        '<div class="form-group">' +
+                            '<label class="range-label">End Position</label>' +
+                            '<input type="number" name="highlight_end[]" class="highlight-input" min="1" max="10" placeholder="3" value="3">' +
+                            '<p class="range-error">Invalid position (1–10)</p>' +
+                        '</div>' +
+                        '<div class="range-preview-col">' +
+                            '<label class="range-label">Preview</label>' +
+                            '<div class="range-preview" data-preview="0">—</div>' +
+                        '</div>' +
+                        '<div class="delete-col">' +
+                            '<label class="range-label">&nbsp;</label>' +
+                            '<button type="button" class="delete-row-btn" aria-label="Remove highlight range">' +
+                                '<i data-lucide="trash-2" width="16" height="16"></i>' +
+                            '</button>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
+            rowIndex = 1;
+
+            // Clear errors
+            updateForm.querySelectorAll('.error').forEach(function(el) { el.classList.remove('error'); });
+            updateForm.querySelectorAll('.input-error').forEach(function(el) { el.classList.remove('input-error'); });
+            updateForm.querySelectorAll('.error-msg').forEach(function(el) { el.classList.remove('show'); });
+            updateForm.querySelectorAll('.range-error').forEach(function(el) { el.classList.remove('show'); });
+            updateForm.querySelectorAll('.has-error').forEach(function(el) { el.classList.remove('has-error'); });
+
+            lucide.createIcons({ attrs: { width: 16, height: 16 } });
+            calculatePricing();
+            refreshAllHighlightPreviews();
+            showToast('Form reset to original values.', 'info');
+        });
+
+        /* ===== Toast (kept for validation feedback only) ===== */
+        function showToast(message, type) {
+            type = type || 'info';
+            var container = document.getElementById('toastContainer');
+            var toast = document.createElement('div');
+            toast.className = 'toast ' + type;
+            var iconName = type === 'success' ? 'check-circle' : type === 'error' ? 'alert-circle' : 'info';
+            var iconColor = type === 'success' ? '#4ADE80' : type === 'error' ? '#F87171' : '#60B5FF';
+            toast.innerHTML = '<i data-lucide="' + iconName + '" width="18" height="18" style="color:' + iconColor + '; flex-shrink:0;"></i><span>' + message + '</span>';
+            container.appendChild(toast);
+            lucide.createIcons({ attrs: { width: 18, height: 18 } });
+            requestAnimationFrame(function() {
+                requestAnimationFrame(function() {
+                    toast.classList.add('show');
+                });
+            });
+            setTimeout(function() {
+                toast.classList.remove('show');
+                setTimeout(function() { toast.remove(); }, 400);
+            }, 3500);
+        }
+
+        /* ===== Reveal on Scroll ===== */
+        var revealObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.08 });
+
+        document.querySelectorAll('.reveal').forEach(function(el) {
+            revealObserver.observe(el);
+        });
+
+        /* ===== Init ===== */
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons({ attrs: { width: 16, height: 16 } });
+            calculatePricing();
+            refreshAllHighlightPreviews();
+        });
+    </script>
+</body>
+</html>

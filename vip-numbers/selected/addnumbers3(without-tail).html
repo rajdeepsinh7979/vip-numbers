@@ -1,0 +1,2029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add VIP Number — Admin Dashboard</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+    <style>
+        /* =============================================
+           1. Custom Properties
+           ============================================= */
+        :root {
+            --bg: #0D0D0D;
+            --fg: #FFFFFF;
+            --muted: #999999;
+            --accent: #D4AF37;
+            --accent-light: #E8CC6E;
+            --accent-dark: #B8962E;
+            --card: rgba(255, 255, 255, 0.035);
+            --card-hover: rgba(255, 255, 255, 0.065);
+            --border: rgba(255, 255, 255, 0.06);
+            --border-gold: rgba(212, 175, 55, 0.25);
+            --accent-blue: #4A9DFF;
+            --green: #22C55E;
+            --red: #EF4444;
+            --pink: #F472B6;
+            --sidebar-width: 260px;
+            --radius-sm: 10px;
+            --radius-md: 12px;
+            --radius-lg: 18px;
+            --radius-xl: 24px;
+            --font-display: 'Playfair Display', serif;
+            --font-body: 'DM Sans', sans-serif;
+            --transition-fast: 0.25s ease;
+            --transition-smooth: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* =============================================
+           2. Reset & Base
+           ============================================= */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: -20%; right: -10%;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.04) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -15%; left: -5%;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(74, 157, 255, 0.03) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
+        }
+        a { color: inherit; text-decoration: none; }
+        button { font-family: var(--font-body); }
+        input, select { font-family: var(--font-body); }
+        ul { list-style: none; }
+
+        /* =============================================
+           3. Scrollbar
+           ============================================= */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+
+        /* =============================================
+           4. Decorative Elements
+           ============================================= */
+        .gold-line {
+            position: fixed; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            z-index: 999;
+        }
+
+        /* =============================================
+           5. Layout
+           ============================================= */
+        .sidebar-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 45; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .sidebar-overlay.is-open { opacity: 1; pointer-events: auto; }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            position: relative;
+        }
+        .page-content {
+            padding: 24px 24px 0;
+            position: relative;
+            z-index: 10;
+        }
+        .page-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .form-area {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .right-sidebar {
+            width: 100%;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* =============================================
+           6. Sidebar
+           ============================================= */
+        .sidebar {
+            width: var(--sidebar-width);
+            min-height: 100vh;
+            background: rgba(18, 18, 18, 0.95);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0; top: 0;
+            z-index: 50;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .sidebar-header {
+            padding: 24px 24px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .sidebar-brand-icon {
+            width: 40px; height: 40px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .sidebar-brand-icon span {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--bg);
+        }
+        .sidebar-brand-name {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 16px;
+            color: #fff;
+            line-height: 1.2;
+        }
+        .sidebar-brand-subtitle {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-top: 2px;
+        }
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .sidebar-nav-label {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: rgba(255, 255, 255, 0.2);
+            padding: 0 16px;
+            margin-bottom: 12px;
+        }
+        .sidebar-nav-label + .sidebar-nav-label { margin-top: 24px; }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 20px;
+            border-radius: var(--radius-md);
+            color: var(--muted);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all var(--transition-fast);
+            position: relative;
+            overflow: hidden;
+        }
+        .sidebar-link svg { width: 18px; height: 18px; flex-shrink: 0; }
+        .sidebar-link::before {
+            content: '';
+            position: absolute; left: 0; top: 50%;
+            transform: translateY(-50%);
+            width: 3px; height: 0;
+            background: var(--accent);
+            border-radius: 0 4px 4px 0;
+            transition: height var(--transition-fast);
+        }
+        .sidebar-link:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .sidebar-link.is-active {
+            color: var(--accent);
+            background: rgba(212, 175, 55, 0.08);
+        }
+        .sidebar-link.is-active::before { height: 24px; }
+
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .inventory-card {
+            padding: 16px;
+            border-radius: var(--radius-lg);
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--border-gold);
+            transition: none;
+        }
+        .inventory-card:hover {
+            transform: none;
+            background: rgba(212, 175, 55, 0.1);
+            border-color: var(--border-gold);
+            box-shadow: none;
+        }
+        .inventory-card-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+        .inventory-card-text {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+            line-height: 1.6;
+        }
+
+        /* =============================================
+           7. Top Header
+           ============================================= */
+        .top-header {
+            position: sticky; top: 0; z-index: 40;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(13, 13, 13, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .top-header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+        }
+        .top-header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .top-header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .menu-toggle {
+            width: 36px; height: 36px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        .menu-toggle svg { width: 20px; height: 20px; }
+        .menu-toggle:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .page-title-area { }
+        .page-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 2px;
+        }
+        .breadcrumb-link {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.3);
+            transition: color var(--transition-fast);
+        }
+        .breadcrumb-link:hover { color: var(--accent); }
+        .breadcrumb-sep {
+            color: rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+        }
+        .breadcrumb-sep svg { width: 12px; height: 12px; }
+        .breadcrumb-current {
+            font-size: 12px;
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        /* Notification button */
+        .notification-btn {
+            width: 40px; height: 40px;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            position: relative;
+        }
+        .notification-btn svg { width: 18px; height: 18px; }
+        .notification-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .notification-badge {
+            position: absolute;
+            top: -4px; right: -4px;
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: var(--bg);
+            font-size: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Profile button */
+        .profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 4px 12px 4px 4px;
+            border-radius: var(--radius-md);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: background var(--transition-fast);
+            color: inherit;
+        }
+        .profile-btn:hover { background: rgba(255, 255, 255, 0.04); }
+        .profile-avatar {
+            width: 36px; height: 36px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.8), var(--accent-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .profile-avatar span {
+            color: var(--bg);
+            font-weight: 700;
+            font-size: 14px;
+        }
+        .profile-name {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+        }
+        .profile-chevron {
+            color: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+        }
+        .profile-chevron svg { width: 16px; height: 16px; }
+
+        /* =============================================
+           8. Dropdowns
+           ============================================= */
+        .dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: #1E1E1E;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 8px;
+            min-width: 200px;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-8px);
+            transition: all var(--transition-fast);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+            z-index: 60;
+        }
+        .dropdown.is-open {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+        .dropdown--wide { min-width: 280px; }
+        .dropdown-title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(255, 255, 255, 0.3);
+            padding: 8px 12px;
+        }
+        .dropdown-header {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 4px;
+        }
+        .dropdown-header-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .dropdown-header-email {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.35);
+            margin-top: 2px;
+        }
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff;
+        }
+        .dropdown-item svg { width: 16px; height: 16px; }
+        .dropdown-item-icon {
+            width: 32px; height: 32px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .dropdown-item-icon svg { width: 16px; height: 16px; }
+        .dropdown-item-icon--green { background: rgba(34, 197, 94, 0.1); }
+        .dropdown-item-icon--green svg { color: #4ADE80; }
+        .dropdown-item-icon--gold { background: rgba(212, 175, 55, 0.1); }
+        .dropdown-item-icon--gold svg { color: var(--accent); }
+        .dropdown-item-content { min-width: 0; }
+        .dropdown-item-title {
+            font-size: 12px;
+            font-weight: 500;
+            color: #fff;
+        }
+        .dropdown-item-time {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.3);
+            margin-top: 2px;
+        }
+
+        /* =============================================
+           9. Cards
+           ============================================= */
+        .glass-card {
+            background: var(--card);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-smooth);
+        }
+        .glass-card:hover {
+            background: var(--card-hover);
+            border-color: var(--border-gold);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(212, 175, 55, 0.06);
+        }
+        .glass-card--static {
+            transition: none;
+        }
+        .glass-card--static:hover {
+            transform: none;
+            background: var(--card);
+            border-color: var(--border);
+            box-shadow: none;
+        }
+        .form-section {
+            padding: 24px;
+        }
+
+        /* =============================================
+           10. Section Headers
+           ============================================= */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+        .section-header--offset { padding: 0 8px; }
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            white-space: nowrap;
+        }
+        .section-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.06), transparent);
+        }
+        .section-description {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.3);
+            margin-bottom: 20px;
+            margin-top: -12px;
+        }
+
+        /* =============================================
+           11. Icon Box
+           ============================================= */
+        .icon-box {
+            width: 32px; height: 32px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .icon-box svg { width: 16px; height: 16px; }
+        .icon-box--gold { background: rgba(212, 175, 55, 0.1); }
+        .icon-box--gold svg { color: var(--accent); }
+        .icon-box--pink { background: rgba(244, 114, 182, 0.1); }
+        .icon-box--pink svg { color: #F472B6; }
+        .icon-box--green { background: rgba(34, 197, 94, 0.1); }
+        .icon-box--green svg { color: #4ADE80; }
+        .icon-box--blue { background: rgba(74, 157, 255, 0.1); }
+        .icon-box--blue svg { color: var(--accent-blue); }
+
+        /* =============================================
+           12. Form Elements
+           ============================================= */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+        .form-group { position: relative; }
+        .form-group--full { grid-column: 1 / -1; }
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.45);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .form-label-icon {
+            display: inline;
+            vertical-align: middle;
+            margin-right: 4px;
+            margin-top: -1px;
+        }
+        .form-label-icon svg { width: 14px; height: 14px; }
+        .input-wrapper { position: relative; }
+        .input-prefix {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.2);
+            font-weight: 600;
+            font-size: 14px;
+            pointer-events: none;
+        }
+        .input-field {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            color: #fff;
+            font-size: 14px;
+            transition: all var(--transition-fast);
+            outline: none;
+        }
+        .input-field:focus {
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.08);
+        }
+        .input-field::placeholder { color: rgba(255, 255, 255, 0.2); }
+        .input-field--prefixed { padding-left: 56px; }
+        .input-field--currency { padding-left: 40px; }
+        .input-field--centered { text-align: center; }
+        .input-field--gold-readonly {
+            border-color: rgba(212, 175, 55, 0.2);
+            background: rgba(212, 175, 55, 0.03);
+            color: rgba(255, 255, 255, 0.5);
+            cursor: default;
+        }
+        .input-field--gold-readonly:focus {
+            border-color: rgba(212, 175, 55, 0.2);
+            background: rgba(212, 175, 55, 0.03);
+            box-shadow: none;
+        }
+        .input-field.has-error {
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+        select.input-field {
+            appearance: none;
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 40px;
+        }
+        .error-msg {
+            font-size: 11px;
+            color: #F87171;
+            margin-top: 6px;
+            display: none;
+        }
+        .error-msg.is-visible { display: block; }
+
+        /* =============================================
+           13. Segment Group
+           ============================================= */
+        .segment-group {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+        }
+        .segment-btn {
+            flex: 1;
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.4);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .segment-btn:hover {
+            color: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .segment-btn.is-active {
+            color: var(--bg);
+            background: var(--accent);
+            box-shadow: 0 2px 12px rgba(212, 175, 55, 0.3);
+        }
+
+        /* =============================================
+           14. Highlight Rows
+           ============================================= */
+        .highlight-rows { display: flex; flex-direction: column; gap: 12px; }
+        .highlight-row {
+            padding: 16px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all var(--transition-smooth);
+            animation: rowSlideIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .highlight-row:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+        .highlight-row.has-error {
+            border-color: rgba(239, 68, 68, 0.2);
+            background: rgba(239, 68, 68, 0.02);
+        }
+        .highlight-row.is-removing {
+            animation: rowSlideOut 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            pointer-events: none;
+        }
+        .highlight-row-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 16px;
+            align-items: start;
+        }
+        .range-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 6px;
+        }
+        .highlight-input {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            color: #fff;
+            font-size: 14px;
+            transition: all var(--transition-fast);
+            outline: none;
+            text-align: center;
+        }
+        .highlight-input:focus {
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.08);
+        }
+        .highlight-input::placeholder { color: rgba(255, 255, 255, 0.15); }
+        .highlight-input.has-error {
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.08);
+        }
+        .range-preview {
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.85);
+            min-height: 42px;
+            display: flex;
+            align-items: center;
+        }
+        .range-preview--empty {
+            color: rgba(255, 255, 255, 0.12);
+            font-family: var(--font-body);
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0;
+        }
+        .range-error {
+            font-size: 10px;
+            color: #F87171;
+            margin-top: 4px;
+            display: none;
+        }
+        .range-error.is-visible { display: block; }
+        .delete-col { padding-top: 22px; }
+        .delete-row-btn {
+            width: 38px; height: 38px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            flex-shrink: 0;
+        }
+        .delete-row-btn svg { width: 16px; height: 16px; }
+        .delete-row-btn:hover {
+            background: rgba(239, 68, 68, 0.12);
+            border-color: rgba(239, 68, 68, 0.2);
+            color: #F87171;
+        }
+        .add-range-btn {
+            margin-top: 16px;
+            width: 100%;
+            padding: 12px;
+            border-radius: var(--radius-md);
+            border: 1px dashed rgba(212, 175, 55, 0.25);
+            background: rgba(212, 175, 55, 0.03);
+            color: var(--accent);
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        .add-range-btn svg { width: 16px; height: 16px; }
+        .add-range-btn:hover {
+            background: rgba(212, 175, 55, 0.08);
+            border-color: rgba(212, 175, 55, 0.4);
+        }
+        .add-range-btn:active { transform: scale(0.99); }
+
+        /* =============================================
+           15. Pricing
+           ============================================= */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        .pricing-formula-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .pricing-formula-bar svg {
+            width: 16px; height: 16px;
+            color: rgba(255, 255, 255, 0.2);
+            flex-shrink: 0;
+        }
+        .pricing-formula-text {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.3);
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* =============================================
+           16. Preview Card
+           ============================================= */
+        .preview-card {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(145deg, rgba(212, 175, 55, 0.06) 0%, rgba(26, 26, 26, 0.9) 40%, rgba(26, 26, 26, 0.95) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            border-radius: 20px;
+            padding: 32px;
+        }
+        .preview-card::before {
+            content: '';
+            position: absolute;
+            top: -50%; right: -30%;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .preview-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), transparent);
+        }
+        .preview-card-inner { position: relative; z-index: 1; }
+        .preview-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+        }
+        .preview-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .preview-label svg { width: 20px; height: 20px; color: rgba(212, 175, 55, 0.6); }
+        .preview-label-text {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+        }
+        .preview-badges { display: flex; align-items: center; gap: 8px; }
+        .preview-number-area { margin-bottom: 32px; }
+        .preview-number {
+    font-family: var(--font-display);
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    line-height: 1.1;
+    color: rgba(255, 255, 255, 0.9);
+}
+        .highlight-gold {
+            color: #D4AF37 !important;
+            -webkit-text-fill-color: #D4AF37 !important;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+        .preview-prices {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            gap: 24px;
+        }
+        .price-block { }
+        .price-block--selling { margin-left: auto; text-align: right; }
+        .price-label {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.25);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .price-label--gold { color: rgba(212, 175, 55, 0.5); }
+        .price-original {
+            font-size: 18px;
+            font-weight: 600;
+            text-decoration: line-through;
+            text-decoration-color: rgba(239, 68, 68, 0.5);
+            color: rgba(255, 255, 255, 0.35);
+        }
+        .price-discount-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #F87171;
+        }
+        .price-selling {
+            font-size: 24px;
+            font-weight: 700;
+            font-family: var(--font-display);
+        }
+        .shimmer-text {
+            background: linear-gradient(90deg, #D4AF37, #E8CC6E, #fff, #E8CC6E, #D4AF37);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s linear infinite;
+        }
+        .preview-highlights {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .preview-highlights-label {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.25);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .highlight-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+
+        /* =============================================
+           17. Buttons
+           ============================================= */
+        .form-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: flex-end;
+            gap: 12px;
+            padding-bottom: 32px;
+        }
+        .btn-gold {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 28px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, #B8962E, #D4AF37, #E8CC6E);
+            color: var(--bg);
+            font-size: 14px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 16px rgba(212, 175, 55, 0.2);
+            text-decoration: none;
+        }
+        .btn-gold svg { width: 16px; height: 16px; }
+        .btn-gold:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 24px rgba(212, 175, 55, 0.35);
+        }
+        .btn-gold:active { transform: translateY(0) scale(0.98); }
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-decoration: none;
+        }
+        .btn-outline svg { width: 16px; height: 16px; }
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+        .btn-outline:active { transform: scale(0.98); }
+        .btn-ghost {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: var(--radius-md);
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        .btn-ghost svg { width: 16px; height: 16px; }
+        .btn-ghost:hover {
+            color: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        /* =============================================
+           18. Badges
+           ============================================= */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge--default {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.25);
+        }
+        .badge--available { background: rgba(34, 197, 94, 0.12); color: #4ADE80; }
+        .badge--sold { background: rgba(239, 68, 68, 0.12); color: #F87171; }
+        .badge--premium { background: rgba(212, 175, 55, 0.15); color: #E8CC6E; }
+        .badge--reserved { background: rgba(74, 157, 255, 0.12); color: #60B5FF; }
+        .badge--vip { background: rgba(244, 114, 182, 0.12); color: #F472B6; }
+        .badge--fancy { background: rgba(232, 204, 110, 0.15); color: #E8CC6E; }
+        .badge--sm { font-size: 10px; padding: 2px 8px; }
+
+        /* =============================================
+           19. Right Sidebar
+           ============================================= */
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .card-header-icon { }
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        /* Summary */
+        .summary-list { display: flex; flex-direction: column; gap: 16px; }
+        .summary-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .summary-item-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .summary-item-icon svg { width: 14px; height: 14px; }
+        .summary-item-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 500;
+        }
+        .summary-item-value {
+            font-size: 14px;
+            font-weight: 700;
+            font-family: var(--font-display);
+        }
+        .summary-item-value--white { color: #fff; }
+        .summary-item-value--green { color: #4ADE80; }
+        .summary-item-value--gold { color: var(--accent); }
+
+        /* Recent */
+        .recent-list { }
+        .recent-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            transition: padding-left 0.2s ease;
+        }
+        .recent-item:last-child { border-bottom: none; }
+        .recent-item:hover { padding-left: 6px; }
+        .recent-item-info { }
+        .recent-item-number {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            letter-spacing: 0.05em;
+        }
+        .recent-item-meta {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.25);
+            margin-top: 2px;
+        }
+
+        /* Tips */
+        .tips-card {
+            border-color: rgba(212, 175, 55, 0.1) !important;
+            background: rgba(212, 175, 55, 0.02) !important;
+        }
+        .tips-card:hover {
+            border-color: rgba(212, 175, 55, 0.1) !important;
+            background: rgba(212, 175, 55, 0.02) !important;
+        }
+        .tips-card-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .tips-card-header svg { width: 16px; height: 16px; color: var(--accent); }
+        .tips-card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent);
+        }
+        .tips-list { display: flex; flex-direction: column; gap: 10px; }
+        .tip-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .tip-bullet {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: rgba(212, 175, 55, 0.4);
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+        .tip-text {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+            line-height: 1.6;
+        }
+
+        /* =============================================
+           20. Progress Bar
+           ============================================= */
+        .progress-track {
+            width: 100%; height: 10px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.06);
+            overflow: hidden;
+        }
+        .progress-track--thin { height: 6px; }
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(to right, var(--accent-dark), var(--accent));
+        }
+
+        /* =============================================
+           21. Animations
+           ============================================= */
+        @keyframes pulse-gold {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+            50% { box-shadow: 0 0 0 6px rgba(212, 175, 55, 0); }
+        }
+        .pulse-dot { animation: pulse-gold 2s infinite; }
+
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        @keyframes rowSlideIn {
+            from { opacity: 0; transform: translateY(-10px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes rowSlideOut {
+            from { opacity: 1; transform: translateY(0) scale(1); max-height: 200px; margin-bottom: 12px; }
+            to { opacity: 0; transform: translateY(-10px) scale(0.95); max-height: 0; margin-bottom: 0; padding: 0 16px; overflow: hidden; }
+        }
+
+        /* =============================================
+           22. Scroll Reveal
+           ============================================= */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .reveal.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* =============================================
+           23. Responsive — Large screens
+           ============================================= */
+        @media (min-width: 1024px) {
+            .page-content { padding: 24px 32px 0; }
+            .top-header-inner { padding: 16px 32px; }
+            .form-section { padding: 32px; }
+            .preview-card { padding: 40px; }
+            .menu-toggle { display: none; }
+        }
+
+        /* =============================================
+           24. Responsive — XL layout
+           ============================================= */
+        @media (min-width: 1280px) {
+            .page-layout { flex-direction: row; }
+            .right-sidebar { width: 320px; }
+            .pricing-grid { grid-template-columns: 1fr 1fr 1fr; }
+            .form-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        /* =============================================
+           25. Responsive — Tablet / Mobile
+           ============================================= */
+        @media (max-width: 1023px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.is-open { transform: translateX(0); }
+            .main-content { margin-left: 0 !important; }
+            .preview-number { font-size: 30px; letter-spacing: 2px; }
+        }
+        @media (max-width: 639px) {
+            .preview-number { font-size: 26px; letter-spacing: 1px; }
+            .form-actions { flex-direction: column; }
+            .form-actions .btn-gold,
+            .form-actions .btn-outline { width: 100%; }
+            .highlight-row-grid { grid-template-columns: 1fr 1fr !important; }
+            .highlight-row-grid .delete-col {
+                grid-column: span 2;
+                justify-content: flex-end;
+            }
+            .profile-name { display: none; }
+        }
+        @media (min-width: 640px) {
+            .form-actions { flex-direction: row; align-items: center; }
+        }
+
+        /* =============================================
+           26. Reduced Motion
+           ============================================= */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="gold-line"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand">
+                <div class="sidebar-brand-icon">
+                    <span>V</span>
+                </div>
+                <div>
+                    <h1 class="sidebar-brand-name">VIP Numbers</h1>
+                    <p class="sidebar-brand-subtitle">Admin Panel</p>
+                </div>
+            </div>
+        </div>
+        <nav class="sidebar-nav" aria-label="Main navigation">
+            <p class="sidebar-nav-label">Main</p>
+            <a href="#" class="sidebar-link">
+                <i data-lucide="layout-dashboard"></i> Dashboard
+            </a>
+            <a href="#" class="sidebar-link is-active">
+                <i data-lucide="phone"></i> Numbers
+            </a>
+            <a href="#" class="sidebar-link">
+                <i data-lucide="check-circle"></i> Number Status
+            </a>
+            <p class="sidebar-nav-label">Settings</p>
+            <a href="#" class="sidebar-link">
+                <i data-lucide="user"></i> Profile
+            </a>
+            <a href="#" class="sidebar-link">
+                <i data-lucide="settings"></i> Settings
+            </a>
+            <a href="#" class="sidebar-link">
+                <i data-lucide="log-out"></i> Logout
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="glass-card glass-card--static inventory-card">
+                <p class="inventory-card-title">Inventory Health</p>
+                <p class="inventory-card-text">8,432 numbers available across 5 categories</p>
+                <div class="progress-track progress-track--thin" style="margin-top:12px;">
+                    <div class="progress-fill" style="width:65%"></div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainWrapper">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="top-header-inner">
+                <div class="top-header-left">
+                    <button type="button" class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <div class="page-title-area">
+                        <h2 class="page-title">Add New VIP Number</h2>
+                        <div class="breadcrumb">
+                            <a href="#" class="breadcrumb-link">Dashboard</a>
+                            <span class="breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+                            <a href="#" class="breadcrumb-link">Numbers</a>
+                            <span class="breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+                            <span class="breadcrumb-current">Add Number</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="top-header-right">
+                    <div style="position:relative;">
+                        <button type="button" class="notification-btn" onclick="toggleDropdown('notifDropdown')" aria-label="Notifications">
+                            <i data-lucide="bell"></i>
+                            <span class="notification-badge pulse-dot">3</span>
+                        </button>
+                        <div class="dropdown dropdown--wide" id="notifDropdown">
+                            <p class="dropdown-title">Notifications</p>
+                            <div class="dropdown-item">
+                                <div class="dropdown-item-icon dropdown-item-icon--green">
+                                    <i data-lucide="plus-circle"></i>
+                                </div>
+                                <div class="dropdown-item-content">
+                                    <p class="dropdown-item-title">New number added</p>
+                                    <p class="dropdown-item-time">2 minutes ago</p>
+                                </div>
+                            </div>
+                            <div class="dropdown-item">
+                                <div class="dropdown-item-icon dropdown-item-icon--gold">
+                                    <i data-lucide="star"></i>
+                                </div>
+                                <div class="dropdown-item-content">
+                                    <p class="dropdown-item-title">Premium number tagged</p>
+                                    <p class="dropdown-item-time">15 minutes ago</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="position:relative;">
+                        <button type="button" class="profile-btn" onclick="toggleDropdown('profileDropdown')" aria-label="Profile menu">
+                            <div class="profile-avatar">
+                                <span>A</span>
+                            </div>
+                            <span class="profile-name">Admin</span>
+                            <span class="profile-chevron"><i data-lucide="chevron-down"></i></span>
+                        </button>
+                        <div class="dropdown" id="profileDropdown">
+                            <div class="dropdown-header">
+                                <p class="dropdown-header-name">Admin User</p>
+                                <p class="dropdown-header-email">admin@vipnumbers.com</p>
+                            </div>
+                            <div class="dropdown-item"><i data-lucide="user"></i> My Profile</div>
+                            <div class="dropdown-item"><i data-lucide="settings"></i> Settings</div>
+                            <div class="dropdown-item"><i data-lucide="log-out"></i> Logout</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <main class="page-content">
+            <form method="POST" action="" id="addNumberForm" novalidate>
+                <div class="page-layout">
+
+                    <!-- Left: Main Form -->
+                    <div class="form-area">
+
+                        <!-- Basic Information -->
+                        <section class="glass-card glass-card--static form-section">
+                            <div class="section-header">
+                                <div class="icon-box icon-box--gold"><i data-lucide="info"></i></div>
+                                <h3 class="section-title">Basic Information</h3>
+                                <div class="section-line"></div>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group form-group--full">
+                                    <label class="form-label" for="mobileNumber">
+                                        <span class="form-label-icon"><i data-lucide="smartphone"></i></span>
+                                        Mobile Number
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <span class="input-prefix">+91</span>
+                                        <input
+                                            type="text" id="mobileNumber" name="mobile_number" class="input-field input-field--prefixed"
+                                            placeholder="Enter Mobile Number" maxlength="10"
+                                            oninput="handleNumberInput(this); updatePreview(); refreshAllHighlightPreviews();"
+                                            aria-describedby="numberError"
+                                        >
+                                    </div>
+                                    <p class="error-msg" id="numberError">Please enter a valid 10-digit mobile number</p>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="category">
+                                        <span class="form-label-icon"><i data-lucide="tag"></i></span>
+                                        Category
+                                    </label>
+                                    <select id="category" name="category" class="input-field" onchange="updatePreview()">
+                                        <option value="">Select Category</option>
+                                        <option value="VIP">VIP</option>
+                                        <option value="Premium">Premium</option>
+                                        <option value="Fancy">Fancy</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <span class="form-label-icon"><i data-lucide="activity"></i></span>
+                                        Status
+                                    </label>
+                                    <input type="hidden" name="status" id="statusInput" value="Available">
+                                    <div class="segment-group" role="radiogroup" aria-label="Number status">
+                                        <button type="button" class="segment-btn is-active" role="radio" aria-checked="true" onclick="setStatus(this, 'Available')">Available</button>
+                                        <button type="button" class="segment-btn" role="radio" aria-checked="false" onclick="setStatus(this, 'Sold')">Sold</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Highlight Ranges -->
+                        <section class="glass-card glass-card--static form-section">
+                            <div class="section-header">
+                                <div class="icon-box icon-box--pink"><i data-lucide="sparkles"></i></div>
+                                <h3 class="section-title">Highlight Ranges</h3>
+                                <div class="section-line"></div>
+                            </div>
+
+                            <p class="section-description">Define position ranges to highlight specific digit sequences in the preview. Positions are 1-based.</p>
+
+                            <div class="highlight-rows" id="highlightRowsContainer"></div>
+
+                            <button type="button" class="add-range-btn" onclick="addHighlightRow()">
+                                <i data-lucide="plus"></i>
+                                Add Highlight Range
+                            </button>
+                        </section>
+
+                        <!-- Pricing -->
+                        <section class="glass-card glass-card--static form-section">
+                            <div class="section-header">
+                                <div class="icon-box icon-box--green"><i data-lucide="indian-rupee"></i></div>
+                                <h3 class="section-title">Pricing</h3>
+                                <div class="section-line"></div>
+                            </div>
+
+                            <div class="pricing-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="originalPrice">
+                                        <span class="form-label-icon"><i data-lucide="banknote"></i></span>
+                                        Original Price (INR)
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <span class="input-prefix">₹</span>
+                                        <input type="number" id="originalPrice" name="original_price" class="input-field input-field--currency" placeholder="e.g. 50000" min="0" oninput="calculatePricing(); updatePreview()">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="discount">
+                                        <span class="form-label-icon"><i data-lucide="percent"></i></span>
+                                        Discount (%)
+                                    </label>
+                                    <input type="number" id="discount" name="discount" class="input-field input-field--centered" placeholder="e.g. 10" min="0" max="100" oninput="calculatePricing(); updatePreview()">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="sellingPrice">
+                                        <span class="form-label-icon"><i data-lucide="circle-dollar-sign"></i></span>
+                                        Selling Price (INR)
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <span class="input-prefix" style="color:rgba(212,175,55,0.5);">₹</span>
+                                        <input type="text" id="sellingPrice" class="input-field input-field--currency input-field--gold-readonly" placeholder="Auto-calculated" readonly tabindex="-1">
+                                    </div>
+                                    <input type="hidden" name="selling_price" id="sellingPriceHidden" value="0">
+                                </div>
+                            </div>
+
+                            <div class="pricing-formula-bar">
+                                <i data-lucide="equal"></i>
+                                <p class="pricing-formula-text" id="pricingFormula">Enter original price and discount to see calculation</p>
+                            </div>
+                        </section>
+
+                        <!-- Live Preview -->
+                        <section class="reveal">
+                            <div class="section-header section-header--offset">
+                                <div class="icon-box icon-box--gold"><i data-lucide="eye"></i></div>
+                                <h3 class="section-title">Live VIP Number Preview</h3>
+                                <div class="section-line"></div>
+                            </div>
+
+                            <div class="preview-card">
+                                <div class="preview-card-inner">
+                                    <div class="preview-header">
+                                        <div class="preview-label">
+                                            <i data-lucide="smartphone"></i>
+                                            <span class="preview-label-text">VIP Number</span>
+                                        </div>
+                                        <div class="preview-badges">
+                                            <span class="badge badge--default" style="font-size:11px;" id="previewCategoryBadge">No Category</span>
+                                            <span class="badge badge--available" id="previewStatusBadge">Available</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="preview-number-area" id="previewNumberWrap">
+                                        <div class="preview-number" id="previewNumber">0000000000</div>
+                                    </div>
+
+                                    <div class="preview-prices">
+                                        <div class="price-block">
+                                            <p class="price-label">Original Price</p>
+                                            <p class="price-original" id="previewOriginalPrice">₹0</p>
+                                        </div>
+                                        <div class="price-block" id="previewDiscountWrap" style="display:none;">
+                                            <p class="price-label">Discount</p>
+                                            <p class="price-discount-value" id="previewDiscount">-0%</p>
+                                        </div>
+                                        <div class="price-block price-block--selling">
+                                            <p class="price-label price-label--gold">Selling Price</p>
+                                            <p class="price-selling shimmer-text" id="previewSellingPrice">₹0</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="preview-highlights" id="previewHighlightsWrap" style="display:none;">
+                                        <p class="preview-highlights-label">Active Highlights</p>
+                                        <div class="highlight-tags" id="previewHighlights"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Action Buttons -->
+                        <section class="reveal">
+                            <div class="form-actions">
+                                <button type="button" class="btn-ghost" onclick="resetForm()">
+                                    <i data-lucide="rotate-ccw"></i> Reset
+                                </button>
+                                <a href="numbers.php" class="btn-outline">
+                                    <i data-lucide="x"></i> Cancel
+                                </a>
+                                <button type="submit" name="action" value="save_and_add" class="btn-outline">
+                                    <i data-lucide="plus"></i> Save & Add Another
+                                </button>
+                                <button type="submit" name="action" value="save" class="btn-gold">
+                                    <i data-lucide="check"></i> Save Number
+                                </button>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- Right Sidebar -->
+                    <div class="right-sidebar">
+                        <!-- Summary Card -->
+                        <div class="glass-card glass-card--static form-section reveal">
+                            <div class="card-header">
+                                <div class="icon-box icon-box--gold"><i data-lucide="bar-chart-3"></i></div>
+                                <h4 class="card-title">Quick Summary</h4>
+                            </div>
+
+                            <div class="summary-list">
+                                <div class="summary-item">
+                                    <div class="summary-item-left">
+                                        <div class="icon-box icon-box--blue"><i data-lucide="hash"></i></div>
+                                        <span class="summary-item-label">Total Numbers</span>
+                                    </div>
+                                    <span class="summary-item-value summary-item-value--white">1,000</span>
+                                </div>
+                                <div class="summary-item">
+                                    <div class="summary-item-left">
+                                        <div class="icon-box icon-box--green"><i data-lucide="check-circle"></i></div>
+                                        <span class="summary-item-label">Available</span>
+                                    </div>
+                                    <span class="summary-item-value summary-item-value--green">832</span>
+                                </div>
+                                <div class="summary-item">
+                                    <div class="summary-item-left">
+                                        <div class="icon-box icon-box--gold"><i data-lucide="crown"></i></div>
+                                        <span class="summary-item-label">Premium</span>
+                                    </div>
+                                    <span class="summary-item-value summary-item-value--gold">356</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recently Added -->
+                        <div class="glass-card glass-card--static form-section reveal">
+                            <div class="card-header">
+                                <div class="icon-box icon-box--green"><i data-lucide="clock"></i></div>
+                                <h4 class="card-title">Recently Added</h4>
+                            </div>
+
+                            <div class="recent-list" id="recentlyAdded">
+                                <div class="recent-item">
+                                    <div class="recent-item-info">
+                                        <p class="recent-item-number">9999001122</p>
+                                        <p class="recent-item-meta">Fancy &middot; ₹45,000</p>
+                                    </div>
+                                    <span class="badge badge--available badge--sm">Available</span>
+                                </div>
+                                <div class="recent-item">
+                                    <div class="recent-item-info">
+                                        <p class="recent-item-number">8888000099</p>
+                                        <p class="recent-item-meta">VIP &middot; ₹2,10,000</p>
+                                    </div>
+                                    <span class="badge badge--available badge--sm">Available</span>
+                                </div>
+                                <div class="recent-item">
+                                    <div class="recent-item-info">
+                                        <p class="recent-item-number">9999888877</p>
+                                        <p class="recent-item-meta">Premium &middot; ₹1,85,000</p>
+                                    </div>
+                                    <span class="badge badge--available badge--sm">Available</span>
+                                </div>
+                                <div class="recent-item">
+                                    <div class="recent-item-info">
+                                        <p class="recent-item-number">7777000088</p>
+                                        <p class="recent-item-meta">Business &middot; ₹65,000</p>
+                                    </div>
+                                    <span class="badge badge--reserved badge--sm">Reserved</span>
+                                </div>
+                                <div class="recent-item">
+                                    <div class="recent-item-info">
+                                        <p class="recent-item-number">7777666655</p>
+                                        <p class="recent-item-meta">Business &middot; ₹78,000</p>
+                                    </div>
+                                    <span class="badge badge--available badge--sm">Available</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tips Card -->
+                        <div class="glass-card glass-card--static form-section tips-card reveal">
+                            <div class="tips-card-header">
+                                <i data-lucide="lightbulb"></i>
+                                <h4 class="tips-card-title">Pro Tips</h4>
+                            </div>
+                            <ul class="tips-list">
+                                <li class="tip-item">
+                                    <span class="tip-bullet"></span>
+                                    <span class="tip-text">Use highlight ranges to draw attention to repeating or sequential digit patterns.</span>
+                                </li>
+                                <li class="tip-item">
+                                    <span class="tip-bullet"></span>
+                                    <span class="tip-text">VIP and Premium categories typically command 2-5x higher prices than Fancy numbers.</span>
+                                </li>
+                                <li class="tip-item">
+                                    <span class="tip-bullet"></span>
+                                    <span class="tip-text">Set a competitive discount to improve visibility in search results and listings.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <script>
+        /* =============================================
+           UI-ONLY JAVASCRIPT
+           No data logic, no fake API calls, no toasts.
+           Only: sidebar, dropdowns, input formatting,
+           highlight rows, pricing preview, live preview,
+           segment toggle, scroll reveal, and form reset.
+           ============================================= */
+
+        // --- Sidebar toggle ---
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('is-open');
+            document.getElementById('sidebarOverlay').classList.toggle('is-open');
+        }
+
+        // --- Dropdown toggle ---
+        function toggleDropdown(id) {
+            var dropdown = document.getElementById(id);
+            var isOpen = dropdown.classList.contains('is-open');
+            document.querySelectorAll('.dropdown').forEach(function(d) {
+                d.classList.remove('is-open');
+            });
+            if (!isOpen) {
+                dropdown.classList.add('is-open');
+            }
+        }
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.dropdown') && !e.target.closest('[onclick*="toggleDropdown"]')) {
+                document.querySelectorAll('.dropdown').forEach(function(d) {
+                    d.classList.remove('is-open');
+                });
+            }
+        });
+
+        // --- Number input: digits only ---
+        function handleNumberInput(el) {
+            el.value = el.value.replace(/[^0-9]/g, '');
+            if (el.value.length === 10) {
+                el.classList.remove('has-error');
+                document.getElementById('numberError').classList.remove('is-visible');
+            }
+        }
+
+        // --- Segment button: Status toggle ---
+        function setStatus(btn, value) {
+            var group = btn.closest('.segment-group');
+            group.querySelectorAll('.segment-btn').forEach(function(b) {
+                b.classList.remove('is-active');
+                b.setAttribute('aria-checked', 'false');
+            });
+            btn.classList.add('is-active');
+            btn.setAttribute('aria-checked', 'true');
+            document.getElementById('statusInput').value = value;
+            updatePreview();
+        }
+
+        // --- Highlight Rows ---
+        var highlightRowIndex = 0;
+
+        function addHighlightRow() {
+            highlightRowIndex++;
+            var idx = highlightRowIndex;
+            var container = document.getElementById('highlightRowsContainer');
+            var row = document.createElement('div');
+            row.className = 'highlight-row';
+            row.setAttribute('data-row-id', idx);
+            row.innerHTML =
+                '<div class="highlight-row-grid">' +
+                    '<div>' +
+                        '<p class="range-label">Start Position</p>' +
+                        '<input type="number" name="highlight_start[]" class="highlight-input" min="1" max="10" placeholder="1" oninput="onHighlightChange(this)">' +
+                    '</div>' +
+                    '<div>' +
+                        '<p class="range-label">End Position</p>' +
+                        '<input type="number" name="highlight_end[]" class="highlight-input" min="1" max="10" placeholder="10" oninput="onHighlightChange(this)">' +
+                    '</div>' +
+                    '<div>' +
+                        '<p class="range-label">Preview</p>' +
+                        '<div class="range-preview range-preview--empty" data-preview-id="' + idx + '">Enter positions</div>' +
+                        '<p class="range-error" data-error-id="' + idx + '">Start must be ≤ End (1-10)</p>' +
+                    '</div>' +
+                    '<div class="delete-col">' +
+                        '<button type="button" class="delete-row-btn" onclick="removeHighlightRow(this)" aria-label="Remove highlight range">' +
+                            '<i data-lucide="trash-2"></i>' +
+                        '</button>' +
+                    '</div>' +
+                '</div>';
+            container.appendChild(row);
+            lucide.createIcons({ nodes: [row] });
+        }
+
+        function removeHighlightRow(btn) {
+            var row = btn.closest('.highlight-row');
+            row.classList.add('is-removing');
+            row.addEventListener('animationend', function() {
+                row.remove();
+                updatePreview();
+            });
+        }
+
+        function onHighlightChange(input) {
+            var row = input.closest('.highlight-row');
+            var startInput = row.querySelector('input[name="highlight_start[]"]');
+            var endInput = row.querySelector('input[name="highlight_end[]"]');
+            var previewEl = row.querySelector('[data-preview-id]');
+            var errorEl = row.querySelector('[data-error-id]');
+            var start = parseInt(startInput.value);
+            var end = parseInt(endInput.value);
+            var number = document.getElementById('mobileNumber').value;
+
+            if (startInput.value && endInput.value && (isNaN(start) || isNaN(end) || start < 1 || end > 10 || start > end)) {
+                row.classList.add('has-error');
+                errorEl.classList.add('is-visible');
+                previewEl.className = 'range-preview range-preview--empty';
+                previewEl.textContent = 'Invalid range';
+                startInput.classList.add('has-error');
+                endInput.classList.add('has-error');
+            } else {
+                row.classList.remove('has-error');
+                errorEl.classList.remove('is-visible');
+                startInput.classList.remove('has-error');
+                endInput.classList.remove('has-error');
+
+                if (!isNaN(start) && !isNaN(end) && start >= 1 && end <= 10 && number.length > 0) {
+                    var html = '';
+                    for (var i = 0; i < number.length; i++) {
+                        var pos = i + 1;
+                        if (pos >= start && pos <= end) {
+                            html += '<span class="highlight-gold">' + number[i] + '</span>';
+                        } else {
+                            html += number[i];
+                        }
+                    }
+                    previewEl.innerHTML = html || number;
+                    previewEl.className = 'range-preview';
+                } else {
+                    previewEl.textContent = number || 'Enter positions';
+                    previewEl.className = 'range-preview' + (number ? '' : ' range-preview--empty');
+                }
+            }
+            updatePreview();
+        }
+
+        function refreshAllHighlightPreviews() {
+            document.querySelectorAll('.highlight-row').forEach(function(row) {
+                var startInput = row.querySelector('input[name="highlight_start[]"]');
+                if (startInput && (startInput.value !== '')) {
+                    onHighlightChange(startInput);
+                } else {
+                    var previewEl = row.querySelector('[data-preview-id]');
+                    var number = document.getElementById('mobileNumber').value;
+                    if (previewEl) {
+                        previewEl.textContent = number || 'Enter positions';
+                        previewEl.className = 'range-preview' + (number ? '' : ' range-preview--empty');
+                    }
+                }
+            });
+        }
+
+        // --- Pricing calculation (visual preview only) ---
+        function calculatePricing() {
+            var original = parseFloat(document.getElementById('originalPrice').value) || 0;
+            var discount = parseFloat(document.getElementById('discount').value) || 0;
+            var selling = 0;
+            var formulaText = 'Enter original price and discount to see calculation';
+
+            if (original > 0) {
+                discount = Math.min(Math.max(discount, 0), 100);
+                selling = Math.round(original - (original * discount / 100));
+                formulaText = '\u20B9' + formatNumber(original) + ' \u2212 ' + discount + '% = \u20B9' + formatNumber(selling);
+            }
+
+            document.getElementById('sellingPrice').value = selling > 0 ? '\u20B9' + formatNumber(selling) : '';
+            document.getElementById('sellingPriceHidden').value = selling;
+            document.getElementById('pricingFormula').textContent = formulaText;
+        }
+
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{2})+(?!\d))/g, ',');
+        }
+
+        // --- Live Preview ---
+        function updatePreview() {
+            var number = document.getElementById('mobileNumber').value || '0000000000';
+            var category = document.getElementById('category').value;
+            var status = document.getElementById('statusInput').value;
+            var original = parseFloat(document.getElementById('originalPrice').value) || 0;
+            var discount = parseFloat(document.getElementById('discount').value) || 0;
+            var selling = parseFloat(document.getElementById('sellingPriceHidden').value) || 0;
+
+            var highlights = getHighlightRanges();
+            var numberHtml = '';
+            for (var i = 0; i < 10; i++) {
+                var pos = i + 1;
+                var digit = i < number.length ? number[i] : '0';
+                var isHighlighted = false;
+                for (var h = 0; h < highlights.length; h++) {
+                    if (pos >= highlights[h].start && pos <= highlights[h].end) {
+                        isHighlighted = true;
+                        break;
+                    }
+                }
+                numberHtml += isHighlighted
+                    ? '<span class="highlight-gold">' + digit + '</span>'
+                    : digit;
+            }
+            document.getElementById('previewNumber').innerHTML = numberHtml;
+
+            var catBadge = document.getElementById('previewCategoryBadge');
+            if (category) {
+                catBadge.textContent = category;
+                catBadge.className = 'badge badge--fancy';
+                catBadge.style.fontSize = '11px';
+            } else {
+                catBadge.textContent = 'No Category';
+                catBadge.className = 'badge badge--default';
+                catBadge.style.fontSize = '11px';
+            }
+
+            var statusBadge = document.getElementById('previewStatusBadge');
+            statusBadge.textContent = status;
+            statusBadge.className = 'badge ' + (status === 'Sold' ? 'badge--sold' : 'badge--available');
+
+            document.getElementById('previewOriginalPrice').textContent = '\u20B9' + formatNumber(original);
+
+            var discountWrap = document.getElementById('previewDiscountWrap');
+            if (discount > 0) {
+                discountWrap.style.display = '';
+                document.getElementById('previewDiscount').textContent = '-' + discount + '%';
+            } else {
+                discountWrap.style.display = 'none';
+            }
+
+            document.getElementById('previewSellingPrice').textContent = '\u20B9' + formatNumber(selling);
+
+            var highlightsWrap = document.getElementById('previewHighlightsWrap');
+            var highlightsContainer = document.getElementById('previewHighlights');
+            if (highlights.length > 0) {
+                highlightsWrap.style.display = '';
+                var tagsHtml = '';
+                for (var h = 0; h < highlights.length; h++) {
+                    tagsHtml += '<span class="badge badge--fancy badge--sm">Pos ' + highlights[h].start + '\u2013' + highlights[h].end + '</span>';
+                }
+                highlightsContainer.innerHTML = tagsHtml;
+            } else {
+                highlightsWrap.style.display = 'none';
+            }
+        }
+
+        function getHighlightRanges() {
+            var ranges = [];
+            document.querySelectorAll('.highlight-row:not(.is-removing)').forEach(function(row) {
+                var start = parseInt(row.querySelector('input[name="highlight_start[]"]').value);
+                var end = parseInt(row.querySelector('input[name="highlight_end[]"]').value);
+                if (!isNaN(start) && !isNaN(end) && start >= 1 && end <= 10 && start <= end) {
+                    ranges.push({ start: start, end: end });
+                }
+            });
+            return ranges;
+        }
+
+        // --- Reset form ---
+        function resetForm() {
+            document.getElementById('addNumberForm').reset();
+            document.getElementById('statusInput').value = 'Available';
+
+            var group = document.querySelector('.segment-group');
+            group.querySelectorAll('.segment-btn').forEach(function(b, i) {
+                if (i === 0) {
+                    b.classList.add('is-active');
+                    b.setAttribute('aria-checked', 'true');
+                } else {
+                    b.classList.remove('is-active');
+                    b.setAttribute('aria-checked', 'false');
+                }
+            });
+
+            document.getElementById('highlightRowsContainer').innerHTML = '';
+            highlightRowIndex = 0;
+
+            document.getElementById('mobileNumber').classList.remove('has-error');
+            document.getElementById('numberError').classList.remove('is-visible');
+
+            document.getElementById('sellingPrice').value = '';
+            document.getElementById('sellingPriceHidden').value = '0';
+            document.getElementById('pricingFormula').textContent = 'Enter original price and discount to see calculation';
+
+            updatePreview();
+        }
+
+        // --- Scroll reveal ---
+        var revealObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+        document.querySelectorAll('.reveal').forEach(function(el) {
+            revealObserver.observe(el);
+        });
+
+        // --- Initialize Lucide icons ---
+        lucide.createIcons();
+    </script>
+</body>
+</html>
