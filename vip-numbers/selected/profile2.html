@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile — VIP Number Admin</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+    <style>
+        /* =============================================
+           CSS VARIABLES & RESET
+        ============================================= */
+        :root {
+            --bg: #0D0D0D;
+            --fg: #FFFFFF;
+            --muted: #999999;
+            --accent: #D4AF37;
+            --accent-light: #E8CC6E;
+            --accent-dark: #B8962E;
+            --card: rgba(255,255,255,0.035);
+            --card-hover: rgba(255,255,255,0.065);
+            --border: rgba(255,255,255,0.06);
+            --border-gold: rgba(212,175,55,0.25);
+            --accent-blue: #4A9DFF;
+            --sidebar-width: 260px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: 'DM Sans', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed; top: -20%; right: -10%;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(212,175,55,0.04) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
+        }
+        body::after {
+            content: '';
+            position: fixed; bottom: -15%; left: -5%;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(74,157,255,0.03) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
+        }
+
+        a { color: inherit; text-decoration: none; }
+        button { font-family: inherit; }
+
+        /* =============================================
+           SCROLLBAR
+        ============================================= */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+        /* =============================================
+           ICON SIZES (applied to SVGs created by Lucide)
+        ============================================= */
+        .icon-md { width: 20px; height: 20px; }
+        .icon-sm { width: 16px; height: 16px; }
+        .icon-xs { width: 14px; height: 14px; }
+        .icon-xxs { width: 12px; height: 12px; }
+        .icon-xxxs { width: 8px; height: 8px; }
+
+        /* =============================================
+           GOLD LINE
+        ============================================= */
+        .gold-line {
+            position: fixed; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            z-index: 999;
+        }
+
+        /* =============================================
+           GLASS CARD
+        ============================================= */
+        .glass-card {
+            background: var(--card);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+        }
+        .glass-card.no-hover { transition: none; }
+        .glass-card.no-hover:hover {
+            transform: none;
+            background: var(--card);
+            border-color: var(--border);
+            box-shadow: none;
+        }
+
+        /* =============================================
+           SIDEBAR
+        ============================================= */
+        .sidebar {
+            width: var(--sidebar-width);
+            min-height: 100vh;
+            background: rgba(18,18,18,0.95);
+            backdrop-filter: blur(30px);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0;
+            top: 0;
+            transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+            z-index: 50;
+        }
+        .sidebar-brand {
+            padding: 24px 24px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .brand-logo { display: flex; align-items: center; gap: 12px; }
+        .brand-icon {
+            width: 40px; height: 40px; border-radius: 12px;
+            background: linear-gradient(to bottom right, var(--accent), var(--accent-dark));
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .brand-letter {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700; font-size: 18px;
+            color: #0D0D0D;
+        }
+        .brand-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700; font-size: 16px;
+            color: #fff; line-height: 1.2;
+        }
+        .brand-subtitle {
+            font-size: 11px; color: rgba(255,255,255,0.3);
+            font-weight: 500; letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .sidebar-nav {
+            flex: 1; padding: 16px;
+            display: flex; flex-direction: column; gap: 4px;
+        }
+        .nav-section-label {
+            font-size: 10px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.15em;
+            color: rgba(255,255,255,0.2);
+            padding: 0 16px; margin-bottom: 12px;
+        }
+        .nav-section-spaced { margin-top: 24px; }
+        .sidebar-link {
+            display: flex; align-items: center; gap: 12px;
+            padding: 11px 20px; border-radius: 12px;
+            color: var(--muted); font-size: 14px; font-weight: 500;
+            transition: all 0.25s ease;
+            position: relative; overflow: hidden;
+            background: none; border: none; cursor: pointer;
+            width: 100%; text-align: left;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .sidebar-link::before {
+            content: ''; position: absolute; left: 0; top: 50%;
+            transform: translateY(-50%); width: 3px; height: 0;
+            background: var(--accent); border-radius: 0 4px 4px 0;
+            transition: height 0.25s ease;
+        }
+        .sidebar-link:hover { color: #fff; background: rgba(255,255,255,0.04); }
+        .sidebar-link.active { color: var(--accent); background: rgba(212,175,55,0.08); }
+        .sidebar-link.active::before { height: 24px; }
+        .sidebar-link svg { width: 18px; height: 18px; flex-shrink: 0; }
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .sidebar-stats-card {
+            padding: 16px;
+            background: rgba(212,175,55,0.1) !important;
+            border-color: rgba(212,175,55,0.25) !important;
+        }
+        .stats-title {
+            font-size: 12px; font-weight: 600;
+            color: var(--accent); margin-bottom: 4px;
+        }
+        .stats-text {
+            font-size: 11px; color: rgba(255,255,255,0.4); line-height: 1.5;
+        }
+        .stats-progress { margin-top: 12px; height: 6px; }
+        .progress-track {
+            width: 100%; height: 10px; border-radius: 10px;
+            background: rgba(255,255,255,0.06); overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; border-radius: 10px;
+            transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+        }
+        .progress-fill-gold {
+            background: linear-gradient(to right, var(--accent-dark), var(--accent));
+        }
+
+        /* =============================================
+           SIDEBAR OVERLAY (mobile)
+        ============================================= */
+        .sidebar-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            z-index: 45; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .sidebar-overlay.show { opacity: 1; pointer-events: auto; }
+
+        /* =============================================
+           MAIN WRAPPER
+        ============================================= */
+        .main-wrapper { margin-left: var(--sidebar-width); }
+
+        /* =============================================
+           TOP HEADER
+        ============================================= */
+        .top-header {
+            position: sticky; top: 0; z-index: 40;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: rgba(13,13,13,0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .header-inner {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px 24px;
+        }
+        .header-left { display: flex; align-items: center; gap: 16px; }
+        .menu-toggle {
+            display: none;
+            width: 36px; height: 36px; border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+            border: none; cursor: pointer;
+            align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.6);
+            transition: all 0.2s ease;
+        }
+        .menu-toggle:hover { color: #fff; background: rgba(255,255,255,0.1); }
+        .header-title { font-size: 18px; font-weight: 600; color: #fff; }
+        .breadcrumb { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+        .breadcrumb-link {
+            font-size: 12px; color: rgba(255,255,255,0.3);
+            transition: color 0.2s ease;
+        }
+        .breadcrumb-link:hover { color: var(--accent); }
+        .breadcrumb-current { font-size: 12px; color: var(--accent); font-weight: 500; }
+        .header-right { display: flex; align-items: center; gap: 12px; }
+
+        /* Icon button (notification bell) */
+        .icon-btn {
+            width: 40px; height: 40px; border-radius: 12px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.5);
+            cursor: pointer; position: relative;
+            transition: all 0.2s ease;
+        }
+        .icon-btn:hover { color: #fff; background: rgba(255,255,255,0.08); }
+
+        /* Notification badge */
+        .notif-badge {
+            position: absolute; top: -4px; right: -4px;
+            width: 20px; height: 20px; border-radius: 50%;
+            background: var(--accent);
+            color: #0D0D0D; font-size: 10px; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            animation: pulse-gold 2s infinite;
+        }
+
+        /* Profile menu button */
+        .profile-menu-btn {
+            display: flex; align-items: center; gap: 10px;
+            padding: 4px 12px 4px 4px; border-radius: 12px;
+            background: transparent; border: none; cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        .profile-menu-btn:hover { background: rgba(255,255,255,0.04); }
+        .profile-avatar-sm {
+            width: 36px; height: 36px; border-radius: 12px;
+            background: linear-gradient(to bottom right, rgba(212,175,55,0.8), var(--accent-dark));
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .profile-avatar-letter { color: #0D0D0D; font-weight: 700; font-size: 14px; }
+        .profile-menu-name {
+            font-size: 14px; color: rgba(255,255,255,0.7); font-weight: 500;
+            display: none;
+        }
+        .chevron-icon { color: rgba(255,255,255,0.3); }
+
+        /* =============================================
+           DROPDOWNS
+        ============================================= */
+        .dropdown {
+            position: absolute; top: calc(100% + 8px); right: 0;
+            background: #1E1E1E; border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px; padding: 8px; min-width: 200px;
+            opacity: 0; pointer-events: none; transform: translateY(-8px);
+            transition: all 0.25s ease;
+            box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+            z-index: 60;
+        }
+        .dropdown.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .dropdown-notif { min-width: 280px; }
+        .dropdown-section-label {
+            font-size: 11px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.3);
+            padding: 8px 14px;
+        }
+        .dropdown-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 14px; border-radius: 10px;
+            font-size: 13px; color: var(--muted); cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .dropdown-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
+        .dropdown-header {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 4px;
+        }
+        .dropdown-user-name { font-size: 14px; font-weight: 600; color: #fff; }
+        .dropdown-user-email { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+        .notif-icon-box {
+            width: 32px; height: 32px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .notif-icon-green { background: rgba(34,197,94,0.1); }
+        .notif-icon-gold { background: rgba(212,175,55,0.1); }
+        .icon-green { color: #4ADE80; }
+        .icon-gold { color: var(--accent); }
+        .notif-title { color: #fff; font-size: 12px; font-weight: 500; }
+        .notif-time { color: rgba(255,255,255,0.3); font-size: 11px; margin-top: 2px; }
+
+        /* =============================================
+           PAGE CONTENT
+        ============================================= */
+        .page-content { padding: 24px; position: relative; z-index: 10; }
+        .content-container {
+            max-width: 896px; margin: 0 auto;
+            display: flex; flex-direction: column; gap: 24px;
+        }
+
+        /* =============================================
+           BADGES
+        ============================================= */
+        .badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 12px; border-radius: 20px;
+            font-size: 12px; font-weight: 600;
+        }
+        .badge-active { background: rgba(34,197,94,0.12); color: #4ADE80; }
+        .badge-admin { background: rgba(212,175,55,0.15); color: #E8CC6E; }
+        .badge-online { background: rgba(34,197,94,0.12); color: #4ADE80; }
+
+        /* =============================================
+           AVATAR
+        ============================================= */
+        .avatar-ring {
+            position: relative;
+            width: 110px; height: 110px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #B8962E, #D4AF37, #E8CC6E, #D4AF37, #B8962E);
+            padding: 3px;
+            flex-shrink: 0;
+        }
+        .avatar-ring::before {
+            content: '';
+            position: absolute; inset: -4px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(212,175,55,0.2), transparent, rgba(212,175,55,0.2));
+            z-index: -1;
+        }
+        .avatar-inner {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            background: #1A1A1A;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .avatar-initials {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700; font-size: 30px;
+            color: var(--accent);
+        }
+        .online-dot {
+            position: absolute; bottom: 4px; right: 4px;
+            width: 18px; height: 18px; border-radius: 50%;
+            background: #22C55E; border: 3px solid #1A1A1A;
+            z-index: 2;
+            animation: pulse-green 2s infinite;
+        }
+
+        /* =============================================
+           PROFILE HEADER CARD
+        ============================================= */
+        .profile-header-card {
+            padding: 32px;
+            border-color: rgba(212,175,55,0.1);
+            background: linear-gradient(145deg, rgba(212,175,55,0.04) 0%, rgba(26,26,26,0.9) 40%, var(--card) 100%);
+        }
+        .profile-header-inner {
+            display: flex; align-items: flex-start; gap: 24px;
+        }
+        .profile-info { flex: 1; min-width: 0; }
+        .profile-name-row {
+            display: flex; flex-wrap: wrap;
+            align-items: center; gap: 12px; margin-bottom: 8px;
+        }
+        .profile-name-lg {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700; font-size: 24px; color: #fff;
+        }
+        .profile-badges-row {
+            display: flex; flex-wrap: wrap;
+            align-items: center; gap: 8px; margin-bottom: 16px;
+        }
+        .profile-username { font-size: 14px; color: rgba(255,255,255,0.4); margin-bottom: 4px; }
+        .profile-contact-row {
+            display: flex; flex-wrap: wrap;
+            align-items: center; gap: 16px; margin-top: 12px;
+            font-size: 12px; color: rgba(255,255,255,0.3);
+        }
+        .contact-item { display: flex; align-items: center; gap: 6px; }
+
+        /* =============================================
+           SECTION CARD
+        ============================================= */
+        .section-card { padding: 24px 32px; }
+        .section-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 24px;
+        }
+        .section-divider { display: flex; align-items: center; gap: 14px; }
+        .section-divider-inline { margin-bottom: 0; flex: 1; }
+        .section-divider .line {
+            flex: 1; height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.06), transparent);
+        }
+        .section-divider h3 {
+            font-size: 14px; font-weight: 600;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase; letter-spacing: 0.08em;
+            white-space: nowrap;
+        }
+        .section-divider .icon-wrap {
+            width: 32px; height: 32px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .section-edit-btn { margin-left: 16px; flex-shrink: 0; }
+
+        /* =============================================
+           INFO GRID
+        ============================================= */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0 32px;
+        }
+        .info-full-width { grid-column: 1 / -1; }
+        .info-row {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            transition: padding 0.2s ease;
+        }
+        .info-row:last-child { border-bottom: none; }
+        .info-row:hover { padding-left: 4px; }
+        .info-label {
+            font-size: 12px; color: rgba(255,255,255,0.3);
+            font-weight: 500; text-transform: uppercase;
+            letter-spacing: 0.08em; flex-shrink: 0;
+        }
+        .info-value {
+            font-size: 14px; color: rgba(255,255,255,0.8);
+            font-weight: 500; text-align: right;
+        }
+
+        /* =============================================
+           SECURITY SECTION
+        ============================================= */
+        .security-card-inner {
+            display: flex; flex-direction: column;
+            align-items: flex-start; justify-content: space-between;
+            gap: 16px; padding: 16px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .security-left { display: flex; align-items: center; gap: 16px; }
+        .security-icon-box {
+            width: 40px; height: 40px; border-radius: 12px;
+            background: rgba(255,255,255,0.04);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .security-label-text {
+            font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.8);
+        }
+        .masked-password {
+            letter-spacing: 3px; font-size: 16px;
+            color: rgba(255,255,255,0.35); margin-top: 2px;
+        }
+        .security-hints {
+            margin-top: 20px; display: flex; flex-wrap: wrap; gap: 12px;
+        }
+        .hint {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 12px; border-radius: 8px;
+        }
+        .hint-green {
+            background: rgba(34,197,94,0.06);
+            border: 1px solid rgba(34,197,94,0.1);
+        }
+        .hint-gold {
+            background: rgba(212,175,55,0.04);
+            border: 1px solid rgba(212,175,55,0.08);
+        }
+        .hint-icon-green { color: #4ADE80; }
+        .hint-icon-gold { color: rgba(212,175,55,0.6); }
+        .hint-text { font-size: 11px; font-weight: 500; }
+        .hint-text-green { color: rgba(74,222,128,0.8); }
+        .hint-text-gold { color: rgba(212,175,55,0.5); }
+
+        /* =============================================
+           BUTTONS
+        ============================================= */
+        .btn-gold {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px 28px; border-radius: 12px;
+            background: linear-gradient(135deg, #B8962E, #D4AF37, #E8CC6E);
+            color: #0D0D0D; font-size: 14px; font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            border: none; cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: 0 4px 16px rgba(212,175,55,0.2);
+        }
+        .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(212,175,55,0.35); }
+        .btn-gold:active { transform: translateY(0) scale(0.98); }
+        .btn-gold:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+
+        .btn-outline {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px 24px; border-radius: 12px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer; transition: all 0.25s ease;
+        }
+        .btn-outline:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color: #fff; }
+        .btn-outline:active { transform: scale(0.98); }
+
+        .btn-sm { padding: 8px 18px; font-size: 13px; border-radius: 10px; }
+
+        /* =============================================
+           MODAL
+        ============================================= */
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 200;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px);
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+
+        .modal-panel {
+            width: 100%; max-width: 600px; max-height: 90vh;
+            background: #1A1A1A;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            overflow: hidden;
+            transform: scale(0.92) translateY(20px);
+            transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+            display: flex; flex-direction: column;
+        }
+        .modal-panel-sm { max-width: 520px; }
+        .modal-overlay.show .modal-panel { transform: scale(1) translateY(0); }
+
+        .modal-header { padding: 24px 28px 0; flex-shrink: 0; }
+        .modal-header-inner {
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .modal-title-group {
+            display: flex; align-items: center; gap: 12px;
+        }
+        .modal-icon {
+            width: 40px; height: 40px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .modal-icon-gold { background: rgba(212,175,55,0.1); }
+        .modal-icon-red { background: rgba(239,68,68,0.1); }
+        .icon-red { color: #F87171; }
+        .modal-title { font-size: 18px; font-weight: 600; color: #fff; }
+        .modal-subtitle { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 2px; }
+        .modal-close-btn {
+            width: 36px; height: 36px; border-radius: 8px;
+            background: rgba(255,255,255,0.04);
+            border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.4);
+            transition: all 0.2s ease;
+        }
+        .modal-close-btn:hover { color: #fff; background: rgba(255,255,255,0.08); }
+
+        .modal-body { padding: 20px 28px 28px; overflow-y: auto; flex: 1; }
+        .modal-body::-webkit-scrollbar { width: 4px; }
+        .modal-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
+
+        .modal-footer {
+            padding: 16px 28px 24px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            flex-shrink: 0;
+        }
+        .modal-footer-inner {
+            display: flex; align-items: center; justify-content: flex-end; gap: 12px;
+        }
+
+        /* =============================================
+           FORM ELEMENTS
+        ============================================= */
+        .form-group { position: relative; margin-bottom: 20px; }
+        .form-group-last { margin-bottom: 0; }
+        .form-label {
+            display: block; font-size: 12px; font-weight: 600;
+            color: rgba(255,255,255,0.45); margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 0.06em;
+        }
+        .form-label .required { color: #F87171; margin-left: 2px; }
+        .input-field {
+            width: 100%; padding: 12px 16px; border-radius: 12px;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+            color: #fff; font-size: 14px; font-family: 'DM Sans', sans-serif;
+            transition: all 0.25s ease; outline: none;
+        }
+        .input-field:focus {
+            border-color: var(--accent);
+            background: rgba(255,255,255,0.06);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.08);
+        }
+        .input-field::placeholder { color: rgba(255,255,255,0.2); }
+        .input-field.error { border-color: #EF4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.1); }
+        .error-msg { font-size: 11px; color: #F87171; margin-top: 6px; display: none; }
+        .error-msg.show { display: block; }
+
+        select.input-field {
+            appearance: none; cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 40px;
+        }
+        select.input-field option { background: #1A1A1A; color: #fff; }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0 20px;
+        }
+        .form-full-width { grid-column: 1 / -1; }
+
+        .phone-input-wrap { position: relative; }
+        .phone-prefix {
+            position: absolute; left: 16px; top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255,255,255,0.2);
+            font-weight: 600; font-size: 14px;
+            pointer-events: none;
+        }
+        .phone-input { padding-left: 56px; }
+
+        /* Password toggle */
+        .password-wrap { position: relative; }
+        .password-wrap .input-field { padding-right: 48px; }
+        .password-toggle {
+            position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+            width: 40px; height: 40px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            background: transparent; border: none; cursor: pointer;
+            color: rgba(255,255,255,0.25); transition: all 0.2s ease;
+        }
+        .password-toggle:hover { color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.04); }
+
+        /* Password strength */
+        .strength-bar { display: flex; gap: 4px; margin-top: 10px; }
+        .strength-segment {
+            flex: 1; height: 4px; border-radius: 4px;
+            background: rgba(255,255,255,0.06);
+            transition: background 0.3s ease;
+        }
+        .strength-label {
+            font-size: 11px; font-weight: 600; margin-top: 6px;
+            color: rgba(255,255,255,0.2);
+            transition: color 0.3s ease;
+        }
+        .strength-reqs { margin-top: 12px; }
+        .strength-req {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 11px; color: rgba(255,255,255,0.3);
+            margin-bottom: 4px; transition: color 0.2s ease;
+        }
+        .strength-req.met { color: #4ADE80; }
+        .strength-req .req-icon {
+            width: 14px; height: 14px; border-radius: 50%;
+            border: 1.5px solid currentColor;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; font-size: 8px; transition: all 0.2s ease;
+        }
+        .strength-req.met .req-icon {
+            background: #4ADE80; border-color: #4ADE80; color: #0D0D0D;
+        }
+
+        /* =============================================
+           SPACER
+        ============================================= */
+        .spacer { height: 32px; }
+
+        /* =============================================
+           ANIMATIONS
+        ============================================= */
+        @keyframes pulse-gold {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(212,175,55,0.4); }
+            50% { box-shadow: 0 0 0 6px rgba(212,175,55,0); }
+        }
+        @keyframes pulse-green {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.5); }
+            50% { box-shadow: 0 0 0 5px rgba(34,197,94,0); }
+        }
+
+        .reveal {
+            opacity: 0; transform: translateY(24px);
+            transition: all 0.6s cubic-bezier(0.4,0,0.2,1);
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* =============================================
+           RESPONSIVE
+        ============================================= */
+        @media (min-width: 1024px) {
+            .header-inner { padding-left: 32px; padding-right: 32px; }
+            .page-content { padding-left: 32px; padding-right: 32px; }
+            .profile-header-inner { gap: 32px; }
+            .profile-name-lg { font-size: 30px; }
+            .section-card { padding: 32px; }
+        }
+
+        @media (min-width: 640px) {
+            .profile-menu-name { display: inline; }
+        }
+
+        @media (max-width: 1023px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-wrapper { margin-left: 0 !important; }
+            .menu-toggle { display: flex; }
+        }
+
+        @media (max-width: 640px) {
+            .modal-panel { max-height: 95vh; border-radius: 16px; }
+            .modal-panel-sm { max-width: 100%; }
+            .modal-header { padding: 20px 20px 0; }
+            .modal-body { padding: 16px 20px 20px; }
+            .modal-footer { padding: 12px 20px 20px; }
+            .profile-header-inner { flex-direction: column; text-align: center; }
+            .avatar-ring { margin: 0 auto; }
+            .profile-badges-row { justify-content: center; }
+            .info-grid { grid-template-columns: 1fr; }
+            .form-grid { grid-template-columns: 1fr; }
+            .section-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+            .section-edit-btn { margin-left: 0; }
+            .security-card-inner { flex-direction: column; align-items: stretch; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="gold-line"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-logo">
+                <div class="brand-icon">
+                    <span class="brand-letter">V</span>
+                </div>
+                <div>
+                    <h1 class="brand-title">VIP Numbers</h1>
+                    <p class="brand-subtitle">Admin Panel</p>
+                </div>
+            </div>
+        </div>
+        <nav class="sidebar-nav" aria-label="Main navigation">
+            <p class="nav-section-label">Main</p>
+            <a href="dashboard.php" class="sidebar-link">
+                <i data-lucide="layout-dashboard"></i> Dashboard
+            </a>
+            <a href="numbers.php" class="sidebar-link">
+                <i data-lucide="phone"></i> Numbers
+            </a>
+            <a href="number-status.php" class="sidebar-link">
+                <i data-lucide="check-circle"></i> Number Status
+            </a>
+            <p class="nav-section-label nav-section-spaced">Settings</p>
+            <a href="profile.php" class="sidebar-link active">
+                <i data-lucide="user"></i> Profile
+            </a>
+            <a href="settings.php" class="sidebar-link">
+                <i data-lucide="settings"></i> Settings
+            </a>
+            <a href="logout.php" class="sidebar-link">
+                <i data-lucide="log-out"></i> Logout
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="glass-card no-hover sidebar-stats-card">
+                <p class="stats-title">Inventory Health</p>
+                <p class="stats-text">8,432 numbers available across 5 categories</p>
+                <div class="stats-progress progress-track">
+                    <div class="progress-fill progress-fill-gold" style="width:65%"></div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-wrapper" id="mainWrapper">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-inner">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                        <i data-lucide="menu" class="icon-md"></i>
+                    </button>
+                    <div>
+                        <h2 class="header-title">My Profile</h2>
+                        <div class="breadcrumb">
+                            <a href="dashboard.php" class="breadcrumb-link">Dashboard</a>
+                            <i data-lucide="chevron-right" class="icon-xxs" style="color:rgba(255,255,255,0.15)"></i>
+                            <span class="breadcrumb-current">Profile</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="relative" data-dropdown-parent>
+                        <button class="icon-btn" id="notifBtn" aria-label="Notifications">
+                            <i data-lucide="bell" class="icon-sm"></i>
+                            <span class="notif-badge">3</span>
+                        </button>
+                        <div class="dropdown dropdown-notif" id="notifDropdown">
+                            <p class="dropdown-section-label">Notifications</p>
+                            <a href="#" class="dropdown-item">
+                                <div class="notif-icon-box notif-icon-green">
+                                    <i data-lucide="plus-circle" class="icon-sm icon-green"></i>
+                                </div>
+                                <div>
+                                    <p class="notif-title">New number added</p>
+                                    <p class="notif-time">2 minutes ago</p>
+                                </div>
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <div class="notif-icon-box notif-icon-gold">
+                                    <i data-lucide="star" class="icon-sm icon-gold"></i>
+                                </div>
+                                <div>
+                                    <p class="notif-title">Premium number tagged</p>
+                                    <p class="notif-time">15 minutes ago</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="relative" data-dropdown-parent>
+                        <button class="profile-menu-btn" id="profileMenuBtn" aria-label="Profile menu">
+                            <div class="profile-avatar-sm">
+                                <span class="profile-avatar-letter">A</span>
+                            </div>
+                            <span class="profile-menu-name">Admin</span>
+                            <i data-lucide="chevron-down" class="icon-sm chevron-icon"></i>
+                        </button>
+                        <div class="dropdown" id="profileDropdown">
+                            <div class="dropdown-header">
+                                <p class="dropdown-user-name">Admin User</p>
+                                <p class="dropdown-user-email">admin@vipnumbers.com</p>
+                            </div>
+                            <a href="profile.php" class="dropdown-item">
+                                <i data-lucide="user" class="icon-sm"></i> My Profile
+                            </a>
+                            <a href="settings.php" class="dropdown-item">
+                                <i data-lucide="settings" class="icon-sm"></i> Settings
+                            </a>
+                            <a href="logout.php" class="dropdown-item">
+                                <i data-lucide="log-out" class="icon-sm"></i> Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <main class="page-content">
+            <div class="content-container">
+
+                <!-- Profile Header Card -->
+                <section class="glass-card no-hover profile-header-card reveal">
+                    <div class="profile-header-inner">
+                        <div class="relative" style="flex-shrink:0;">
+                            <div class="avatar-ring">
+                                <div class="avatar-inner">
+                                    <span class="avatar-initials">AR</span>
+                                </div>
+                            </div>
+                            <div class="online-dot"></div>
+                        </div>
+                        <div class="profile-info">
+                            <div class="profile-name-row">
+                                <h1 class="profile-name-lg">Arjun Rathore</h1>
+                            </div>
+                            <div class="profile-badges-row">
+                                <span class="badge badge-admin"><i data-lucide="shield-check" class="icon-xxs"></i> Administrator</span>
+                                <span class="badge badge-online"><span style="width:6px;height:6px;border-radius:50%;background:#4ADE80;display:inline-block;"></span> Online</span>
+                                <span class="badge badge-active"><i data-lucide="check-circle" class="icon-xxs"></i> Active</span>
+                            </div>
+                            <p class="profile-username">@arjun.rathore</p>
+                            <div class="profile-contact-row">
+                                <span class="contact-item"><i data-lucide="mail" class="icon-xs"></i> arjun.rathore@vipnumbers.com</span>
+                                <span class="contact-item"><i data-lucide="phone" class="icon-xs"></i> +91 98765 43210</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Personal Information -->
+                <section class="glass-card no-hover section-card reveal">
+                    <div class="section-header">
+                        <div class="section-divider section-divider-inline">
+                            <div class="icon-wrap" style="background:rgba(212,175,55,0.1);"><i data-lucide="user-circle" class="icon-sm icon-gold"></i></div>
+                            <h3>Personal Information</h3>
+                            <div class="line"></div>
+                        </div>
+                        <button type="button" class="btn-gold btn-sm section-edit-btn" onclick="openModal('profileModal')">
+                            <i data-lucide="pencil" class="icon-xs"></i>
+                            Edit Personal Information
+                        </button>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-row">
+                            <span class="info-label">Full Name</span>
+                            <span class="info-value">Arjun Rathore</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Username</span>
+                            <span class="info-value">arjun.rathore</span>
+                        </div>
+                        <div class="info-row info-full-width">
+                            <span class="info-label">Email Address</span>
+                            <span class="info-value">arjun.rathore@vipnumbers.com</span>
+                        </div>
+                        <div class="info-row info-full-width">
+                            <span class="info-label">Mobile Number</span>
+                            <span class="info-value">+91 98765 43210</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Account Security -->
+                <section class="glass-card no-hover section-card reveal">
+                    <div class="section-divider">
+                        <div class="icon-wrap" style="background:rgba(239,68,68,0.1);"><i data-lucide="shield" class="icon-sm icon-red"></i></div>
+                        <h3>Account Security</h3>
+                        <div class="line"></div>
+                    </div>
+                    <div class="security-card-inner">
+                        <div class="security-left">
+                            <div class="security-icon-box">
+                                <i data-lucide="key-round" class="icon-md" style="color:rgba(255,255,255,0.3)"></i>
+                            </div>
+                            <div>
+                                <p class="security-label-text">Password</p>
+                                <p class="masked-password">************</p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-outline btn-sm" style="flex-shrink:0;" onclick="openModal('passwordModal')">
+                            <i data-lucide="lock" class="icon-xs"></i>
+                            Change Password
+                        </button>
+                    </div>
+                    <div class="security-hints">
+                        <div class="hint hint-green">
+                            <i data-lucide="shield-check" class="icon-xs hint-icon-green"></i>
+                            <span class="hint-text hint-text-green">Password last changed 45 days ago</span>
+                        </div>
+                        <div class="hint hint-gold">
+                            <i data-lucide="info" class="icon-xs hint-icon-gold"></i>
+                            <span class="hint-text hint-text-gold">Recommended: Change every 90 days</span>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="spacer"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ======================== -->
+    <!-- MODAL 1: Edit Profile    -->
+    <!-- ======================== -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="profileModalTitle">
+            <div class="modal-header">
+                <div class="modal-header-inner">
+                    <div class="modal-title-group">
+                        <div class="modal-icon modal-icon-gold">
+                            <i data-lucide="user-pen" class="icon-md icon-gold"></i>
+                        </div>
+                        <div>
+                            <h2 class="modal-title" id="profileModalTitle">Update Personal Information</h2>
+                            <p class="modal-subtitle">Edit your profile details below</p>
+                        </div>
+                    </div>
+                    <button type="button" class="modal-close-btn" onclick="closeModal('profileModal')" aria-label="Close">
+                        <i data-lucide="x" class="icon-md"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="profileForm" action="" method="POST">
+                    <input type="hidden" name="action" value="update_profile">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="pFullName">Full Name <span class="required">*</span></label>
+                            <input type="text" id="pFullName" name="full_name" class="input-field" placeholder="Enter full name" value="Arjun Rathore" required>
+                            <p class="error-msg" id="pFullNameError">Full name is required</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="pUsername">Username <span class="required">*</span></label>
+                            <input type="text" id="pUsername" name="username" class="input-field" placeholder="Enter username" value="arjun.rathore" required>
+                            <p class="error-msg" id="pUsernameError">Username is required</p>
+                        </div>
+                        <div class="form-group form-full-width">
+                            <label class="form-label" for="pEmail">Email Address <span class="required">*</span></label>
+                            <input type="email" id="pEmail" name="email" class="input-field" placeholder="Enter email address" value="arjun.rathore@vipnumbers.com" required>
+                            <p class="error-msg" id="pEmailError">Please enter a valid email address</p>
+                        </div>
+                        <div class="form-group form-full-width">
+                            <label class="form-label" for="pPhone">Mobile Number <span class="required">*</span></label>
+                            <div class="phone-input-wrap">
+                                <span class="phone-prefix">+91</span>
+                                <input type="text" id="pPhone" name="phone" class="input-field phone-input" placeholder="10-digit number" maxlength="10" value="9876543210" required pattern="[0-9]{10}" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                            </div>
+                            <p class="error-msg" id="pPhoneError">Please enter a valid 10-digit mobile number</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer-inner" style="padding-top:4px;">
+                        <button type="button" class="btn-outline btn-sm" onclick="closeModal('profileModal')">
+                            <i data-lucide="x" class="icon-xs"></i> Cancel
+                        </button>
+                        <button type="submit" class="btn-gold btn-sm">
+                            <i data-lucide="check" class="icon-xs"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================== -->
+    <!-- MODAL 2: Change Password -->
+    <!-- ======================== -->
+    <div class="modal-overlay" id="passwordModal">
+        <div class="modal-panel modal-panel-sm" role="dialog" aria-modal="true" aria-labelledby="passwordModalTitle">
+            <div class="modal-header">
+                <div class="modal-header-inner">
+                    <div class="modal-title-group">
+                        <div class="modal-icon modal-icon-red">
+                            <i data-lucide="lock" class="icon-md icon-red"></i>
+                        </div>
+                        <div>
+                            <h2 class="modal-title" id="passwordModalTitle">Change Password</h2>
+                            <p class="modal-subtitle">Update your account password</p>
+                        </div>
+                    </div>
+                    <button type="button" class="modal-close-btn" onclick="closeModal('passwordModal')" aria-label="Close">
+                        <i data-lucide="x" class="icon-md"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="passwordForm" action="" method="POST">
+                    <input type="hidden" name="action" value="change_password">
+                    <div class="form-group">
+                        <label class="form-label" for="pwCurrent">Current Password <span class="required">*</span></label>
+                        <div class="password-wrap">
+                            <input type="password" id="pwCurrent" name="current_password" class="input-field" placeholder="Enter current password" autocomplete="current-password" required>
+                            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('pwCurrent', this)" aria-label="Toggle password visibility">
+                                <i data-lucide="eye" class="icon-sm"></i>
+                            </button>
+                        </div>
+                        <p class="error-msg" id="pwCurrentError">Current password is required</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="pwNew">New Password <span class="required">*</span></label>
+                        <div class="password-wrap">
+                            <input type="password" id="pwNew" name="new_password" class="input-field" placeholder="Enter new password" autocomplete="new-password" required oninput="updatePasswordStrength()">
+                            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('pwNew', this)" aria-label="Toggle password visibility">
+                                <i data-lucide="eye" class="icon-sm"></i>
+                            </button>
+                        </div>
+                        <p class="error-msg" id="pwNewError">New password is required</p>
+                        <p class="error-msg" id="pwNewSameError">New password must be different from current password</p>
+                        <div class="strength-bar">
+                            <div class="strength-segment" id="str1"></div>
+                            <div class="strength-segment" id="str2"></div>
+                            <div class="strength-segment" id="str3"></div>
+                            <div class="strength-segment" id="str4"></div>
+                        </div>
+                        <p class="strength-label" id="strengthLabel">Enter a password to see strength</p>
+                        <div class="strength-reqs">
+                            <div class="strength-req" id="reqLength">
+                                <span class="req-icon"><i data-lucide="check" class="icon-xxxs"></i></span>
+                                <span>Minimum 8 characters</span>
+                            </div>
+                            <div class="strength-req" id="reqUpper">
+                                <span class="req-icon"><i data-lucide="check" class="icon-xxxs"></i></span>
+                                <span>Uppercase letter</span>
+                            </div>
+                            <div class="strength-req" id="reqLower">
+                                <span class="req-icon"><i data-lucide="check" class="icon-xxxs"></i></span>
+                                <span>Lowercase letter</span>
+                            </div>
+                            <div class="strength-req" id="reqNumber">
+                                <span class="req-icon"><i data-lucide="check" class="icon-xxxs"></i></span>
+                                <span>Number</span>
+                            </div>
+                            <div class="strength-req" id="reqSpecial">
+                                <span class="req-icon"><i data-lucide="check" class="icon-xxxs"></i></span>
+                                <span>Special character</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-group-last">
+                        <label class="form-label" for="pwConfirm">Confirm New Password <span class="required">*</span></label>
+                        <div class="password-wrap">
+                            <input type="password" id="pwConfirm" name="confirm_password" class="input-field" placeholder="Confirm new password" autocomplete="new-password" required>
+                            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('pwConfirm', this)" aria-label="Toggle password visibility">
+                                <i data-lucide="eye" class="icon-sm"></i>
+                            </button>
+                        </div>
+                        <p class="error-msg" id="pwConfirmError">Please confirm your new password</p>
+                        <p class="error-msg" id="pwMatchError">Passwords do not match</p>
+                    </div>
+                    <div class="modal-footer-inner" style="padding-top:4px;">
+                        <button type="button" class="btn-outline btn-sm" onclick="closeModal('passwordModal')">
+                            <i data-lucide="x" class="icon-xs"></i> Cancel
+                        </button>
+                        <button type="submit" class="btn-gold btn-sm">
+                            <i data-lucide="shield-check" class="icon-xs"></i> Update Password
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* =========================================
+           INITIALIZATION
+        ========================================= */
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            initScrollReveal();
+
+            /* Sidebar toggle */
+            document.getElementById('menuToggle').addEventListener('click', toggleSidebar);
+            document.getElementById('sidebarOverlay').addEventListener('click', toggleSidebar);
+
+            /* Dropdown toggles */
+            document.getElementById('notifBtn').addEventListener('click', function() {
+                toggleDropdown('notifDropdown');
+            });
+            document.getElementById('profileMenuBtn').addEventListener('click', function() {
+                toggleDropdown('profileDropdown');
+            });
+
+            /* Close dropdowns on outside click */
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('[data-dropdown-parent]')) {
+                    document.querySelectorAll('.dropdown').forEach(function(d) {
+                        d.classList.remove('show');
+                    });
+                }
+            });
+
+            /* Close modals on overlay click */
+            document.getElementById('profileModal').addEventListener('click', function(e) {
+                if (e.target === this) closeModal('profileModal');
+            });
+            document.getElementById('passwordModal').addEventListener('click', function(e) {
+                if (e.target === this) closeModal('passwordModal');
+            });
+
+            /* Keyboard: Escape closes modals */
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeModal('profileModal');
+                    closeModal('passwordModal');
+                }
+            });
+        });
+
+        /* =========================================
+           SIDEBAR TOGGLE
+        ========================================= */
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('show');
+        }
+
+        /* =========================================
+           DROPDOWN TOGGLE
+        ========================================= */
+        function toggleDropdown(id) {
+            var dd = document.getElementById(id);
+            var isOpen = dd.classList.contains('show');
+            document.querySelectorAll('.dropdown').forEach(function(d) {
+                d.classList.remove('show');
+            });
+            if (!isOpen) dd.classList.add('show');
+        }
+
+        /* =========================================
+           MODAL MANAGEMENT
+        ========================================= */
+        function openModal(id) {
+            document.getElementById(id).classList.add('show');
+            document.body.style.overflow = 'hidden';
+            lucide.createIcons();
+
+            if (id === 'passwordModal') {
+                document.getElementById('pwCurrent').value = '';
+                document.getElementById('pwNew').value = '';
+                document.getElementById('pwConfirm').value = '';
+                resetPasswordStrength();
+                document.querySelectorAll('#passwordModal .password-toggle i').forEach(function(ic) {
+                    ic.setAttribute('data-lucide', 'eye');
+                });
+                lucide.createIcons();
+            }
+
+            setTimeout(function() {
+                var firstInput = document.getElementById(id).querySelector('input');
+                if (firstInput) firstInput.focus();
+            }, 100);
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        /* =========================================
+           PASSWORD VISIBILITY TOGGLE
+        ========================================= */
+        function togglePasswordVisibility(inputId, btn) {
+            var input = document.getElementById(inputId);
+            var icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                input.type = 'password';
+                icon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+        }
+
+        /* =========================================
+           PASSWORD STRENGTH METER
+        ========================================= */
+        function updatePasswordStrength() {
+            var pw = document.getElementById('pwNew').value;
+            var score = 0;
+            var hasLength = pw.length >= 8;
+            var hasUpper = /[A-Z]/.test(pw);
+            var hasLower = /[a-z]/.test(pw);
+            var hasNumber = /[0-9]/.test(pw);
+            var hasSpecial = /[^A-Za-z0-9]/.test(pw);
+
+            if (hasLength) score++;
+            if (hasUpper) score++;
+            if (hasLower) score++;
+            if (hasNumber) score++;
+            if (hasSpecial) score++;
+
+            toggleReq('reqLength', hasLength);
+            toggleReq('reqUpper', hasUpper);
+            toggleReq('reqLower', hasLower);
+            toggleReq('reqNumber', hasNumber);
+            toggleReq('reqSpecial', hasSpecial);
+
+            var colors = ['', '#EF4444', '#F59E0B', '#F59E0B', '#22C55E', '#22C55E'];
+            var labels = ['Enter a password to see strength', 'Weak', 'Fair', 'Good', 'Strong', 'Very Strong'];
+            var labelColors = ['rgba(255,255,255,0.2)', '#EF4444', '#F59E0B', '#F59E0B', '#22C55E', '#22C55E'];
+
+            for (var i = 1; i <= 4; i++) {
+                var seg = document.getElementById('str' + i);
+                seg.style.background = (pw.length > 0 && i <= score) ? colors[score] : 'rgba(255,255,255,0.06)';
+            }
+
+            var label = document.getElementById('strengthLabel');
+            if (pw.length === 0) {
+                label.textContent = labels[0];
+                label.style.color = labelColors[0];
+            } else {
+                label.textContent = labels[score] || labels[1];
+                label.style.color = labelColors[score] || labelColors[1];
+            }
+        }
+
+        function toggleReq(id, met) {
+            var el = document.getElementById(id);
+            if (met) {
+                el.classList.add('met');
+            } else {
+                el.classList.remove('met');
+            }
+        }
+
+        function resetPasswordStrength() {
+            for (var i = 1; i <= 4; i++) {
+                document.getElementById('str' + i).style.background = 'rgba(255,255,255,0.06)';
+            }
+            document.getElementById('strengthLabel').textContent = 'Enter a password to see strength';
+            document.getElementById('strengthLabel').style.color = 'rgba(255,255,255,0.2)';
+            var reqIds = ['reqLength', 'reqUpper', 'reqLower', 'reqNumber', 'reqSpecial'];
+            reqIds.forEach(function(id) {
+                document.getElementById(id).classList.remove('met');
+            });
+        }
+
+        /* =========================================
+           SCROLL REVEAL
+        ========================================= */
+        function initScrollReveal() {
+            var reveals = document.querySelectorAll('.reveal');
+            if ('IntersectionObserver' in window) {
+                var observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.1 });
+                reveals.forEach(function(el) { observer.observe(el); });
+            } else {
+                reveals.forEach(function(el) { el.classList.add('visible'); });
+            }
+        }
+    </script>
+</body>
+</html>
