@@ -1386,16 +1386,13 @@ select.input-field option {
     .page-subtitle {
         font-size: 11px;
     }
-    /* Hide search box on this breakpoint, show on 1024 */
     .header-search-box {
         display: none !important;
     }
-    /* Hide filter toggle and refresh on small screens */
     .header-icon-btn#filterToggleBtn,
     .header-icon-btn#refreshBtn {
         display: none;
     }
-    /* Smaller icon buttons */
     .header-icon-btn {
         width: 36px;
         height: 36px;
@@ -1424,13 +1421,12 @@ select.input-field option {
         padding: 2px 4px 2px 2px;
     }
 
-    /* Dashboard content */
     .dashboard-content {
         padding: 16px;
         gap: 16px;
     }
 
-    /* Stats */
+    /* Stats — tighter icon & gap to prevent cramping */
     .stats-grid {
         grid-template-columns: 1fr 1fr;
         gap: 12px;
@@ -1439,7 +1435,11 @@ select.input-field option {
         padding: 14px;
     }
     .stat-card-inner {
-        gap: 8px;
+        gap: 6px;                       /* was 8px */
+    }
+    .stat-info {
+        overflow: hidden;               /* NEW: prevent text spillover */
+        min-width: 0;                   /* NEW: allow flex shrink */
     }
     .stat-value {
         font-size: 22px;
@@ -1449,13 +1449,13 @@ select.input-field option {
         font-size: 10px;
     }
     .stat-icon {
-        width: 38px;
-        height: 38px;
+        width: 36px;                    /* was 38px */
+        height: 36px;
         border-radius: 10px;
     }
     .stat-icon svg {
-        width: 16px;
-        height: 16px;
+        width: 15px;                    /* was 16px */
+        height: 15px;
     }
     .stat-trend {
         margin-top: 6px;
@@ -1467,7 +1467,6 @@ select.input-field option {
         display: none;
     }
 
-    /* Filter */
     .filter-section {
         padding: 14px;
     }
@@ -1476,7 +1475,6 @@ select.input-field option {
         gap: 12px;
     }
 
-    /* Table */
     .table-scroll-wrapper {
         max-height: calc(100vh - 320px);
         min-height: 260px;
@@ -1503,7 +1501,6 @@ select.input-field option {
         padding: 5px 26px 5px 10px;
     }
 
-    /* Bulk bar */
     .bulk-bar {
         padding: 10px 14px;
         gap: 8px;
@@ -1513,7 +1510,6 @@ select.input-field option {
         font-size: 11px;
     }
 
-    /* Footer */
     .page-footer {
         padding: 16px;
     }
@@ -1527,11 +1523,7 @@ select.input-field option {
         gap: 10px;
     }
 
-    /* Dropdown positioning fix for small screens */
-    .dropdown {
-        right: -40px;
-        min-width: 240px;
-    }
+    
 }
 
 /* =============================================
@@ -1583,13 +1575,12 @@ select.input-field option {
         font-size: 11px;
     }
 
-    /* Dashboard */
     .dashboard-content {
         padding: 12px;
         gap: 12px;
     }
 
-    /* Stats — single column on very small screens */
+    /* Stats — hide decorative icon to give text full card width */
     .stats-grid {
         grid-template-columns: 1fr 1fr;
         gap: 10px;
@@ -1601,20 +1592,19 @@ select.input-field option {
     .glass-card {
         border-radius: 14px;
     }
+    .stat-card-inner {
+        gap: 0;                         /* was inherited 6px — no icon, no gap needed */
+    }
     .stat-value {
         font-size: 20px;
     }
     .stat-icon {
-        width: 34px;
-        height: 34px;
-        border-radius: 9px;
+        display: none;                  /* NEW: hide icon, free full width for text */
     }
-    .stat-icon svg {
-        width: 14px;
-        height: 14px;
+    .stat-trend-value {
+        font-size: 10px;
     }
 
-    /* Filter */
     .filter-section {
         padding: 12px;
         border-radius: 14px;
@@ -1633,9 +1623,10 @@ select.input-field option {
         background-size: 14px;
     }
 
-    /* Table */
+    /* Table — contain scroll within rounded card */
     .table-section .glass-card {
         border-radius: 14px;
+        overflow: hidden;               /* NEW: prevent scroll shadow bleeding */
     }
     .table-scroll-wrapper {
         max-height: calc(100vh - 300px);
@@ -1687,7 +1678,6 @@ select.input-field option {
         font-size: 12px;
     }
 
-    /* Result count bar */
     .result-count-bar {
         padding: 8px 12px;
     }
@@ -1695,7 +1685,6 @@ select.input-field option {
         font-size: 11px;
     }
 
-    /* Bulk bar */
     .bulk-bar {
         padding: 10px 12px;
         gap: 6px;
@@ -1716,7 +1705,6 @@ select.input-field option {
         height: 12px;
     }
 
-    /* Modal */
     .modal-overlay {
         padding: 12px;
         align-items: flex-end;
@@ -1746,7 +1734,6 @@ select.input-field option {
         margin-bottom: 20px;
     }
 
-    /* Empty state */
     .empty-state {
         padding: 40px 16px;
     }
@@ -1771,7 +1758,6 @@ select.input-field option {
         border-radius: 10px;
     }
 
-    /* Footer */
     .page-footer {
         padding: 12px;
     }
@@ -1783,14 +1769,7 @@ select.input-field option {
         gap: 8px;
     }
 
-    /* Dropdown - full width on very small screens */
-    .dropdown {
-        right: -8px;
-        left: 8px;
-        width: auto;
-        min-width: 0;
-        border-radius: 12px;
-    }
+    
 }
 
 /* =============================================
@@ -1820,6 +1799,7 @@ select.input-field option {
     }
     .stat-value {
         font-size: 18px;
+        margin-top: 4px;                 /* was inherited 6px */
     }
     .stat-label {
         font-size: 9px;
@@ -1846,6 +1826,8 @@ select.input-field option {
     .modal-number-display {
         font-size: 20px;
     }
+
+    
 }
 
 /* =============================================
@@ -1876,6 +1858,8 @@ select.input-field option {
         border-radius: 20px;
         max-height: 90vh;
     }
+
+    
 }
 
 /* =============================================
@@ -1886,8 +1870,7 @@ select.input-field option {
         animation-duration: 0.01ms !important;
         transition-duration: 0.01ms !important;
     }
-}
-    </style>
+}    </style>
 </head>
 <body>
     <div class="gold-line"></div>
@@ -1948,7 +1931,7 @@ select.input-field option {
                         <i data-lucide="menu"></i>
                     </button>
                     <div>
-                        <h2 class="page-title">Number List & Status</h2>
+                        <h2 class="page-title">Number List</h2>
                         <p class="page-subtitle">Manage and track all numbers</p>
                     </div>
                 </div>
@@ -3185,6 +3168,40 @@ select.input-field option {
                 observer.observe(el);
             });
         }
+        /* =============================================
+   Mobile Dropdown Enhancements
+============================================= */
+(function() {
+    // Close all dropdowns when tapping outside on mobile
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.dropdown-trigger')) {
+            document.querySelectorAll('.dropdown.visible').forEach(function(d) {
+                d.classList.remove('visible');
+            });
+        }
+    });
+
+    // Close any open dropdown when the mobile menu toggle is tapped,
+    // preventing dropdown from lingering behind the sidebar overlay
+    var menuToggle = document.getElementById('menuToggle');
+    if (menuToggle) {
+        menuToggle.addEventListener('click', function() {
+            document.querySelectorAll('.dropdown.visible').forEach(function(d) {
+                d.classList.remove('visible');
+            });
+        });
+    }
+
+    // Close any open dropdown when the sidebar overlay is tapped
+    var sidebarOverlay = document.getElementById('sidebarOverlay');
+    if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', function() {
+            document.querySelectorAll('.dropdown.visible').forEach(function(d) {
+                d.classList.remove('visible');
+            });
+        });
+    }
+})();
     </script>
 </body>
 </html>
