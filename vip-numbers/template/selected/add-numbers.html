@@ -1026,7 +1026,7 @@
             margin-bottom: 8px;
         }
         .highlight-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-
+        
         /* =============================================
            17. Buttons
            ============================================= */
@@ -1636,55 +1636,14 @@
                                 </label>
                                 <select id="category" class="input-field" onchange="updatePreview()">
                                     <option value="">Select category</option>
-                                    <option value="vip">VIP</option>
-                                    <option value="fancy">Fancy</option>
-                                    <option value="premium">Premium</option>
-                                    <option value="golden">Golden</option>
-                                    <option value="platinum">Platinum</option>
+                                    <option value="Vip">VIP</option>
+                                    <option value="Fancy">Fancy</option>
+                                    <option value="Premium">Premium</option>
+                                    <option value="Golden">Golden</option>
+                                    <option value="Platinum">Platinum</option>
                                 </select>
                             </div>
-                            <div class="form-group">
-                                <label class="form-label" for="network">
-                                    <span class="form-label-icon"><i data-lucide="signal"></i></span>
-                                    Network
-                                </label>
-                                <select id="network" class="input-field" onchange="updatePreview()">
-                                    <option value="">Select network</option>
-                                    <option value="airtel">Airtel</option>
-                                    <option value="jio">Jio</option>
-                                    <option value="vi">Vi</option>
-                                    <option value="bsnl">BSNL</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="status">
-                                    <span class="form-label-icon"><i data-lucide="circle-dot"></i></span>
-                                    Status
-                                </label>
-                                <select id="status" class="input-field" onchange="updatePreview()">
-                                    <option value="available">Available</option>
-                                    <option value="reserved">Reserved</option>
-                                    <option value="sold">Sold</option>
-                                </select>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- Number Type -->
-                    <section class="glass-card form-section reveal">
-                        <div class="section-header">
-                            <div class="icon-box icon-box--pink">
-                                <i data-lucide="sparkles"></i>
-                            </div>
-                            <span class="section-title">Number Type</span>
-                            <div class="section-line"></div>
-                        </div>
-                        <div class="segment-group" id="segmentGroup">
-                            <button type="button" class="segment-btn is-active" data-type="normal" onclick="setNumberType(this)">Normal</button>
-                            <button type="button" class="segment-btn" data-type="fancy" onclick="setNumberType(this)">Fancy</button>
-                            <button type="button" class="segment-btn" data-type="vip" onclick="setNumberType(this)">VIP</button>
-                            <button type="button" class="segment-btn" data-type="golden" onclick="setNumberType(this)">Golden</button>
-                            <button type="button" class="segment-btn" data-type="platinum" onclick="setNumberType(this)">Platinum</button>
+                            
                         </div>
                     </section>
 
@@ -1780,11 +1739,30 @@
                                 </div>
                                 <div class="preview-badges" id="previewBadges">
                                     <span class="badge badge--available">Available</span>
-                                </div>
+                                    <span id="preview-category" 
+      class="badge badge--default"
+      style="
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 14px;
+        border-radius: 999px;
+        background: rgba(222, 234, 90, 0.12);
+        color: var(--accent);
+        border: 1px solid var(--accent);
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.2px;
+        white-space: nowrap;
+      ">
+    Not Selected
+</span>  </div>
+                                
                             </div>
                             <div class="preview-number-area">
                                 <div class="preview-number" id="previewNumber">+91 XXXXXXXXXX</div>
                             </div>
+                            
                             <div class="preview-prices">
                                 <div class="price-block">
                                     <p class="price-label">Original</p>
@@ -2083,7 +2061,6 @@
         function updatePreview() {
             const phone = document.getElementById('phoneNumber').value;
             const category = document.getElementById('category').value;
-            const status = document.getElementById('status').value;
             const original = parseFloat(document.getElementById('originalPrice').value) || 0;
             const discount = parseFloat(document.getElementById('discount').value) || 0;
             const selling = original - (original * discount / 100);
@@ -2119,35 +2096,7 @@
             }
             document.getElementById('previewNumber').innerHTML = displayNumber;
 
-            // Badges
-            let badges = '';
-            const statusMap = {
-                available: { class: 'badge--available', label: 'Available' },
-                reserved: { class: 'badge--reserved', label: 'Reserved' },
-                sold: { class: 'badge--sold', label: 'Sold' }
-            };
-            const catMap = {
-                vip: { class: 'badge--vip', label: 'VIP' },
-                fancy: { class: 'badge--fancy', label: 'Fancy' },
-                premium: { class: 'badge--premium', label: 'Premium' },
-                golden: { class: 'badge--premium', label: 'Golden' },
-                platinum: { class: 'badge--premium', label: 'Platinum' }
-            };
-            const typeMap = {
-                normal: null,
-                fancy: { class: 'badge--fancy', label: 'Fancy' },
-                vip: { class: 'badge--vip', label: 'VIP' },
-                golden: { class: 'badge--premium', label: 'Golden' },
-                platinum: { class: 'badge--premium', label: 'Platinum' }
-            };
-
-            if (statusMap[status]) badges += `<span class="badge ${statusMap[status].class}">${statusMap[status].label}</span>`;
-            if (category && catMap[category]) badges += `<span class="badge ${catMap[category].class}">${catMap[category].label}</span>`;
-            if (typeMap[numberType] && (!category || catMap[category]?.label !== typeMap[numberType]?.label)) {
-                badges += `<span class="badge ${typeMap[numberType].class}">${typeMap[numberType].label}</span>`;
-            }
-            document.getElementById('previewBadges').innerHTML = badges || '<span class="badge badge--default">No type</span>';
-
+            
             // Prices
             // Prices — Selling = what user entered, Original = marked up total
             const marked = original + (original * discount / 100);
@@ -2187,6 +2136,33 @@
                 phoneInput.classList.remove('has-error');
                 phoneError.classList.remove('is-visible');
             }
+            const categorySelect = document.getElementById('category');
+const previewCategory = document.getElementById('preview-category');
+
+if (categorySelect && previewCategory) {
+    const categoryBadgeMap = {
+        'VIP': 'badge--Vip',
+        'Premium': 'badge-Ppremium',
+        'Fancy': 'badge--Fancy',
+        'Reserved': 'badge--Reserved',
+        'Available': 'badge--Available',
+        'Sold': 'badge--Sold'
+    };
+
+    function updatePreviewCategory() {
+        const val = categorySelect.value;
+        previewCategory.textContent = val || 'Not Selected';
+        previewCategory.className = ''; // clear all classes first
+        if (val && categoryBadgeMap[val]) {
+            previewCategory.classList.add('badge', categoryBadgeMap[val]);
+        } else {
+            previewCategory.classList.add('badge');
+        }
+    }
+
+    categorySelect.addEventListener('change', updatePreviewCategory);
+    updatePreviewCategory();
+}
         }
 
         // =============================================
