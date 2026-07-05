@@ -976,6 +976,30 @@
             align-items: flex-end;
             gap: 20px;
         }
+        .preview-number-sum {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    padding: 6px 14px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #f4d35e;
+    background: rgba(212, 175, 55, 0.12);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    border-radius: 999px;
+    letter-spacing: 1.2px;
+    font-family: 'Courier New', Courier, monospace;
+    text-shadow: 0 0 8px rgba(212, 175, 55, 0.25);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(6px);
+}
+
+.preview-number-sum:hover {
+    background: rgba(212, 175, 55, 0.18);
+    border-color: rgba(212, 175, 55, 0.4);
+    transform: translateY(-1px);
+}
         .price-block { }
         .price-block--selling { margin-left: auto; text-align: right; }
         .price-label {
@@ -1762,6 +1786,7 @@
                             <div class="preview-number-area">
                                 <div class="preview-number" id="previewNumber">+91 XXXXXXXXXX</div>
                             </div>
+                            <div class="preview-number-sum" id="previewNumberSum">Sum = --</div>
                             
                             <div class="preview-prices">
                                 <div class="price-block">
@@ -2294,6 +2319,61 @@ if (categorySelect && previewCategory) {
 
         // Initial preview
         updatePreview();
+ // Number Sum calculation for Live Preview
+function calculateNumberSum(numStr) {
+    if (!numStr || numStr.length === 0) return '--';
+    var digits = numStr.replace(/\D/g, '').split('').map(Number);
+    if (digits.length === 0) return '--';
+    var sum = digits.reduce(function(a, b) { return a + b; }, 0);
+    var chain = [sum];
+    while (chain.length < 3) {
+        if (sum < 10) {
+            chain.push(sum);
+        } else {
+            sum = String(sum).split('').map(Number).reduce(function(a, b) { return a + b; }, 0);
+            chain.push(sum);
+        }
+    }
+    return chain.join(' - ');
+}
+
+function updateNumberSum() {
+    var display = document.getElementById('previewNumberSum');
+    if (!display || !updateNumberSum._input) return;
+var result = calculateNumberSum(updateNumberSum._input.value);
+display.textContent = result === '--' ? '--' : 'Sum = ' + result;}
+
+// Robustly find the mobile/VIP number input
+var mobileInput = document.getElementById('mobileNumber')
+    || document.getElementById('vipNumber')
+    || document.getElementById('phoneNumber')
+    || document.getElementById('number')
+    || document.getElementById('vip_number')
+    || document.getElementById('mobile_number');
+
+// Fallback: find the prefixed input (+91) which is always the mobile field
+if (!mobileInput) {
+    var prefixedInputs = document.querySelectorAll('.input-field--prefixed');
+    if (prefixedInputs.length > 0) {
+        mobileInput = prefixedInputs[0];
+    }
+}
+
+// Fallback: find input inside the first form section with a prefix wrapper
+if (!mobileInput) {
+    var prefixEl = document.querySelector('.input-prefix');
+    if (prefixEl) {
+        var wrapper = prefixEl.closest('.input-wrapper') || prefixEl.parentElement;
+        if (wrapper) {
+            mobileInput = wrapper.querySelector('input');
+        }
+    }
+}
+
+if (mobileInput) {
+    updateNumberSum._input = mobileInput;
+    mobileInput.addEventListener('input', updateNumberSum);
+}
     </script>
 </body>
 </html>
