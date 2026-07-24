@@ -760,13 +760,19 @@ if (categorySelect && previewCategory) {
             body: formData
         })
         .then(res => res.json())
-        .then(data => {
-
-            showToast(data.message, data.success ? "success" : "error");
+        .then(async (data) => {
 
             if (data.success) {
+                await addActivity(
+                    "New Number Added",
+                    `${phone} added to ${category} category`,
+                    "green"
+                );
+
                 resetForm();
             }
+
+            showToast(data.message, data.success ? "success" : "error");
 
         })
         .catch(err => {
@@ -958,6 +964,24 @@ if (!mobileInput) {
 if (mobileInput) {
     updateNumberSum._input = mobileInput;
     mobileInput.addEventListener('input', updateNumberSum);
+}
+
+async function addActivity(title, description, color) {
+
+    console.log("addActivity called", title, description, color);
+
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("color", color);
+
+    const response = await fetch("../api/add_activity.php", {
+        method: "POST",
+        body: formData
+    });
+
+    const result = await response.json();
+    return result;
 }
     </script>
 </body>
