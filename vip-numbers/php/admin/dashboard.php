@@ -290,7 +290,7 @@
                             <div class="donut-wrapper">
                                 <canvas id="statusDonutChart"></canvas>
                                 <div class="donut-center">
-                                    <p class="donut-center-value">1,000</p>
+                                    <p id="totalCount2" class="donut-center-value">1,000</p>
                                     <p class="donut-center-label">Total</p>
                                 </div>
                             </div>
@@ -338,11 +338,11 @@
                                 </div>
                                 <div class="legend-item">
                                     <span class="legend-dot" style="background:#4A9DFF;"></span>
-                                    <span class="legend-label">Business</span>
+                                    <span class="legend-label">Platinum</span>
                                 </div>
                                 <div class="legend-item">
                                     <span class="legend-dot" style="background:#A78BFA;"></span>
-                                    <span class="legend-label">Lucky</span>
+                                    <span class="legend-label">Golden</span>
                                 </div>
                                 <div class="legend-item">
                                     <span class="legend-dot" style="background:#F472B6;"></span>
@@ -747,80 +747,56 @@
             updateStatCard("available", stats.available);
             updateStatCard("premium", stats.premium);
             updateStatCard("reserved", stats.reserved);
+
+            document.getElementById("totalCount2").textContent=stats.total.count.toLocaleString("en-IN");
         }
+        function updateStatCard(prefix, data) {
 
-        function updateStatCard(prefix,data){
+            document.getElementById(prefix + "Count").textContent = data.count;
 
-            document.getElementById(prefix+"Count").textContent=data.count;
+            const percent = document.getElementById(prefix + "Percent");
 
-            const percent=document.getElementById(prefix+"Percent");
+            const trend = percent.parentElement;
 
-            percent.textContent=
-                (data.percent>=0?"+":"")+data.percent+"%";
+            const icon = trend.querySelector("[data-lucide]");
 
-            percent.classList.remove(
-                "text-green-400",
-                "text-red-400"
+            percent.textContent =
+                (data.percent >= 0 ? "+" : "") + data.percent + "%";
+
+            // Remove previous trend classes
+            trend.classList.remove(
+                "stat-trend--up",
+                "stat-trend--down",
+                "stat-trend--up-gold"
             );
 
-            if(data.percent>=0){
+            if (data.percent > 0) {
 
-                percent.classList.add("text-green-400");
+                
+                trend.classList.add("stat-trend--up");
+                
 
-            }else{
-
-                percent.classList.add("text-red-400");
+                icon.setAttribute("data-lucide", "trending-up");
 
             }
+            else if (data.percent < 0) {
+
+                trend.classList.add("stat-trend--down");
+
+                icon.setAttribute("data-lucide", "trending-down");
+
+            }
+            else {
+
+                // 0%
+                trend.classList.add("stat-trend--neutral");
+
+                icon.setAttribute("data-lucide","minus");
+
+            }
+
+            lucide.createIcons();
         }
-
-        loadDashboardStats();   
-        function updateStatCard(prefix, data){
-
-        document.getElementById(prefix + "Count").textContent = data.count;
-
-        const percent = document.getElementById(prefix + "Percent");
-
-        const icon = percent.parentElement.querySelector("[data-lucide]");
-
-        percent.textContent =
-            (data.percent >= 0 ? "+" : "") + data.percent + "%";
-
-        // Reset classes
-        percent.classList.remove("text-green-400","text-red-400","text-yellow-400");
-
-        icon.classList.remove("text-green-400","text-red-400","text-yellow-400");
-
-        if(data.percent > 0){
-
-            percent.classList.add("text-green-400");
-
-            icon.setAttribute("data-lucide","trending-up");
-            icon.classList.remove("text-red-400","text-yellow-400");
-            icon.classList.add("text-green-400");
-
-        }
-        else if(data.percent < 0){
-
-            percent.classList.add("text-red-400");
-
-            icon.setAttribute("data-lucide","trending-down");
-            icon.classList.remove("text-green-400","text-yellow-400");
-            icon.classList.add("text-red-400");
-
-        }
-        else{
-
-            percent.classList.add("text-yellow-400");
-
-            icon.setAttribute("data-lucide","minus");
-            icon.classList.remove("text-green-400","text-red-400");
-            icon.classList.add("text-yellow-400");
-
-        }
-
-        lucide.createIcons();
-    }
     let numbers = [];
 
         function formatPrice(price){
@@ -891,7 +867,7 @@
                             </button>
 
                             <a
-                                href="edit_number.php?id=${n.id}"
+                                href="update-number.php?id=${n.id}"
                                 class="action-btn">
                                 <i data-lucide="edit-3"></i>
                             </a>
