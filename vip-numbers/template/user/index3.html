@@ -1,0 +1,2599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bhudev Sim Store — India's trusted destination for premium VIP mobile numbers. Fancy, lucky, repeating and business numbers.">
+    <meta name="keywords" content="VIP numbers, premium mobile numbers, fancy numbers, lucky numbers, Bhudev Sim Store">
+    <title>Bhudev Sim Store — Premium VIP Mobile Numbers</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <style>
+        /* ============================================
+   BHUDEV SIM STORE — PREMIUM DARK THEME
+   Pure CSS3 — No Frameworks
+   ============================================ */
+
+/* ---------- CSS Custom Properties ---------- */
+:root {
+    --black: #0B0B0B;
+    --charcoal: #161616;
+    --dark-gray: #222222;
+    --mid-gray: #2A2A2A;
+    --light-gray: #333333;
+    --surface-gray: #3D3D3D;
+    --gold: #D4AF37;
+    --gold-light: #E8C547;
+    --gold-pale: #F5E8A8;
+    --gold-dark: #8B7536;
+    --gold-muted: rgba(212, 175, 55, 0.15);
+    --gold-border: rgba(212, 175, 55, 0.1);
+    --gold-border-hover: rgba(212, 175, 55, 0.3);
+    --text-primary: #E8E8E8;
+    --text-secondary: #999999;
+    --text-muted: #666666;
+    --text-dim: #444444;
+    --blue-accent: #4A7CFF;
+    --purple-accent: #9B6DFF;
+    --green-accent: #34D399;
+    --red-accent: #F87171;
+
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-full: 9999px;
+
+    --shadow-gold: 0 20px 50px -15px rgba(212, 175, 55, 0.12);
+    --shadow-card: 0 4px 20px -5px rgba(0, 0, 0, 0.4);
+
+    --transition-fast: 0.2s ease;
+    --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --font-heading: 'Outfit', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-accent: 'Poppins', sans-serif;
+
+    /* === CHANGE 1: Container widened from 1200px to 1440px (~120%) === */
+    --container-max: 1440px;
+    /* === NEW: Wider variant for hero/cta === */
+    --container-wide: 1600px;
+
+    /* === CHANGE 2: Fluid padding using clamp() === */
+    /* Scales from 16px (mobile) → 48px (large desktop) automatically */
+    --container-padding: clamp(16px, 4vw, 48px);
+
+    /* === CHANGE 3: Fluid section spacing === */
+    --section-padding-y: clamp(56px, 8vw, 120px);
+}
+
+/* ---------- Reset & Base ---------- */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    background: var(--black);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* === CHANGE 4: Stronger overflow protection === */
+    overflow-x: hidden;
+    max-width: 100vw;
+    /* Prevent layout shift from scrollbar */
+    scrollbar-gutter: stable both-edges;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+ul, ol {
+    list-style: none;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+    /* Prevent images from causing overflow */
+    height: auto;
+}
+
+button, input, select, textarea {
+    font: inherit;
+    color: inherit;
+    border: none;
+    outline: none;
+    background: none;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* ---------- Utilities ---------- */
+.container {
+    width: 100%;
+    max-width: var(--container-max);
+    margin: 0 auto;
+    /* === CHANGE 5: Use clamp() padding, prevents overflow === */
+    padding-left: var(--container-padding);
+    padding-right: var(--container-padding);
+}
+
+/* === NEW: Wider container variant === */
+.container--wide {
+    max-width: var(--container-wide);
+}
+
+.gold-text {
+    background: linear-gradient(135deg, #D4AF37 0%, #F5E8A8 45%, #D4AF37 65%, #8B7536 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.gold-shimmer {
+    background: linear-gradient(110deg, #D4AF37 0%, #F5E8A8 28%, #D4AF37 52%, #F0D97A 78%, #D4AF37 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0%, 100% { background-position: 0% center; }
+    50% { background-position: 200% center; }
+}
+
+@keyframes particleFloat {
+    0% {
+        transform: translateY(0) scale(0);
+        opacity: 0;
+    }
+    8% {
+        opacity: 0.7;
+        transform: translateY(0) scale(1);
+    }
+    90% {
+        opacity: 0.3;
+    }
+    100% {
+        transform: translateY(-100vh) scale(0.4);
+        opacity: 0;
+    }
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-accent);
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: var(--radius-md);
+    padding: 12px 24px;
+    transition: all var(--transition);
+    white-space: nowrap;
+    line-height: 1;
+}
+
+.btn--sm {
+    font-size: 12px;
+    padding: 10px 18px;
+    border-radius: var(--radius-sm);
+}
+
+.btn--lg {
+    font-size: 15px;
+    padding: 16px 32px;
+    border-radius: var(--radius-lg);
+}
+
+.btn--flex {
+    flex: 1;
+    justify-content: center;
+}
+
+.btn--gold {
+    background: linear-gradient(135deg, #D4AF37 0%, #E8C547 50%, #D4AF37 100%);
+    background-size: 200% 200%;
+    color: var(--black);
+}
+
+.btn--gold:hover {
+    background-position: 100% 100%;
+    box-shadow: 0 8px 30px rgba(212, 175, 55, 0.3);
+    transform: translateY(-1px);
+}
+
+.btn--outline {
+    background: transparent;
+    border: 1.5px solid var(--gold-border-hover);
+    color: var(--gold);
+}
+
+.btn--outline:hover {
+    border-color: var(--gold);
+    background: rgba(212, 175, 55, 0.06);
+    transform: translateY(-1px);
+}
+
+.btn--dark {
+    background: var(--dark-gray);
+    color: var(--text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.btn--dark:hover {
+    background: var(--mid-gray);
+    border-color: var(--gold-border-hover);
+}
+
+
+/* ==========================================
+   NAVIGATION
+   ========================================== */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 0;
+    transition: all var(--transition);
+    background: transparent;
+}
+
+.navbar--scrolled {
+    background: rgba(11, 11, 11, 0.92);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.06);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+.navbar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+    gap: 16px;
+}
+.navbar__logo {
+    width: 60px;
+    height: auto;
+    max-width: 100%;
+}
+.navbar__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.navbar__brand-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-sm);
+    border: 2px solid #D4AF37;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #D4AF37;
+    font-size: 18px;
+    overflow: hidden;
+}
+
+.navbar__brand-text {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--text-primary);
+    /* === CHANGE 6: Prevent brand text from wrapping awkwardly === */
+    white-space: nowrap;
+}
+
+.navbar__menu {
+    display: none;
+    gap: 4px;
+    /* === CHANGE 7: Allow menu to shrink if needed === */
+    flex: 1;
+    justify-content: center;
+}
+
+.navbar__link {
+    padding: 8px 16px;
+    /* This smoothly scales the font from 15px up to 17px on larger screens */
+    font-size: clamp(15px, 1.1vw, 17px); 
+    font-weight: 500;
+    color: var(--text-secondary);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.navbar__link:hover,
+.navbar__link--active {
+    color: var(--gold);
+}
+
+.navbar__actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.navbar__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 24px;
+    transition: background var(--transition-fast);
+}
+
+.navbar__toggle:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Mobile Menu */
+.menu-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    background: rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition);
+}
+
+body.menu-open .menu-overlay {
+    opacity: 1;
+    visibility: visible;
+}
+
+.mobile-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 300px;
+    max-width: 85vw;
+    z-index: 1200;
+    background: var(--charcoal);
+    border-left: 1px solid var(--gold-border);
+    transform: translateX(100%);
+    transition: transform var(--transition-slow);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+body.menu-open .mobile-menu {
+    transform: translateX(0);
+}
+
+.mobile-menu__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.mobile-menu__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-size: 20px;
+    transition: all var(--transition-fast);
+}
+
+.mobile-menu__close:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+}
+
+.mobile-menu__nav {
+    flex: 1;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.mobile-menu__link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.mobile-menu__link:hover,
+.mobile-menu__link--active {
+    color: var(--gold);
+    background: var(--gold-muted);
+}
+
+.mobile-menu__link .iconify {
+    font-size: 18px;
+    opacity: 0.7;
+}
+
+.mobile-menu__cta {
+    padding: 16px 24px 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+
+/* ==========================================
+   HERO SECTION
+   ========================================== */
+.hero {
+    position: relative;
+    /* === CHANGE 8: Use min() with svh for mobile browser safety === */
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--black);
+}
+
+.hero__bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.hero__particle {
+    position: absolute;
+    bottom: -10px;
+    left: var(--x);
+    width: var(--s);
+    height: var(--s);
+    background: rgba(212, 175, 55, 0.4);
+    border-radius: 50%;
+    animation: particleFloat var(--dur) var(--d) linear infinite;
+}
+
+.hero__grid-pattern {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(212, 175, 55, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(212, 175, 55, 0.025) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+}
+
+.hero__deco-number {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-size: clamp(80px, 15vw, 220px);
+    color: rgba(212, 175, 55, 0.025);
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: -30%;
+    right: -15%;
+    width: 65%;
+    height: 130%;
+    background: radial-gradient(ellipse, rgba(212, 175, 55, 0.06) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.hero::after {
+    content: '';
+    position: absolute;
+    bottom: -20%;
+    left: -10%;
+    width: 45%;
+    height: 80%;
+    background: radial-gradient(ellipse, rgba(212, 175, 55, 0.035) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.hero__content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: clamp(100px, 15vh, 140px) 0 clamp(60px, 10vh, 100px);
+    /* === CHANGE 9: Wider hero content using clamp() === */
+    max-width: min(760px, 90%);
+    margin: 0 auto;
+}
+
+.hero__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--gold-border-hover);
+    background: rgba(212, 175, 55, 0.06);
+    font-size: clamp(10px, 1.5vw, 11px);
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+}
+
+.hero__badge .iconify {
+    font-size: 12px;
+}
+
+.hero__title {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(34px, 6.5vw, 72px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    margin-bottom: 24px;
+}
+
+.hero__desc {
+    font-size: clamp(15px, 1.8vw, 18px);
+    color: var(--text-muted);
+    line-height: 1.7;
+    max-width: 520px;
+    margin: 0 auto 40px;
+    font-weight: 300;
+}
+
+.hero__actions {
+    margin-bottom: 48px;
+}
+
+.hero__trust {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(16px, 3vw, 28px);
+}
+
+.hero__trust-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: clamp(12px, 1.5vw, 13px);
+    color: var(--text-dim);
+}
+
+.hero__trust-item .iconify {
+    color: var(--gold);
+    font-size: 16px;
+}
+
+
+/* ==========================================
+   COMPACT FILTER SECTION
+   ========================================== */
+.filter-section {
+    position: relative;
+    z-index: 10;
+    margin-top: -40px;
+    padding-bottom: 20px;
+}
+
+.filter-card {
+    background: var(--charcoal);
+    border: 1px solid var(--gold-border);
+    border-radius: var(--radius-xl);
+    /* === CHANGE 10: Fluid padding inside filter card === */
+    padding: clamp(20px, 3vw, 32px);
+    box-shadow: var(--shadow-gold);
+}
+
+.filter-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+.filter-form__label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+}
+
+.filter-form__label--hidden {
+    visibility: hidden;
+    height: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+.filter-form__input-wrap {
+    position: relative;
+}
+
+.filter-form__icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: var(--text-dim);
+    pointer-events: none;
+}
+
+.filter-form__input,
+.filter-form__select {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--dark-gray);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 14px;
+    transition: border-color var(--transition-fast);
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.filter-form__input {
+    padding-left: 42px;
+}
+
+.filter-form__input::placeholder {
+    color: var(--text-dim);
+}
+
+.filter-form__select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+}
+
+.filter-form__input:focus,
+.filter-form__select:focus {
+    border-color: var(--gold-border-hover);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.08);
+}
+
+.filter-form__btn {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 24px;
+}
+
+
+/* ==========================================
+   SECTIONS — General
+   ========================================== */
+.section {
+    /* === CHANGE 11: Fluid vertical section padding === */
+    padding: var(--section-padding-y) 0;
+}
+
+.section--alt {
+    background: var(--charcoal);
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: clamp(36px, 5vw, 56px);
+    max-width: 620px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 8px;
+}
+
+.section-header__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--gold-border);
+    background: rgba(212, 175, 55, 0.04);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+}
+
+.section-header__badge .iconify {
+    font-size: 11px;
+}
+
+.section-header__title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: clamp(26px, 4.5vw, 46px);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+.section-header__desc {
+    font-size: clamp(14px, 1.6vw, 15px);
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+.section-footer {
+    text-align: center;
+    margin-top: 48px;
+}
+
+
+/* ==========================================
+   FEATURED NUMBER CARDS
+   ========================================== */
+/* === CHANGE 12: Auto-fit grid so cards reflow naturally === */
+.number-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+    gap: clamp(16px, 2vw, 24px);
+}
+
+.number-card {
+    background: var(--charcoal);
+    border: 1px solid var(--gold-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: all var(--transition);
+    display: flex;
+    flex-direction: column;
+}
+
+.number-card:hover {
+    border-color: var(--gold-border-hover);
+    box-shadow: var(--shadow-gold);
+    transform: translateY(-6px);
+}
+
+.number-card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 20px 0;
+    gap: 8px;
+}
+
+.number-card__badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    background: var(--gold-muted);
+    color: var(--gold);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.number-card__badge--blue {
+    background: rgba(74, 124, 255, 0.12);
+    color: var(--blue-accent);
+}
+
+.number-card__badge--purple {
+    background: rgba(155, 109, 255, 0.12);
+    color: var(--purple-accent);
+}
+
+.number-card__badge--green {
+    background: rgba(52, 211, 153, 0.12);
+    color: var(--green-accent);
+}
+
+.number-card__badge--red {
+    background: rgba(248, 113, 113, 0.12);
+    color: var(--red-accent);
+}
+
+.number-card__wish {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    color: var(--text-dim);
+    font-size: 18px;
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.number-card__wish:hover {
+    color: var(--red-accent);
+    background: rgba(248, 113, 113, 0.1);
+}
+
+.number-card__body {
+    padding: 16px 20px 20px;
+    /* === CHANGE 13: Push actions to bottom for equal-height cards === */
+    flex: 1;
+}
+
+.number-card__prefix {
+    font-size: 12px;
+    color: var(--text-dim);
+    font-weight: 500;
+}
+
+.number-card__number {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: clamp(20px, 2.6vw, 26px);
+    color: var(--gold);
+    letter-spacing: 0.06em;
+    margin: 4px 0 12px;
+    /* === NEW: Prevent long numbers from overflowing === */
+    word-break: break-word;
+}
+
+.number-card__price {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--text-primary);
+}
+
+.number-card__actions {
+    display: flex;
+    gap: 8px;
+    padding: 0 20px 20px;
+}
+
+
+/* ==========================================
+   FEATURE CARDS (Why Choose Us)
+   ========================================== */
+/* === CHANGE 14: Auto-fit grid for feature cards === */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: clamp(16px, 2vw, 24px);
+}
+
+.feature-card {
+    background: var(--charcoal);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: var(--radius-lg);
+    padding: clamp(24px, 3vw, 32px);
+    transition: all var(--transition);
+}
+
+.feature-card:hover {
+    border-color: var(--gold-border);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px -10px rgba(0, 0, 0, 0.3);
+}
+
+.feature-card__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    background: var(--gold-muted);
+    border: 1px solid var(--gold-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    font-size: 22px;
+    margin-bottom: 20px;
+    transition: all var(--transition);
+}
+
+.feature-card:hover .feature-card__icon {
+    background: linear-gradient(135deg, #D4AF37, #E8C547);
+    color: var(--black);
+    border-color: transparent;
+    transform: scale(1.08);
+}
+
+.feature-card__title {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.feature-card__desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.7;
+}
+
+
+/* ==========================================
+   CATEGORY CARDS
+   ========================================== */
+/* === CHANGE 15: Categories grid uses auto-fit === */
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+    gap: clamp(12px, 1.5vw, 16px);
+}
+
+.category-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: clamp(20px, 2.5vw, 28px) 16px;
+    background: var(--charcoal);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: var(--radius-lg);
+    transition: all var(--transition);
+}
+
+.category-card:hover {
+    border-color: var(--gold-border-hover);
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px -10px rgba(212, 175, 55, 0.08);
+}
+
+.category-card__icon {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-lg);
+    background: var(--gold-muted);
+    border: 1px solid var(--gold-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    font-size: 24px;
+    margin-bottom: 16px;
+    transition: all var(--transition);
+}
+
+.category-card:hover .category-card__icon {
+    background: linear-gradient(135deg, #D4AF37, #E8C547);
+    color: var(--black);
+    border-color: transparent;
+}
+
+.category-card__title {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.category-card__count {
+    font-size: 11px;
+    color: var(--text-dim);
+}
+
+
+/* ==========================================
+   HOW IT WORKS — STEPS
+   ========================================== */
+.steps-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    position: relative;
+}
+
+.step-card {
+    text-align: center;
+    position: relative;
+}
+
+.step-card__number {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #D4AF37, #E8C547);
+    color: var(--black);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    box-shadow: 0 8px 24px rgba(212, 175, 55, 0.2);
+    position: relative;
+    z-index: 2;
+}
+
+.step-card__title {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.step-card__desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    max-width: 260px;
+    margin: 0 auto;
+}
+
+
+/* ==========================================
+   TESTIMONIALS
+   ========================================== */
+/* === CHANGE 16: Auto-fit testimonials grid === */
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: clamp(16px, 2vw, 24px);
+}
+
+.testimonial-card {
+    background: var(--charcoal);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: var(--radius-lg);
+    padding: clamp(24px, 3vw, 32px);
+    transition: all var(--transition);
+    display: flex;
+    flex-direction: column;
+}
+
+.testimonial-card:hover {
+    border-color: var(--gold-border);
+    transform: translateY(-4px);
+    box-shadow: 0 15px 40px -10px rgba(0, 0, 0, 0.3);
+}
+
+.testimonial-card__stars {
+    display: flex;
+    gap: 3px;
+    margin-bottom: 20px;
+    color: var(--gold);
+    font-size: 18px;
+}
+
+.testimonial-card__stars .iconify:last-child {
+    color: var(--text-dim);
+}
+
+.testimonial-card__text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 24px;
+    font-style: italic;
+    flex: 1;
+}
+
+.testimonial-card__author {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.testimonial-card__avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #D4AF37, #E8C547);
+    color: var(--black);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.testimonial-card__avatar--blue {
+    background: linear-gradient(135deg, #4A7CFF, #7BA3FF);
+    color: #fff;
+}
+
+.testimonial-card__avatar--green {
+    background: linear-gradient(135deg, #34D399, #6EE7B7);
+    color: #000;
+}
+
+.testimonial-card__name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.testimonial-card__role {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 2px;
+}
+
+
+/* ==========================================
+   FAQ ACCORDION
+   ========================================== */
+.faq-list {
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.faq-item {
+    background: var(--charcoal);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: border-color var(--transition);
+}
+
+.faq-item.faq-item--active {
+    border-color: var(--gold-border);
+}
+
+.faq-item__toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 24px;
+    text-align: left;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-primary);
+    transition: color var(--transition-fast);
+}
+
+.faq-item__toggle:hover {
+    color: var(--gold);
+}
+
+.faq-item__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--gold-muted);
+    color: var(--gold);
+    font-size: 16px;
+    flex-shrink: 0;
+    transition: all var(--transition);
+}
+
+.faq-item--active .faq-item__icon {
+    transform: rotate(45deg);
+    background: linear-gradient(135deg, #D4AF37, #E8C547);
+    color: var(--black);
+}
+
+.faq-item__answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height var(--transition-slow), padding var(--transition);
+}
+
+.faq-item--active .faq-item__answer {
+    max-height: 500px;
+}
+
+.faq-item__answer p {
+    padding: 0 24px 20px;
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.8;
+}
+
+
+/* ==========================================
+   FINAL CTA SECTION
+   ========================================== */
+.cta-section {
+    position: relative;
+    padding: clamp(80px, 12vw, 120px) 0;
+    overflow: hidden;
+    background: var(--black);
+}
+
+.cta-section__glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.cta-section__content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+.cta-section__icon {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-lg);
+    background: var(--gold-muted);
+    border: 1px solid var(--gold-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    font-size: 30px;
+    margin: 0 auto 28px;
+}
+
+.cta-section__title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: clamp(26px, 4.5vw, 44px);
+    line-height: 1.2;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+}
+
+.cta-section__desc {
+    font-size: clamp(14px, 1.6vw, 15px);
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 36px;
+}
+
+.cta-section__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+
+
+/* ==========================================
+   FOOTER
+   ========================================== */
+.footer {
+    background: var(--charcoal);
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    padding: 64px 0 0;
+}
+
+/* === CHANGE 17: Footer grid with auto-fit for responsiveness === */
+.footer__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.footer__brand-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.8;
+    margin: 16px 0 24px;
+    max-width: 280px;
+}
+
+.footer__social {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.footer__social-link {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dim);
+    font-size: 18px;
+    transition: all var(--transition-fast);
+}
+
+.footer__social-link:hover {
+    color: var(--gold);
+    border-color: var(--gold-border-hover);
+    background: var(--gold-muted);
+}
+
+.footer__heading {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    letter-spacing: 0.02em;
+}
+
+.footer__list li {
+    margin-bottom: 12px;
+}
+
+.footer__list a {
+    font-size: 13px;
+    color: var(--text-muted);
+    transition: color var(--transition-fast);
+}
+
+.footer__list a:hover {
+    color: var(--gold);
+}
+
+.footer__contact-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.footer__contact-list .iconify {
+    color: var(--gold);
+    font-size: 18px;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.footer__contact-list span {
+    display: block;
+    font-size: 13px;
+    color: var(--text-secondary);
+    word-break: break-word;
+}
+
+.footer__contact-list small {
+    display: block;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 2px;
+}
+
+.footer__bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 0;
+    text-align: center;
+}
+
+.footer__bottom p {
+    font-size: 12px;
+    color: var(--text-dim);
+}
+
+.footer__bottom-links {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.footer__bottom-links a {
+    font-size: 12px;
+    color: var(--text-dim);
+    transition: color var(--transition-fast);
+}
+
+.footer__bottom-links a:hover {
+    color: var(--gold);
+}
+
+
+/* ==========================================
+   SCROLL REVEAL
+   ========================================== */
+.reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* ==========================================
+   SCROLLBAR
+   ========================================== */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--black);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--gold-dark);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--gold);
+}
+
+
+/* ============================================
+   RESPONSIVE BREAKPOINTS
+   Strategy: mobile-first with progressive enhancement
+   Breakpoints chosen to cover common devices:
+   - 480px : Large phones
+   - 640px : Small tablets / large landscape phones
+   - 768px : Tablets (iPad portrait)
+   - 1024px : Laptops / iPad landscape
+   - 1280px : Small desktops
+   - 1440px : Standard laptops (MacBook 14"/16")
+   - 1536px : Large desktops
+   - 1920px : Full HD displays
+   ============================================ */
+
+/* ---------- 480px+ : Large Phones ---------- */
+@media (min-width: 480px) {
+    .hero__actions {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .cta-section__actions {
+        flex-direction: row;
+    }
+}
+
+/* ---------- 640px+ : Small Tablets ---------- */
+@media (min-width: 640px) {
+    .filter-form {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .filter-form__group--submit {
+        grid-column: 1 / -1;
+    }
+
+    .filter-form__btn {
+        max-width: 280px;
+        margin: 0 auto;
+    }
+
+    .footer__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .footer__bottom {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+
+/* ---------- 768px+ : Tablets (NEW breakpoint) ---------- */
+@media (min-width: 768px) {
+    .section-header {
+        margin-bottom: 48px;
+    }
+
+    .footer__grid {
+        grid-template-columns: 1.4fr 1fr 1fr;
+        gap: 32px;
+    }
+
+    .footer__brand-block {
+        grid-column: 1 / -1;
+        margin-bottom: 8px;
+    }
+
+    /* === On tablets, show footer brand full-width then links in columns === */
+}
+
+/* ---------- 1024px+ : Laptops / Desktops ---------- */
+@media (min-width: 1024px) {
+    .section {
+        padding: clamp(80px, 8vw, 110px) 0;
+    }
+
+    .navbar__menu {
+        display: flex;
+    }
+
+    .navbar__toggle {
+        display: none;
+    }
+
+    /* === CHANGE 18: Desktop filter layout === */
+    .filter-form {
+        grid-template-columns: 2fr 1fr 1fr auto;
+        align-items: end;
+    }
+
+    .filter-form__group--submit {
+        grid-column: auto;
+    }
+
+    .filter-form__btn {
+        max-width: none;
+        min-width: 140px;
+    }
+
+    /* === Number grid: 3 columns at laptop, 4 at wide desktop === */
+    .number-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .features-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .steps-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 32px;
+    }
+
+    /* Step connector line */
+    .steps-grid::before {
+        content: '';
+        position: absolute;
+        top: 28px;
+        left: calc(12.5% + 28px);
+        right: calc(12.5% + 28px);
+        height: 2px;
+        background: linear-gradient(90deg, var(--gold), rgba(212, 175, 55, 0.1), rgba(212, 175, 55, 0.1), var(--gold));
+        z-index: 1;
+    }
+
+    .testimonials-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .footer__grid {
+        grid-template-columns: 1.6fr 1fr 1fr 1.2fr;
+        gap: 40px;
+    }
+
+    .footer__brand-block {
+        grid-column: auto;
+        margin-bottom: 0;
+    }
+}
+
+/* ---------- 1280px+ : Small Desktops ---------- */
+@media (min-width: 1280px) {
+    .number-grid {
+        /* === CHANGE 19: 4 columns at wide screens === */
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .hero__content {
+        padding: 140px 0 100px;
+    }
+
+    .categories-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+
+    .cta-section {
+        padding: 120px 0;
+    }
+}
+
+/* ---------- 1440px+ : Standard Laptops (MacBook) ---------- */
+@media (min-width: 1440px) {
+    /* === CHANGE 20: Optimal layout for 1440x900 === */
+    :root {
+        --container-padding: 48px;
+    }
+
+    .section {
+        padding: 100px 0;
+    }
+
+    .navbar__link {
+        padding: 8px 18px;
+    }
+}
+
+/* ---------- 1536px+ : Large Desktops ---------- */
+@media (min-width: 1536px) {
+    /* Extra breathing room on large screens */
+    .hero__title {
+        font-size: clamp(48px, 6vw, 80px);
+    }
+
+    .number-grid {
+        gap: 28px;
+    }
+}
+
+/* ---------- 1920px+ : Full HD ---------- */
+@media (min-width: 1920px) {
+    :root {
+        --container-max: 1600px;
+    }
+
+    .section {
+        padding: 120px 0;
+    }
+}
+
+/* ==========================================
+   REDUCED MOTION ACCESSIBILITY
+   ========================================== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ==========================================
+   PRINT SAFETY
+   ========================================== */
+@media print {
+    .navbar,
+    .mobile-menu,
+    .menu-overlay,
+    .hero__bg,
+    .hero__grid-pattern,
+    .hero__deco-number,
+    .cta-section__glow {
+        display: none !important;
+    }
+}
+    </style>
+</head>
+<body>
+
+    <!-- ========== NAVIGATION ========== -->
+    <header class="navbar" data-js="navbar">
+        <div class="container navbar__inner">
+            <a href="index.html" class="navbar__brand">
+                <span class="navbar__brand-icon">
+                    <img src="logo.png" alt="Bhudev Sim Store Logo" class="navbar__logo">
+                </span>
+                <span class="navbar__brand-text">Bhudev <span class="gold-text">Sim Store</span></span>
+            </a>
+
+            <nav class="navbar__menu">
+                <a href="index.html" class="navbar__link navbar__link--active">Home</a>
+                <a href="premium-numbers.html" class="navbar__link">Premium Numbers</a>
+                <a href="filter-numbers.html" class="navbar__link">Filter Numbers</a>
+                <a href="about-us.html" class="navbar__link">About Us</a>
+                <a href="contact-us.html" class="navbar__link">Contact Us</a>
+                <a href="privacy-policy.html" class="navbar__link">Privacy Policy</a>
+            </nav>
+
+            <div class="navbar__actions">
+                <a href="premium-numbers.html" class="btn btn--gold btn--sm">
+                    <span class="iconify" data-icon="mdi:crown"></span>
+                    Browse Numbers
+                </a>
+                <button class="navbar__toggle" data-js="menu-open" aria-label="Open menu">
+                    <span class="iconify" data-icon="mdi:menu"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="menu-overlay" data-js="menu-overlay"></div>
+
+    <!-- Mobile Menu Panel -->
+    <aside class="mobile-menu" data-js="mobile-menu">
+        <div class="mobile-menu__header">
+            <span class="navbar__brand-text">Bhudev <span class="gold-text">Sim Store</span></span>
+            <button class="mobile-menu__close" data-js="menu-close" aria-label="Close menu">
+                <span class="iconify" data-icon="mdi:close"></span>
+            </button>
+        </div>
+        <nav class="mobile-menu__nav">
+            <a href="index.html" class="mobile-menu__link mobile-menu__link--active">
+                <span class="iconify" data-icon="mdi:home"></span> Home
+            </a>
+            <a href="premium-numbers.html" class="mobile-menu__link">
+                <span class="iconify" data-icon="mdi:crown"></span> Premium Numbers
+            </a>
+            <a href="filter-numbers.html" class="mobile-menu__link">
+                <span class="iconify" data-icon="mdi:filter-variant"></span> Filter Numbers
+            </a>
+            <a href="about-us.html" class="mobile-menu__link">
+                <span class="iconify" data-icon="mdi:information"></span> About Us
+            </a>
+            <a href="contact-us.html" class="mobile-menu__link">
+                <span class="iconify" data-icon="mdi:email"></span> Contact Us
+            </a>
+            <a href="privacy-policy.html" class="mobile-menu__link">
+                <span class="iconify" data-icon="mdi:shield-check"></span> Privacy Policy
+            </a>
+        </nav>
+        <div class="mobile-menu__cta">
+            <a href="premium-numbers.html" class="btn btn--gold" style="width:100%; justify-content:center;">
+                <span class="iconify" data-icon="mdi:crown"></span> Browse Numbers
+            </a>
+        </div>
+    </aside>
+
+
+    <!-- ========== HERO SECTION ========== -->
+    <section class="hero">
+        <div class="hero__bg">
+            <span class="hero__particle" style="--x:8%;--d:0s;--dur:11s;--s:2px;"></span>
+            <span class="hero__particle" style="--x:22%;--d:1.5s;--dur:13s;--s:3px;"></span>
+            <span class="hero__particle" style="--x:38%;--d:3s;--dur:10s;--s:2px;"></span>
+            <span class="hero__particle" style="--x:52%;--d:0.8s;--dur:14s;--s:2.5px;"></span>
+            <span class="hero__particle" style="--x:65%;--d:4s;--dur:9s;--s:2px;"></span>
+            <span class="hero__particle" style="--x:78%;--d:2s;--dur:12s;--s:3px;"></span>
+            <span class="hero__particle" style="--x:90%;--d:5s;--dur:11s;--s:2px;"></span>
+            <span class="hero__particle" style="--x:45%;--d:6s;--dur:15s;--s:2.5px;"></span>
+            <span class="hero__particle" style="--x:15%;--d:7s;--dur:10s;--s:1.5px;"></span>
+            <span class="hero__particle" style="--x:72%;--d:3.5s;--dur:13s;--s:2px;"></span>
+        </div>
+        <div class="hero__grid-pattern"></div>
+
+        <!-- Decorative background number -->
+        <div class="hero__deco-number" aria-hidden="true">9999 999 999</div>
+
+        <div class="container hero__content">
+            <div class="hero__badge reveal">
+                <span class="iconify" data-icon="mdi:star-four-points"></span>
+                India's Trusted VIP Number Platform
+            </div>
+            <h1 class="hero__title reveal">
+                Own a Number That<br>
+                <span class="gold-shimmer">Speaks Premium</span>
+            </h1>
+            <p class="hero__desc reveal">
+                Discover exclusive VIP mobile numbers curated for those who value distinction. Fancy, lucky, repeating — your perfect number awaits.
+            </p>
+            <div class="hero__actions reveal">
+                <a href="premium-numbers.html" class="btn btn--gold btn--lg">
+                    <span class="iconify" data-icon="mdi:crown"></span>
+                    Browse Premium Numbers
+                </a>
+            </div>
+            <div class="hero__trust reveal">
+                <span class="hero__trust-item">
+                    <span class="iconify" data-icon="mdi:check-decagram"></span>
+                    10,000+ Numbers
+                </span>
+                <span class="hero__trust-item">
+                    <span class="iconify" data-icon="mdi:shield-check"></span>
+                    100% Verified
+                </span>
+                <span class="hero__trust-item">
+                    <span class="iconify" data-icon="mdi:account-group"></span>
+                    5,000+ Customers
+                </span>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ========== COMPACT FILTER SECTION ========== -->
+    <section class="filter-section">
+        <div class="container">
+            <div class="filter-card reveal">
+                <form action="filter-numbers.html" method="GET" class="filter-form">
+                    <div class="filter-form__group">
+                        <label class="filter-form__label" for="filter-number">Search Number</label>
+                        <div class="filter-form__input-wrap">
+                            <span class="iconify filter-form__icon" data-icon="mdi:magnify"></span>
+                            <input type="text" id="filter-number" name="number" class="filter-form__input" placeholder="Enter digits or pattern...">
+                        </div>
+                    </div>
+                    <div class="filter-form__group">
+                        <label class="filter-form__label" for="filter-price">Price Range</label>
+                        <select id="filter-price" name="price" class="filter-form__select">
+                            <option value="">All Prices</option>
+                            <option value="0-5000">Under ₹5,000</option>
+                            <option value="5000-15000">₹5,000 – ₹15,000</option>
+                            <option value="15000-50000">₹15,000 – ₹50,000</option>
+                            <option value="50000-100000">₹50,000 – ₹1,00,000</option>
+                            <option value="100000-500000">₹1,00,000 – ₹5,00,000</option>
+                            <option value="500000-above">Above ₹5,00,000</option>
+                        </select>
+                    </div>
+                    <div class="filter-form__group">
+                        <label class="filter-form__label" for="filter-category">Category</label>
+                        <select id="filter-category" name="category" class="filter-form__select">
+                            <option value="">All Categories</option>
+                            <option value="fancy">Fancy Numbers</option>
+                            <option value="lucky">Lucky Numbers</option>
+                            <option value="repeating">Repeating Numbers</option>
+                            <option value="business">Business Numbers</option>
+                            <option value="premium-series">Premium Series</option>
+                            <option value="celebrity">Celebrity Choice</option>
+                        </select>
+                    </div>
+                    <div class="filter-form__group filter-form__group--submit">
+                        <label class="filter-form__label filter-form__label--hidden">Search</label>
+                        <button type="submit" class="btn btn--gold filter-form__btn">
+                            <span class="iconify" data-icon="mdi:magnify"></span>
+                            Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ========== FEATURED PREMIUM NUMBERS ========== -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-header__badge">
+                    <span class="iconify" data-icon="mdi:star-four-points"></span>
+                    Featured Collection
+                </span>
+                <h2 class="section-header__title">Premium VIP <span class="gold-text">Numbers</span></h2>
+                <p class="section-header__desc">Handpicked exclusive numbers that stand out from the crowd</p>
+            </div>
+
+            <div class="number-grid">
+                <article class="number-card reveal">
+                    <div class="number-card__top">
+                        <span class="number-card__badge">Repeating</span>
+                        <button class="number-card__wish" aria-label="Add to wishlist">
+                            <span class="iconify" data-icon="mdi:heart-outline"></span>
+                        </button>
+                    </div>
+                    <div class="number-card__body">
+                        <span class="number-card__prefix">+91</span>
+                        <p class="number-card__number">9999 999 999</p>
+                        <p class="number-card__price">₹2,50,000</p>
+                    </div>
+                    <div class="number-card__actions">
+                        <a href="#" class="btn btn--gold btn--sm btn--flex">Buy Now</a>
+                        <a href="#" class="btn btn--outline btn--sm btn--flex">Details</a>
+                    </div>
+                </article>
+
+                <article class="number-card reveal">
+                    <div class="number-card__top">
+                        <span class="number-card__badge number-card__badge--blue">Lucky</span>
+                        <button class="number-card__wish" aria-label="Add to wishlist">
+                            <span class="iconify" data-icon="mdi:heart-outline"></span>
+                        </button>
+                    </div>
+                    <div class="number-card__body">
+                        <span class="number-card__prefix">+91</span>
+                        <p class="number-card__number">7860 786 786</p>
+                        <p class="number-card__price">₹1,85,000</p>
+                    </div>
+                    <div class="number-card__actions">
+                        <a href="#" class="btn btn--gold btn--sm btn--flex">Buy Now</a>
+                        <a href="#" class="btn btn--outline btn--sm btn--flex">Details</a>
+                    </div>
+                </article>
+
+                <article class="number-card reveal">
+                    <div class="number-card__top">
+                        <span class="number-card__badge number-card__badge--purple">Fancy</span>
+                        <button class="number-card__wish" aria-label="Add to wishlist">
+                            <span class="iconify" data-icon="mdi:heart-outline"></span>
+                        </button>
+                    </div>
+                    <div class="number-card__body">
+                        <span class="number-card__prefix">+91</span>
+                        <p class="number-card__number">8888 000 888</p>
+                        <p class="number-card__price">₹3,20,000</p>
+                    </div>
+                    <div class="number-card__actions">
+                        <a href="#" class="btn btn--gold btn--sm btn--flex">Buy Now</a>
+                        <a href="#" class="btn btn--outline btn--sm btn--flex">Details</a>
+                    </div>
+                </article>
+
+                <article class="number-card reveal">
+                    <div class="number-card__top">
+                        <span class="number-card__badge number-card__badge--green">Business</span>
+                        <button class="number-card__wish" aria-label="Add to wishlist">
+                            <span class="iconify" data-icon="mdi:heart-outline"></span>
+                        </button>
+                    </div>
+                    <div class="number-card__body">
+                        <span class="number-card__prefix">+91</span>
+                        <p class="number-card__number">9876 543 210</p>
+                        <p class="number-card__price">₹1,45,000</p>
+                    </div>
+                    <div class="number-card__actions">
+                        <a href="#" class="btn btn--gold btn--sm btn--flex">Buy Now</a>
+                        <a href="#" class="btn btn--outline btn--sm btn--flex">Details</a>
+                    </div>
+                </article>
+
+                <article class="number-card reveal">
+                    <div class="number-card__top">
+                        <span class="number-card__badge number-card__badge--red">VIP</span>
+                        <button class="number-card__wish" aria-label="Add to wishlist">
+                            <span class="iconify" data-icon="mdi:heart-outline"></span>
+                        </button>
+                    </div>
+                    <div class="number-card__body">
+                        <span class="number-card__prefix">+91</span>
+                        <p class="number-card__number">7777 777 777</p>
+                        <p class="number-card__price">₹4,10,000</p>
+                    </div>
+                    <div class="number-card__actions">
+                        <a href="#" class="btn btn--gold btn--sm btn--flex">Buy Now</a>
+                        <a href="#" class="btn btn--outline btn--sm btn--flex">Details</a>
+                    </div>
+                </article>
+
+                <article class="number-card reveal">
+                    <div class="number-card__top">
+                        <span class="number-card__badge number-card__badge--blue">Lucky</span>
+                        <button class="number-card__wish" aria-label="Add to wishlist">
+                            <span class="iconify" data-icon="mdi:heart-outline"></span>
+                        </button>
+                    </div>
+                    <div class="number-card__body">
+                        <span class="number-card__prefix">+91</span>
+                        <p class="number-card__number">1111 111 111</p>
+                        <p class="number-card__price">₹2,10,000</p>
+                    </div>
+                    <div class="number-card__actions">
+                        <a href="#" class="btn btn--gold btn--sm btn--flex">Buy Now</a>
+                        <a href="#" class="btn btn--outline btn--sm btn--flex">Details</a>
+                    </div>
+                </article>
+
+                <article class="number-card reveal">
+                    <div class="number-card__top">
+                        <span class="number-card__badge">Repeating</span>
+                        <button class="number-card__wish" aria-label="Add to wishlist">
+                            <span class="iconify" data-icon="mdi:heart-outline"></span>
+                        </button>
+                    </div>
+                    <div class="number-card__body">
+                        <span class="number-card__prefix">+91</span>
+                        <p class="number-card__number">6000 600 600</p>
+                        <p class="number-card__price">₹1,75,000</p>
+                    </div>
+                    <div class="number-card__actions">
+                        <a href="#" class="btn btn--gold btn--sm btn--flex">Buy Now</a>
+                        <a href="#" class="btn btn--outline btn--sm btn--flex">Details</a>
+                    </div>
+                </article>
+
+                <article class="number-card reveal">
+                    <div class="number-card__top">
+                        <span class="number-card__badge number-card__badge--purple">Fancy</span>
+                        <button class="number-card__wish" aria-label="Add to wishlist">
+                            <span class="iconify" data-icon="mdi:heart-outline"></span>
+                        </button>
+                    </div>
+                    <div class="number-card__body">
+                        <span class="number-card__prefix">+91</span>
+                        <p class="number-card__number">1234 567 890</p>
+                        <p class="number-card__price">₹2,80,000</p>
+                    </div>
+                    <div class="number-card__actions">
+                        <a href="#" class="btn btn--gold btn--sm btn--flex">Buy Now</a>
+                        <a href="#" class="btn btn--outline btn--sm btn--flex">Details</a>
+                    </div>
+                </article>
+            </div>
+
+            <div class="section-footer reveal">
+                <a href="premium-numbers.html" class="btn btn--outline btn--lg">
+                    View All Numbers
+                    <span class="iconify" data-icon="mdi:arrow-right"></span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ========== WHY CHOOSE US — FEATURES ========== -->
+    <section class="section section--alt">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-header__badge">
+                    <span class="iconify" data-icon="mdi:star-four-points"></span>
+                    Why Choose Us
+                </span>
+                <h2 class="section-header__title">The Bhudev <span class="gold-text">Advantage</span></h2>
+                <p class="section-header__desc">Premium service designed around your needs</p>
+            </div>
+
+            <div class="features-grid">
+                <article class="feature-card reveal">
+                    <div class="feature-card__icon">
+                        <span class="iconify" data-icon="mdi:shield-check"></span>
+                    </div>
+                    <h3 class="feature-card__title">100% Verified Numbers</h3>
+                    <p class="feature-card__desc">Every number is legally verified and ready for instant activation with proper documentation.</p>
+                </article>
+
+                <article class="feature-card reveal">
+                    <div class="feature-card__icon">
+                        <span class="iconify" data-icon="mdi:lightning-bolt"></span>
+                    </div>
+                    <h3 class="feature-card__title">Instant Activation</h3>
+                    <p class="feature-card__desc">Get your number activated within 24 hours of purchase with our streamlined process.</p>
+                </article>
+
+                <article class="feature-card reveal">
+                    <div class="feature-card__icon">
+                        <span class="iconify" data-icon="mdi:handshake"></span>
+                    </div>
+                    <h3 class="feature-card__title">Trusted Platform</h3>
+                    <p class="feature-card__desc">Over 5,000 satisfied customers trust Bhudev Sim Store for premium mobile numbers.</p>
+                </article>
+
+                <article class="feature-card reveal">
+                    <div class="feature-card__icon">
+                        <span class="iconify" data-icon="mdi:headset"></span>
+                    </div>
+                    <h3 class="feature-card__title">24/7 Support</h3>
+                    <p class="feature-card__desc">Our dedicated support team is always available to help you with any queries or concerns.</p>
+                </article>
+
+                <article class="feature-card reveal">
+                    <div class="feature-card__icon">
+                        <span class="iconify" data-icon="mdi:lock"></span>
+                    </div>
+                    <h3 class="feature-card__title">Secure Transactions</h3>
+                    <p class="feature-card__desc">Bank-grade encryption protects your payments and personal information at every step.</p>
+                </article>
+
+                <article class="feature-card reveal">
+                    <div class="feature-card__icon">
+                        <span class="iconify" data-icon="mdi:trophy"></span>
+                    </div>
+                    <h3 class="feature-card__title">Premium Collection</h3>
+                    <p class="feature-card__desc">Curated selection of rare and exclusive numbers you won't find anywhere else.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ========== CATEGORIES ========== -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-header__badge">
+                    <span class="iconify" data-icon="mdi:star-four-points"></span>
+                    Browse Categories
+                </span>
+                <h2 class="section-header__title">Find Your <span class="gold-text">Perfect Number</span></h2>
+                <p class="section-header__desc">Explore our curated categories to find the number that matches your style</p>
+            </div>
+
+            <div class="categories-grid">
+                <a href="filter-numbers.html?category=fancy" class="category-card reveal">
+                    <div class="category-card__icon">
+                        <span class="iconify" data-icon="mdi:diamond-stone"></span>
+                    </div>
+                    <h3 class="category-card__title">Fancy</h3>
+                    <span class="category-card__count">2,500+ numbers</span>
+                </a>
+
+                <a href="filter-numbers.html?category=lucky" class="category-card reveal">
+                    <div class="category-card__icon">
+                        <span class="iconify" data-icon="mdi:clover"></span>
+                    </div>
+                    <h3 class="category-card__title">Lucky</h3>
+                    <span class="category-card__count">1,800+ numbers</span>
+                </a>
+
+                <a href="filter-numbers.html?category=repeating" class="category-card reveal">
+                    <div class="category-card__icon">
+                        <span class="iconify" data-icon="mdi:repeat"></span>
+                    </div>
+                    <h3 class="category-card__title">Repeating</h3>
+                    <span class="category-card__count">1,200+ numbers</span>
+                </a>
+
+                <a href="filter-numbers.html?category=business" class="category-card reveal">
+                    <div class="category-card__icon">
+                        <span class="iconify" data-icon="mdi:briefcase"></span>
+                    </div>
+                    <h3 class="category-card__title">Business</h3>
+                    <span class="category-card__count">900+ numbers</span>
+                </a>
+
+                <a href="filter-numbers.html?category=premium-series" class="category-card reveal">
+                    <div class="category-card__icon">
+                        <span class="iconify" data-icon="mdi:crown"></span>
+                    </div>
+                    <h3 class="category-card__title">Premium Series</h3>
+                    <span class="category-card__count">600+ numbers</span>
+                </a>
+
+                <a href="filter-numbers.html?category=celebrity" class="category-card reveal">
+                    <div class="category-card__icon">
+                        <span class="iconify" data-icon="mdi:star"></span>
+                    </div>
+                    <h3 class="category-card__title">Celebrity</h3>
+                    <span class="category-card__count">300+ numbers</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ========== HOW IT WORKS ========== -->
+    <section class="section section--alt">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-header__badge">
+                    <span class="iconify" data-icon="mdi:star-four-points"></span>
+                    Simple Process
+                </span>
+                <h2 class="section-header__title">How It <span class="gold-text">Works</span></h2>
+                <p class="section-header__desc">Get your premium number in four easy steps</p>
+            </div>
+
+            <div class="steps-grid">
+                <article class="step-card reveal">
+                    <div class="step-card__number">1</div>
+                    <h3 class="step-card__title">Browse Numbers</h3>
+                    <p class="step-card__desc">Explore our curated collection of premium VIP numbers using filters.</p>
+                </article>
+
+                <article class="step-card reveal">
+                    <div class="step-card__number">2</div>
+                    <h3 class="step-card__title">Select & Pay</h3>
+                    <p class="step-card__desc">Choose your favorite number and complete the secure payment process.</p>
+                </article>
+
+                <article class="step-card reveal">
+                    <div class="step-card__number">3</div>
+                    <h3 class="step-card__title">Submit Documents</h3>
+                    <p class="step-card__desc">Upload your KYC documents for verification and number activation.</p>
+                </article>
+
+                <article class="step-card reveal">
+                    <div class="step-card__number">4</div>
+                    <h3 class="step-card__title">Get Activated</h3>
+                    <p class="step-card__desc">Receive your activated SIM at your doorstep within 24-48 hours.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ========== TESTIMONIALS ========== -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-header__badge">
+                    <span class="iconify" data-icon="mdi:star-four-points"></span>
+                    Customer Stories
+                </span>
+                <h2 class="section-header__title">What Our <span class="gold-text">Customers Say</span></h2>
+                <p class="section-header__desc">Real experiences from satisfied Bhudev Sim Store customers</p>
+            </div>
+
+            <div class="testimonials-grid">
+                <article class="testimonial-card reveal">
+                    <div class="testimonial-card__stars">
+                        <span class="iconify" data-icon="mdi:star"></span>
+                        <span class="iconify" data-icon="mdi:star"></span>
+                        <span class="iconify" data-icon="mdi:star"></span>
+                        <span class="iconify" data-icon="mdi:star"></span>
+                        <span class="iconify" data-icon="mdi:star"></span>
+                    </div>
+                    <p class="testimonial-card__text">"Got my dream number 9999 series in just 2 days! The entire process was smooth and the team was very professional. Highly recommended!"</p>
+                    <div class="testimonial-card__author">
+                        <div class="testimonial-card__avatar">RK</div>
+                        <div>
+                            <p class="testimonial-card__name">Rajesh Kumar</p>
+                            <p class="testimonial-card__role">Business Owner, Delhi</p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="testimonial-card reveal">
+                    <div class="testimonial-card__stars">
+                        <span class="iconify" data-icon="mdi:star"></span>
+                        <span class="iconify" data-icon="mdi:star"></span>
+                        <span class="iconify" data-icon="mdi:star"></span>
+                        <span class="iconify" data-icon="mdi:star"></span>
+                        <span class="iconify" data-icon="mdi:star"></span>
+                    </div>
+                    <p class="testimonial-card__text">"I was skeptical at first but Bhudev Sim Store delivered exactly what they promised. My lucky number 7860 series is now active!"</p>
+                    <div class="testimonial-card__author">
+                        <div class="testimonial-card__avatar testimonial-card__avatar--blue">SP</div>
+                        <div>
+                            <p class="testimonial-card__name">Sneha Patel</p>
+                            <p class="testimonial-card__role">Doctor, Mumbai</p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="testimonial-card reveal">
+                    <div class="testimonial-card__stars">
+                        <span class="iconify" data-icon="mdi:star"></span>
+                        <span class="iconify" data-icon="mdi:star"></span>
+                        <span class="iconify" data-icon="mdi:star"></span>
+                        <span class="iconify" data-icon="mdi:star"></span>
+                        <span class="iconify" data-icon="mdi:star"></span>
+                    </div>
+                    <p class="testimonial-card__text">"Best platform for VIP numbers in India. Great pricing, transparent process, and excellent customer support. Will buy again!"</p>
+                    <div class="testimonial-card__author">
+                        <div class="testimonial-card__avatar testimonial-card__avatar--green">AV</div>
+                        <div>
+                            <p class="testimonial-card__name">Amit Verma</p>
+                            <p class="testimonial-card__role">Entrepreneur, Bangalore</p>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ========== FAQ ========== -->
+    <section class="section section--alt">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-header__badge">
+                    <span class="iconify" data-icon="mdi:star-four-points"></span>
+                    Common Questions
+                </span>
+                <h2 class="section-header__title">Frequently Asked <span class="gold-text">Questions</span></h2>
+                <p class="section-header__desc">Everything you need to know about our premium number service</p>
+            </div>
+
+            <div class="faq-list">
+                <div class="faq-item reveal">
+                    <button class="faq-item__toggle">
+                        How long does the activation process take?
+                        <span class="faq-item__icon"><span class="iconify" data-icon="mdi:plus"></span></span>
+                    </button>
+                    <div class="faq-item__answer">
+                        <p>Once your payment and KYC documents are verified, your number is typically activated within 24-48 hours. The SIM card is then delivered to your doorstep within 2-3 business days.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item reveal">
+                    <button class="faq-item__toggle">
+                        Are these numbers legally valid?
+                        <span class="faq-item__icon"><span class="iconify" data-icon="mdi:plus"></span></span>
+                    </button>
+                    <div class="faq-item__answer">
+                        <p>Yes, absolutely. Every number we sell is 100% legally valid and registered through official telecom channels. You will receive proper documentation and the SIM will be registered in your name with valid KYC.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item reveal">
+                    <button class="faq-item__toggle">
+                        Can I port my premium number to another network?
+                        <span class="iconify faq-item__icon" data-icon="mdi:plus"></span>
+                    </button>
+                    <div class="faq-item__answer">
+                        <p>Yes, you can port your number to any telecom operator using MNP (Mobile Number Portability) after 90 days of activation, as per TRAI regulations.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item reveal">
+                    <button class="faq-item__toggle">
+                        What payment methods do you accept?
+                        <span class="faq-item__icon"><span class="iconify" data-icon="mdi:plus"></span></span>
+                    </button>
+                    <div class="faq-item__answer">
+                        <p>We accept all major payment methods including UPI, credit/debit cards, net banking, and EMI options for premium numbers above ₹50,000.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item reveal">
+                    <button class="faq-item__toggle">
+                        Do you offer refunds?
+                        <span class="faq-item__icon"><span class="iconify" data-icon="mdi:plus"></span></span>
+                    </button>
+                    <div class="faq-item__answer">
+                        <p>Due to the exclusive nature of VIP numbers, we do not offer refunds once a number is activated. However, if there's an issue from our end, we ensure full resolution or replacement.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ========== FINAL CTA ========== -->
+    <section class="cta-section">
+        <div class="cta-section__glow"></div>
+        <div class="container">
+            <div class="cta-section__content reveal">
+                <div class="cta-section__icon">
+                    <span class="iconify" data-icon="mdi:crown"></span>
+                </div>
+                <h2 class="cta-section__title">Ready to Own a <span class="gold-text">Premium Number?</span></h2>
+                <p class="cta-section__desc">Browse our exclusive collection of VIP mobile numbers and stand out from the crowd today.</p>
+                <div class="cta-section__actions">
+                    <a href="premium-numbers.html" class="btn btn--gold btn--lg">
+                        <span class="iconify" data-icon="mdi:crown"></span>
+                        Browse Numbers
+                    </a>
+                    <a href="contact-us.html" class="btn btn--outline btn--lg">
+                        <span class="iconify" data-icon="mdi:phone"></span>
+                        Contact Us
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__grid">
+                <div class="footer__brand-block">
+                    <a href="index.html" class="navbar__brand">
+                        <span class="navbar__brand-icon">
+                            <img src="logo.png" alt="Bhudev Sim Store Logo" class="navbar__logo">
+                        </span>
+                        <span class="navbar__brand-text">Bhudev <span class="gold-text">Sim Store</span></span>
+                    </a>
+                    <p class="footer__brand-desc">
+                        India's trusted destination for premium VIP mobile numbers. Fancy, lucky, repeating and business numbers — curated for distinction.
+                    </p>
+                    <div class="footer__social">
+                        <a href="#" class="footer__social-link" aria-label="Facebook">
+                            <span class="iconify" data-icon="mdi:facebook"></span>
+                        </a>
+                        <a href="#" class="footer__social-link" aria-label="Instagram">
+                            <span class="iconify" data-icon="mdi:instagram"></span>
+                        </a>
+                        <a href="#" class="footer__social-link" aria-label="Twitter">
+                            <span class="iconify" data-icon="mdi:twitter"></span>
+                        </a>
+                        <a href="#" class="footer__social-link" aria-label="WhatsApp">
+                            <span class="iconify" data-icon="mdi:whatsapp"></span>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="footer__heading">Quick Links</h4>
+                    <ul class="footer__list">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="premium-numbers.html">Premium Numbers</a></li>
+                        <li><a href="filter-numbers.html">Filter Numbers</a></li>
+                        <li><a href="about-us.html">About Us</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="footer__heading">Support</h4>
+                    <ul class="footer__list">
+                        <li><a href="contact-us.html">Contact Us</a></li>
+                        <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">Refund Policy</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="footer__heading">Get in Touch</h4>
+                    <ul class="footer__contact-list">
+                        <li>
+                            <span class="iconify" data-icon="mdi:phone"></span>
+                            <div>
+                                <span>+91 98765 43210</span>
+                                <small>Mon-Sun, 9 AM - 9 PM</small>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="iconify" data-icon="mdi:email"></span>
+                            <div>
+                                <span>support@bhudevsimstore.com</span>
+                                <small>24/7 Email Support</small>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="iconify" data-icon="mdi:map-marker"></span>
+                            <div>
+                                <span>New Delhi, India</span>
+                                <small>110001</small>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer__bottom">
+                <p>&copy; 2024 Bhudev Sim Store. All rights reserved.</p>
+                <div class="footer__bottom-links">
+                    <a href="privacy-policy.html">Privacy</a>
+                    <a href="#">Terms</a>
+                    <a href="#">Cookies</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <script>
+        /* ============================================
+           BHUDEV SIM STORE — INTERACTIONS
+           ============================================ */
+
+        // ---------- Navbar scroll effect ----------
+        const navbar = document.querySelector('[data-js="navbar"]');
+        let lastScroll = 0;
+
+        function handleScroll() {
+            const currentScroll = window.pageYOffset;
+            if (currentScroll > 20) {
+                navbar.classList.add('navbar--scrolled');
+            } else {
+                navbar.classList.remove('navbar--scrolled');
+            }
+            lastScroll = currentScroll;
+        }
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+
+        // ---------- Mobile menu ----------
+        const menuOpenBtn = document.querySelector('[data-js="menu-open"]');
+        const menuCloseBtn = document.querySelector('[data-js="menu-close"]');
+        const menuOverlay = document.querySelector('[data-js="menu-overlay"]');
+        const mobileMenu = document.querySelector('[data-js="mobile-menu"]');
+
+        function openMenu() {
+            document.body.classList.add('menu-open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            document.body.classList.remove('menu-open');
+            document.body.style.overflow = '';
+        }
+
+        menuOpenBtn?.addEventListener('click', openMenu);
+        menuCloseBtn?.addEventListener('click', closeMenu);
+        menuOverlay?.addEventListener('click', closeMenu);
+
+        // Close menu on link click
+        document.querySelectorAll('.mobile-menu__link').forEach(link => {
+            link.addEventListener('click', closeMenu);
+        });
+
+        // Close menu on Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.body.classList.contains('menu-open')) {
+                closeMenu();
+            }
+        });
+
+        // ---------- Scroll Reveal ----------
+        const revealElements = document.querySelectorAll('.reveal');
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    // Stagger reveal for grouped items
+                    setTimeout(() => {
+                        entry.target.classList.add('revealed');
+                    }, (index % 4) * 80);
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // ---------- FAQ Accordion ----------
+        const faqItems = document.querySelectorAll('.faq-item');
+
+        faqItems.forEach(item => {
+            const toggle = item.querySelector('.faq-item__toggle');
+            toggle?.addEventListener('click', () => {
+                const isActive = item.classList.contains('faq-item--active');
+                // Close all
+                faqItems.forEach(i => i.classList.remove('faq-item--active'));
+                // Open clicked if it was closed
+                if (!isActive) {
+                    item.classList.add('faq-item--active');
+                }
+            });
+        });
+
+        // ---------- Wishlist toggle ----------
+        document.querySelectorAll('.number-card__wish').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const icon = btn.querySelector('.iconify');
+                const current = icon.getAttribute('data-icon');
+                if (current === 'mdi:heart-outline') {
+                    icon.setAttribute('data-icon', 'mdi:heart');
+                    icon.style.color = '#F87171';
+                } else {
+                    icon.setAttribute('data-icon', 'mdi:heart-outline');
+                    icon.style.color = '';
+                }
+            });
+        });
+
+        // ---------- Active nav link based on current page ----------
+        (function setActiveNav() {
+            const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+            document.querySelectorAll('.navbar__link, .mobile-menu__link').forEach(link => {
+                const href = link.getAttribute('href');
+                if (href === currentPath) {
+                    document.querySelectorAll('.navbar__link, .mobile-menu__link').forEach(l =>
+                        l.classList.remove('navbar__link--active', 'mobile-menu__link--active'));
+                    link.classList.add('navbar__link--active', 'mobile-menu__link--active');
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
