@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Search and filter premium VIP mobile numbers by digits, patterns, price, total, sum and category at Bhudev Sim Store.">
+    <title>VIP Number Search & Filter | Bhudev Sim Store</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <style>
+        /* ============================================
+   BHUDEV SIM STORE — PREMIUM DARK THEME
+   ============================================ */
+        :root {
+            --black: #0B0B0B; --charcoal: #161616; --dark-gray: #222222; --mid-gray: #2A2A2A;
+            --light-gray: #333333; --surface-gray: #3D3D3D; --gold: #D4AF37; --gold-light: #E8C547;
+            --gold-pale: #F5E8A8; --gold-dark: #8B7536; --gold-muted: rgba(212, 175, 55, 0.15);
+            --gold-border: rgba(212, 175, 55, 0.1); --gold-border-hover: rgba(212, 175, 55, 0.3);
+            --text-primary: #E8E8E8; --text-secondary: #999999; --text-muted: #666666; --text-dim: #444444;
+            --blue-accent: #4A7CFF; --purple-accent: #9B6DFF; --green-accent: #34D399; --red-accent: #F87171;
+            --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; --radius-xl: 20px; --radius-full: 9999px;
+            --transition-fast: 0.2s ease; --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-heading: 'Outfit', sans-serif; --font-body: 'Inter', sans-serif; --font-accent: 'Poppins', sans-serif;
+            --container-max: 1440px; --container-padding: clamp(16px, 4vw, 48px);
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: var(--font-body); font-size: 15px; line-height: 1.6; color: var(--text-primary); background: var(--black); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+        a { color: inherit; text-decoration: none; transition: color var(--transition-fast); }
+        ul, ol { list-style: none; }
+        img { max-width: 100%; display: block; height: auto; }
+        button, input, select, textarea { font: inherit; color: inherit; border: none; outline: none; background: none; }
+        button { cursor: pointer; }
+
+        .container { width: 100%; max-width: var(--container-max); margin: 0 auto; padding-left: var(--container-padding); padding-right: var(--container-padding); }
+        .gold-text { background: linear-gradient(135deg, #D4AF37 0%, #F5E8A8 45%, #D4AF37 65%, #8B7536 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .gold-shimmer { background: linear-gradient(110deg, #D4AF37 0%, #F5E8A8 28%, #D4AF37 52%, #F0D97A 78%, #D4AF37 100%); background-size: 200% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 4s ease-in-out infinite; }
+        @keyframes shimmer { 0%, 100% { background-position: 0% center; } 50% { background-position: 200% center; } }
+
+        /* Buttons */
+        .btn { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-accent); font-weight: 600; font-size: 14px; border-radius: var(--radius-md); padding: 12px 24px; transition: all var(--transition); white-space: nowrap; line-height: 1; }
+        .btn--sm { font-size: 12px; padding: 10px 18px; border-radius: var(--radius-sm); }
+        .btn--gold { background: linear-gradient(135deg, #D4AF37 0%, #E8C547 50%, #D4AF37 100%); background-size: 200% 200%; color: var(--black); }
+        .btn--gold:hover { background-position: 100% 100%; box-shadow: 0 8px 30px rgba(212, 175, 55, 0.3); transform: translateY(-1px); }
+        .btn--outline { background: transparent; border: 1.5px solid var(--gold-border-hover); color: var(--gold); }
+        .btn--outline:hover { border-color: var(--gold); background: rgba(212, 175, 55, 0.06); }
+        .btn--whatsapp { background: #25D366; color: #fff; }
+        .btn--whatsapp:hover { background: #1ebe5d; box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3); }
+        .btn--dark { background: var(--dark-gray); color: var(--text-primary); border: 1px solid rgba(255,255,255,0.06); }
+        .btn--dark:hover { background: var(--mid-gray); border-color: var(--gold-border-hover); }
+        .btn--disabled { background: var(--mid-gray); color: var(--text-dim); border: 1px solid rgba(255,255,255,0.04); cursor: not-allowed; pointer-events: none; }
+
+        /* Navbar */
+        .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 0; transition: all var(--transition); background: transparent; }
+        .navbar--scrolled { background: rgba(11, 11, 11, 0.92); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(212, 175, 55, 0.06); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3); }
+        .navbar__inner { display: flex; align-items: center; justify-content: space-between; height: 72px; gap: 16px; }
+        .navbar__logo { width: 60px; height: auto; max-width: 100%; }
+        .navbar__brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+        .navbar__brand-icon { width: 38px; height: 38px; border-radius: var(--radius-sm); border: 2px solid #D4AF37; background: transparent; display: flex; align-items: center; justify-content: center; color: #D4AF37; font-size: 18px; overflow: hidden; }
+        .navbar__brand-text { font-family: var(--font-heading); font-weight: 700; font-size: 18px; color: var(--text-primary); white-space: nowrap; }
+        .navbar__menu { display: none; gap: 4px; flex: 1; justify-content: center; }
+        .navbar__link { padding: 8px 16px; font-size: clamp(15px, 1.1vw, 17px); font-weight: 500; color: var(--text-secondary); border-radius: var(--radius-sm); transition: all var(--transition-fast); white-space: nowrap; }
+        .navbar__link:hover, .navbar__link--active { color: var(--gold); }
+        .navbar__actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+        .navbar__toggle { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: var(--radius-sm); color: var(--text-primary); font-size: 24px; transition: background var(--transition-fast); }
+        .navbar__toggle:hover { background: rgba(255, 255, 255, 0.05); }
+        .menu-overlay { position: fixed; inset: 0; z-index: 1100; background: rgba(0, 0, 0, 0.6); opacity: 0; visibility: hidden; transition: all var(--transition); }
+        body.menu-open .menu-overlay { opacity: 1; visibility: visible; }
+        .mobile-menu { position: fixed; top: 0; right: 0; bottom: 0; width: 300px; max-width: 85vw; z-index: 1200; background: var(--charcoal); border-left: 1px solid var(--gold-border); transform: translateX(100%); transition: transform var(--transition); display: flex; flex-direction: column; overflow-y: auto; }
+        body.menu-open .mobile-menu { transform: translateX(0); }
+        .mobile-menu__header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .mobile-menu__close { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: var(--radius-sm); color: var(--text-secondary); font-size: 20px; }
+        .mobile-menu__nav { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 4px; }
+        .mobile-menu__link { display: flex; align-items: center; gap: 12px; padding: 14px 16px; font-size: 14px; font-weight: 500; color: var(--text-secondary); border-radius: var(--radius-md); transition: all var(--transition-fast); }
+        .mobile-menu__link:hover, .mobile-menu__link--active { color: var(--gold); background: var(--gold-muted); }
+
+        /* Page Hero */
+        .page-hero { position: relative; padding: clamp(120px, 15vh, 160px) 0 clamp(40px, 6vh, 60px); overflow: hidden; background: var(--black); text-align: center; }
+        .page-hero__grid-pattern { position: absolute; inset: 0; background-image: linear-gradient(rgba(212, 175, 55, 0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(212, 175, 55, 0.025) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; }
+        .page-hero__content { position: relative; z-index: 2; max-width: min(660px, 90%); margin: 0 auto; }
+        .page-hero::before { content: ''; position: absolute; top: -30%; right: -15%; width: 65%; height: 130%; background: radial-gradient(ellipse, rgba(212, 175, 55, 0.06) 0%, transparent 60%); pointer-events: none; }
+        .hero__badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 20px; border-radius: var(--radius-full); border: 1px solid var(--gold-border-hover); background: rgba(212, 175, 55, 0.06); font-size: clamp(10px, 1.5vw, 11px); font-weight: 600; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 32px; }
+        .page-hero__title { font-family: var(--font-heading); font-weight: 800; font-size: clamp(34px, 6.5vw, 56px); line-height: 1.1; letter-spacing: -0.02em; color: var(--text-primary); margin-bottom: 16px; }
+        .page-hero__desc { font-size: clamp(15px, 1.8vw, 18px); color: var(--text-muted); line-height: 1.7; max-width: 480px; margin: 0 auto; font-weight: 300; }
+
+        /* ========================================== HORIZONTAL FILTER SECTION ========================================== */
+        .filter-section { padding: 0 0 40px; }
+        .filter-card { background: var(--charcoal); border: 1px solid var(--gold-border); border-radius: var(--radius-xl); padding: clamp(20px, 3vw, 32px); box-shadow: 0 20px 50px -15px rgba(212, 175, 55, 0.12); }
+        
+        .search-tabs { display: flex; background: var(--dark-gray); border-radius: var(--radius-md); padding: 4px; margin-bottom: 24px; }
+        .search-tab { flex: 1; text-align: center; padding: 12px 8px; font-size: 13px; font-weight: 600; color: var(--text-muted); border-radius: var(--radius-sm); transition: all var(--transition-fast); cursor: pointer; }
+        .search-tab.active { background: var(--gold); color: var(--black); box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2); }
+        .search-tab-content { display: none; }
+        .search-tab-content.active { display: block; }
+
+        .filter-row { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 16px; align-items: flex-end; }
+        .filter-row:last-child { margin-bottom: 0; }
+        .filter-group { flex: 1 1 150px; min-width: 120px; }
+        .filter-group--btn { flex: 0 0 auto; display: flex; gap: 12px; align-items: flex-end; }
+        .filter-group label { display: block; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+        .input-field { width: 100%; padding: 12px 16px; background: var(--dark-gray); border: 1px solid rgba(255,255,255,0.06); border-radius: var(--radius-md); color: var(--text-primary); font-size: 14px; transition: border-color var(--transition-fast); }
+        .input-field::placeholder { color: var(--text-dim); }
+        .input-field:focus { border-color: var(--gold-border-hover); box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.08); }
+        select.input-field { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor:pointer; }
+        .input-helper { font-size: 10px; color: var(--text-dim); margin-top: 4px; }
+
+        .results-top-bar { display: flex; justify-content: space-between; align-items: center; margin: 40px 0 24px; gap: 16px; flex-wrap: wrap; }
+        .results-info h2 { font-family: var(--font-heading); font-size: 20px; font-weight: 700; color: var(--text-primary); }
+        .results-info span { color: var(--gold); }
+
+        /* ========================================== STATIC NUMBER GRID & CARD (IMAGE MATCH) ========================================== */
+        .vip-number-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        
+        .vip-card { position: relative; overflow: hidden; background: var(--charcoal); border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 20px; padding: 24px; transition: all var(--transition); display: flex; flex-direction: column; }
+        .vip-card:hover { border-color: rgba(212, 175, 55, 0.4); box-shadow: 0 15px 40px rgba(212, 175, 55, 0.08); transform: translateY(-4px); }
+        .vip-card::before { content: ''; position: absolute; top: -50%; right: -30%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(212, 175, 55, 0.06) 0%, transparent 70%); pointer-events: none; }
+        .vip-card__inner { position: relative; z-index: 1; display: flex; flex-direction: column; height: 100%; }
+        
+        .vip-card__top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; gap: 10px; }
+        .vip-card__badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; background: rgba(74, 124, 255, 0.12); color: var(--blue-accent); text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        /* Status Badges */
+        .vip-card__status { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; flex-shrink: 0; }
+        .vip-card__status .iconify { font-size: 12px; }
+        .vip-card__status--available { background: rgba(52, 211, 153, 0.12); color: var(--green-accent); }
+        .vip-card__status--sold { background: rgba(248, 113, 113, 0.12); color: var(--red-accent); }
+
+        .vip-card__number-area { text-align: center; margin-bottom: 16px; }
+        .vip-card__prefix { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-bottom: 4px; display: block; }
+        .vip-card__number { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 900; letter-spacing: 1px; line-height: 1.2; color: rgba(255, 255, 255, 0.9); word-break: break-all; margin: 0; }
+        .highlight-gold { color: #D4AF37 !important; -webkit-text-fill-color: #D4AF37 !important; text-shadow: 0 0 20px rgba(212, 175, 55, 0.3); }
+        
+        .vip-card__sum { display: inline-flex; align-items: center; justify-content: center; margin-top: 10px; padding: 5px 12px; font-size: 12px; font-weight: 700; color: #f4d35e; background: rgba(212, 175, 55, 0.12); border: 1px solid rgba(212, 175, 55, 0.25); border-radius: 999px; letter-spacing: 1px; font-family: 'Courier New', Courier, monospace; }
+
+        .vip-card__divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), transparent); margin: 20px 0; }
+
+        .vip-card__prices { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 20px; }
+        .price-block--original { flex: 1; }
+        .price-original { font-size: 14px; font-weight: 600; text-decoration: line-through; text-decoration-color: rgba(239, 68, 68, 0.5); color: rgba(255, 255, 255, 0.35); display: block; }
+        .discount-badge { font-size: 11px; color: var(--green-accent); font-weight: 700; display: block; margin-top: 2px; }
+        .price-block--selling { text-align: right; }
+        .price-selling { font-size: 24px; font-weight: 700; font-family: 'Playfair Display', serif; background: linear-gradient(90deg, #D4AF37, #E8CC6E, #fff, #E8CC6E, #D4AF37); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 3s linear infinite; display: block; }
+
+        .vip-card__actions { display: flex; gap: 8px; margin-top: auto; }
+        .vip-card__actions .btn { flex: 1; justify-content: center; padding: 10px 12px; font-size: 12px; }
+
+        /* Footer */
+        .footer { background: var(--charcoal); border-top: 1px solid rgba(255, 255, 255, 0.04); padding: 64px 0 0; margin-top: 80px; }
+        .footer__grid { display: grid; grid-template-columns: 1fr; gap: 40px; padding-bottom: 48px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
+        .footer__brand-desc { font-size: 13px; color: var(--text-muted); line-height: 1.8; margin: 16px 0 24px; max-width: 280px; }
+        .footer__social { display: flex; gap: 10px; flex-wrap: wrap; }
+        .footer__social-link { width: 40px; height: 40px; border-radius: var(--radius-sm); border: 1px solid rgba(255, 255, 255, 0.06); display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 18px; transition: all var(--transition-fast); }
+        .footer__social-link:hover { color: var(--gold); border-color: var(--gold-border-hover); background: var(--gold-muted); }
+        .footer__heading { font-family: var(--font-heading); font-weight: 600; font-size: 14px; color: var(--text-primary); margin-bottom: 20px; }
+        .footer__list li { margin-bottom: 12px; }
+        .footer__list a { font-size: 13px; color: var(--text-muted); transition: color var(--transition-fast); }
+        .footer__list a:hover { color: var(--gold); }
+        .footer__contact-list li { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 20px; }
+        .footer__contact-list .iconify { color: var(--gold); font-size: 18px; margin-top: 2px; flex-shrink: 0; }
+        .footer__contact-list span { display: block; font-size: 13px; color: var(--text-secondary); word-break: break-word; }
+        .footer__bottom { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 24px 0; text-align: center; }
+        .footer__bottom p { font-size: 12px; color: var(--text-dim); }
+
+        /* ============================================ RESPONSIVE ============================================ */
+        @media (max-width: 1280px) { .vip-number-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 1023px) {
+            .navbar__actions .btn { display: none; }
+            .navbar__menu { display: none; }
+            .navbar__toggle { display: flex; }
+            .vip-number-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 767px) {
+            .vip-number-grid { grid-template-columns: 1fr; }
+            .filter-group { flex: 1 1 100%; }
+            .search-tab { font-size: 11px; padding: 10px 4px; }
+        }
+        @media (min-width: 640px) {
+            .footer__grid { grid-template-columns: repeat(2, 1fr); }
+            .footer__bottom { flex-direction: row; justify-content: space-between; }
+        }
+        @media (min-width: 768px) { .footer__grid { grid-template-columns: 1.4fr 1fr 1fr; gap: 32px; } }
+        @media (min-width: 1024px) {
+            .navbar__menu { display: flex; }
+            .navbar__toggle { display: none; }
+            .footer__grid { grid-template-columns: 1.6fr 1fr 1fr 1.2fr; gap: 40px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== NAVIGATION ========== -->
+    <header class="navbar" data-js="navbar">
+        <div class="container navbar__inner">
+            <a href="index.html" class="navbar__brand">
+                <span class="navbar__brand-icon"><img src="logo.png" alt="Bhudev Sim Store Logo" class="navbar__logo"></span>
+                <span class="navbar__brand-text">Bhudev <span class="gold-text">Sim Store</span></span>
+            </a>
+            <nav class="navbar__menu">
+                <a href="index.html" class="navbar__link">Home</a>
+                <a href="premium-numbers.html" class="navbar__link">Premium Numbers</a>
+                <a href="vip-number-filter.html" class="navbar__link navbar__link--active">Filter Numbers</a>
+                <a href="about-us.html" class="navbar__link">About Us</a>
+                <a href="contact-us.html" class="navbar__link">Contact Us</a>
+            </nav>
+            <div class="navbar__actions">
+                <a href="premium-numbers.html" class="btn btn--gold btn--sm"><span class="iconify" data-icon="mdi:crown"></span> Browse Numbers</a>
+                <button class="navbar__toggle" data-js="menu-open" aria-label="Open menu"><span class="iconify" data-icon="mdi:menu"></span></button>
+            </div>
+        </div>
+    </header>
+    <div class="menu-overlay" data-js="menu-overlay"></div>
+    <aside class="mobile-menu" data-js="mobile-menu">
+        <div class="mobile-menu__header">
+            <span class="navbar__brand-text">Bhudev <span class="gold-text">Sim Store</span></span>
+            <button class="mobile-menu__close" data-js="menu-close" aria-label="Close menu"><span class="iconify" data-icon="mdi:close"></span></button>
+        </div>
+        <nav class="mobile-menu__nav">
+            <a href="index.html" class="mobile-menu__link"><span class="iconify" data-icon="mdi:home"></span> Home</a>
+            <a href="premium-numbers.html" class="mobile-menu__link"><span class="iconify" data-icon="mdi:crown"></span> Premium Numbers</a>
+            <a href="vip-number-filter.html" class="mobile-menu__link mobile-menu__link--active"><span class="iconify" data-icon="mdi:filter-variant"></span> Filter Numbers</a>
+            <a href="about-us.html" class="mobile-menu__link"><span class="iconify" data-icon="mdi:information"></span> About Us</a>
+            <a href="contact-us.html" class="mobile-menu__link"><span class="iconify" data-icon="mdi:email"></span> Contact Us</a>
+        </nav>
+    </aside>
+
+    <!-- ========== PAGE HERO ========== -->
+    <section class="page-hero">
+        <div class="page-hero__grid-pattern"></div>
+        <div class="container page-hero__content">
+            <div class="hero__badge"><span class="iconify" data-icon="mdi:filter-variant"></span> Advanced Search</div>
+            <h1 class="page-hero__title">Find Your Perfect <span class="gold-shimmer">VIP Number</span></h1>
+            <p class="page-hero__desc">Use our powerful filters to search premium mobile numbers by digits, patterns, price, and numerology.</p>
+        </div>
+    </section>
+
+    <!-- ========== MAIN FILTER SECTION (UI ONLY) ========== -->
+    <section class="filter-section">
+        <div class="container">
+            <form class="filter-card" id="filterForm" onsubmit="return false;">
+                <!-- Tabs -->
+                <div class="search-tabs">
+                    <div class="search-tab active" data-tab="global">Global Search</div>
+                    <div class="search-tab" data-tab="premium">Premium Search</div>
+                    <div class="search-tab" data-tab="advance">Advance Search</div>
+                    <div class="search-tab" data-tab="family">Family / Quantity</div>
+                </div>
+
+                <!-- Global Search -->
+                <div class="search-tab-content active" id="tab-global">
+                    <div class="filter-row">
+                        <div class="filter-group" style="flex: 3 1 300px;">
+                            <label for="globalSearch">Search VIP Number</label>
+                            <input type="text" id="globalSearch" class="input-field" placeholder="Enter digits (e.g. 9999)">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Premium Search -->
+                <div class="search-tab-content" id="tab-premium">
+                    <div class="filter-row">
+                        <div class="filter-group"><label for="premiumStart">Start With</label><input type="text" id="premiumStart" class="input-field" placeholder="e.g. 999"></div>
+                        <div class="filter-group"><label for="premiumAnywhere">Anywhere</label><input type="text" id="premiumAnywhere" class="input-field" placeholder="e.g. 999"></div>
+                        <div class="filter-group"><label for="premiumEnd">End With</label><input type="text" id="premiumEnd" class="input-field" placeholder="e.g. 999"></div>
+                    </div>
+                </div>
+
+                <!-- Advance Search -->
+                <div class="search-tab-content" id="tab-advance">
+                    <div class="filter-row">
+                        <div class="filter-group"><label for="advanceStart">Start With</label><input type="text" id="advanceStart" class="input-field" placeholder="e.g. 98"></div>
+                        <div class="filter-group"><label for="advanceAnywhere">Anywhere</label><input type="text" id="advanceAnywhere" class="input-field" placeholder="e.g. 786"></div>
+                        <div class="filter-group"><label for="advanceEnd">End With</label><input type="text" id="advanceEnd" class="input-field" placeholder="e.g. 999"></div>
+                        <div class="filter-group"><label for="advanceMust">Must Contain</label><input type="text" id="advanceMust" class="input-field" placeholder="e.g. 1,5,9"><div class="input-helper">Digits that must appear</div></div>
+                        <div class="filter-group"><label for="advanceNot">Not Contain</label><input type="text" id="advanceNot" class="input-field" placeholder="e.g. 2,4,8"><div class="input-helper">Digits that should not appear</div></div>
+                    </div>
+                </div>
+
+                <!-- Family Search -->
+                <div class="search-tab-content" id="tab-family">
+                    <div class="filter-row">
+                        <div class="filter-group" style="flex: 2 1 250px;">
+                            <label for="filterQuantity">How many similar numbers do you need?</label>
+                            <input type="number" id="filterQuantity" class="input-field" placeholder="e.g. 3" min="1">
+                            <div class="input-helper">Find matching numbers for family or business</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Common Horizontal Filters -->
+                <div class="filter-row" style="margin-top: 24px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 24px;">
+                    <div class="filter-group"><label for="filterTotal">Total</label><input type="number" id="filterTotal" class="input-field" placeholder="e.g. 41"></div>
+                    <div class="filter-group"><label for="filterSum">Sum (Root)</label><input type="number" id="filterSum" class="input-field" placeholder="e.g. 5" min="1" max="9"></div>
+                    <div class="filter-group"><label for="minPrice">Min Price (₹)</label><input type="number" id="minPrice" class="input-field" placeholder="₹ 1,000"></div>
+                    <div class="filter-group"><label for="maxPrice">Max Price (₹)</label><input type="number" id="maxPrice" class="input-field" placeholder="₹ 10,000"></div>
+                    <div class="filter-group">
+                        <label for="filterCategory">Category</label>
+                        <select id="filterCategory" class="input-field">
+                            <option value="">All Categories</option>
+                            <option value="penta">Penta Numbers</option>
+                            <option value="hexa">Hexa Numbers</option>
+                            <option value="septa">Septa Numbers</option>
+                            <option value="octa">Octa Numbers</option>
+                            <option value="ending-aaaa">Ending AAAA</option>
+                            <option value="ab-ab">AB AB</option>
+                            <option value="abc-abc">ABC ABC</option>
+                            <option value="mirror">Mirror Numbers</option>
+                            <option value="786">786 Numbers</option>
+                            <option value="doubling">Doubling Numbers</option>
+                            <option value="ending-aaa">Ending AAA</option>
+                            <option value="unique">Unique Numbers</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="filter-row" style="margin-top: 16px; justify-content: flex-end;">
+                    <button type="reset" class="btn btn--dark"><span class="iconify" data-icon="mdi:refresh"></span> Reset Filters</button>
+                    <button type="submit" class="btn btn--gold btn--lg"><span class="iconify" data-icon="mdi:magnify"></span> Search VIP Numbers</button>
+                </div>
+            </form>
+
+            <!-- Results Top Bar -->
+            <div class="results-top-bar">
+                <div class="results-info">
+                    <h2><span>120</span> VIP Numbers Found</h2>
+                </div>
+                <div class="results-controls">
+                    <select class="input-field" id="sortSelect" style="width: auto; padding: 10px 36px 10px 16px;">
+                        <option value="default">Sort By: Default</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="number-low">Number: Low to High</option>
+                        <option value="number-high">Number: High to Low</option>
+                        <option value="newest">Newest</option>
+                        <option value="popular">Popular</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- ===================================================================== -->
+            <!-- STATIC NUMBER GRID - PHP READY STRUCTURE -->
+            <!-- ===================================================================== -->
+            <div class="vip-number-grid">
+                
+                <!-- Card 1 (Available) -->
+                <article class="vip-card">
+                    <div class="vip-card__inner">
+                        <div class="vip-card__top">
+                            <span class="vip-card__badge">Penta</span>
+                            <span class="vip-card__status vip-card__status--available"><span class="iconify" data-icon="mdi:check-circle"></span> Available</span>
+                        </div>
+                        <div class="vip-card__number-area">
+                            <span class="vip-card__prefix">+91</span>
+                            <h3 class="vip-card__number">98765 <span class="highlight-gold">43210</span></h3>
+                            <span class="vip-card__sum">Sum = 45 - 9 - 9</span>
+                        </div>
+                        <div class="vip-card__divider"></div>
+                        <div class="vip-card__prices">
+                            <div class="price-block--original">
+                                <span class="price-original">₹12,999</span>
+                                <span class="discount-badge">23% OFF</span>
+                            </div>
+                            <div class="price-block--selling">
+                                <span class="price-selling">₹9,999</span>
+                            </div>
+                        </div>
+                        <div class="vip-card__actions">
+                            <a href="#" class="btn btn--outline btn--sm">View</a>
+                            <a href="https://wa.me/919999999999?text=Hello%2C%20I%20am%20interested%20in%20VIP%20number%209876543210." target="_blank" class="btn btn--whatsapp btn--sm"><span class="iconify" data-icon="mdi:whatsapp"></span> Buy</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Card 2 (Available) -->
+                <article class="vip-card">
+                    <div class="vip-card__inner">
+                        <div class="vip-card__top">
+                            <span class="vip-card__badge" style="background: rgba(155, 109, 255, 0.12); color: var(--purple-accent);">Hexa</span>
+                            <span class="vip-card__status vip-card__status--available"><span class="iconify" data-icon="mdi:check-circle"></span> Available</span>
+                        </div>
+                        <div class="vip-card__number-area">
+                            <span class="vip-card__prefix">+91</span>
+                            <h3 class="vip-card__number">99999 <span class="highlight-gold">88888</span></h3>
+                            <span class="vip-card__sum">Sum = 85 - 13 - 4</span>
+                        </div>
+                        <div class="vip-card__divider"></div>
+                        <div class="vip-card__prices">
+                            <div class="price-block--original">
+                                <span class="price-original">₹18,999</span>
+                                <span class="discount-badge">16% OFF</span>
+                            </div>
+                            <div class="price-block--selling">
+                                <span class="price-selling">₹15,999</span>
+                            </div>
+                        </div>
+                        <div class="vip-card__actions">
+                            <a href="#" class="btn btn--outline btn--sm">View</a>
+                            <a href="https://wa.me/919999999999?text=Hello%2C%20I%20am%20interested%20in%20VIP%20number%209999988888." target="_blank" class="btn btn--whatsapp btn--sm"><span class="iconify" data-icon="mdi:whatsapp"></span> Buy</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Card 3 (Sold) -->
+                <article class="vip-card">
+                    <div class="vip-card__inner">
+                        <div class="vip-card__top">
+                            <span class="vip-card__badge" style="background: rgba(52, 211, 153, 0.12); color: var(--green-accent);">ABC ABC</span>
+                            <span class="vip-card__status vip-card__status--sold"><span class="iconify" data-icon="mdi:close-circle"></span> Sold</span>
+                        </div>
+                        <div class="vip-card__number-area">
+                            <span class="vip-card__prefix">+91</span>
+                            <h3 class="vip-card__number">98989 <span class="highlight-gold">89898</span></h3>
+                            <span class="vip-card__sum">Sum = 76 - 13 - 4</span>
+                        </div>
+                        <div class="vip-card__divider"></div>
+                        <div class="vip-card__prices">
+                            <div class="price-block--original">
+                                <span class="price-original">₹9,500</span>
+                                <span class="discount-badge">21% OFF</span>
+                            </div>
+                            <div class="price-block--selling">
+                                <span class="price-selling">₹7,500</span>
+                            </div>
+                        </div>
+                        <div class="vip-card__actions">
+                            <button class="btn btn--disabled btn--sm" style="flex: 1; justify-content: center;"><span class="iconify" data-icon="mdi:lock"></span> Sold Out</button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Card 4 (Available) -->
+                <article class="vip-card">
+                    <div class="vip-card__inner">
+                        <div class="vip-card__top">
+                            <span class="vip-card__badge">Penta</span>
+                            <span class="vip-card__status vip-card__status--available"><span class="iconify" data-icon="mdi:check-circle"></span> Available</span>
+                        </div>
+                        <div class="vip-card__number-area">
+                            <span class="vip-card__prefix">+91</span>
+                            <h3 class="vip-card__number">98777 <span class="highlight-gold">77777</span></h3>
+                            <span class="vip-card__sum">Sum = 69 - 15 - 6</span>
+                        </div>
+                        <div class="vip-card__divider"></div>
+                        <div class="vip-card__prices">
+                            <div class="price-block--original">
+                                <span class="price-original">₹30,000</span>
+                                <span class="discount-badge">17% OFF</span>
+                            </div>
+                            <div class="price-block--selling">
+                                <span class="price-selling">₹25,000</span>
+                            </div>
+                        </div>
+                        <div class="vip-card__actions">
+                            <a href="#" class="btn btn--outline btn--sm">View</a>
+                            <a href="https://wa.me/919999999999?text=Hello%2C%20I%20am%20interested%20in%20VIP%20number%209877777777." target="_blank" class="btn btn--whatsapp btn--sm"><span class="iconify" data-icon="mdi:whatsapp"></span> Buy</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Card 5 (Available) -->
+                <article class="vip-card">
+                    <div class="vip-card__inner">
+                        <div class="vip-card__top">
+                            <span class="vip-card__badge" style="background: rgba(155, 109, 255, 0.12); color: var(--purple-accent);">AB AB</span>
+                            <span class="vip-card__status vip-card__status--available"><span class="iconify" data-icon="mdi:check-circle"></span> Available</span>
+                        </div>
+                        <div class="vip-card__number-area">
+                            <span class="vip-card__prefix">+91</span>
+                            <h3 class="vip-card__number">99990 <span class="highlight-gold">00099</span></h3>
+                            <span class="vip-card__sum">Sum = 45 - 9 - 9</span>
+                        </div>
+                        <div class="vip-card__divider"></div>
+                        <div class="vip-card__prices">
+                            <div class="price-block--original">
+                                <span class="price-original">₹55,000</span>
+                                <span class="discount-badge">18% OFF</span>
+                            </div>
+                            <div class="price-block--selling">
+                                <span class="price-selling">₹45,000</span>
+                            </div>
+                        </div>
+                        <div class="vip-card__actions">
+                            <a href="#" class="btn btn--outline btn--sm">View</a>
+                            <a href="https://wa.me/919999999999?text=Hello%2C%20I%20am%20interested%20in%20VIP%20number%209999000099." target="_blank" class="btn btn--whatsapp btn--sm"><span class="iconify" data-icon="mdi:whatsapp"></span> Buy</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Card 6 (Sold) -->
+                <article class="vip-card">
+                    <div class="vip-card__inner">
+                        <div class="vip-card__top">
+                            <span class="vip-card__badge" style="background: rgba(52, 211, 153, 0.12); color: var(--green-accent);">Doubling</span>
+                            <span class="vip-card__status vip-card__status--sold"><span class="iconify" data-icon="mdi:close-circle"></span> Sold</span>
+                        </div>
+                        <div class="vip-card__number-area">
+                            <span class="vip-card__prefix">+91</span>
+                            <h3 class="vip-card__number">90909 <span class="highlight-gold">09090</span></h3>
+                            <span class="vip-card__sum">Sum = 36 - 9 - 9</span>
+                        </div>
+                        <div class="vip-card__divider"></div>
+                        <div class="vip-card__prices">
+                            <div class="price-block--original">
+                                <span class="price-original">₹55,000</span>
+                                <span class="discount-badge">18% OFF</span>
+                            </div>
+                            <div class="price-block--selling">
+                                <span class="price-selling">₹45,000</span>
+                            </div>
+                        </div>
+                        <div class="vip-card__actions">
+                            <button class="btn btn--disabled btn--sm" style="flex: 1; justify-content: center;"><span class="iconify" data-icon="mdi:lock"></span> Sold Out</button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Card 7 (Available) -->
+                <article class="vip-card">
+                    <div class="vip-card__inner">
+                        <div class="vip-card__top">
+                            <span class="vip-card__badge">Penta</span>
+                            <span class="vip-card__status vip-card__status--available"><span class="iconify" data-icon="mdi:check-circle"></span> Available</span>
+                        </div>
+                        <div class="vip-card__number-area">
+                            <span class="vip-card__prefix">+91</span>
+                            <h3 class="vip-card__number">88888 <span class="highlight-gold">81234</span></h3>
+                            <span class="vip-card__sum">Sum = 50 - 5 - 5</span>
+                        </div>
+                        <div class="vip-card__divider"></div>
+                        <div class="vip-card__prices">
+                            <div class="price-block--original">
+                                <span class="price-original">₹38,000</span>
+                                <span class="discount-badge">16% OFF</span>
+                            </div>
+                            <div class="price-block--selling">
+                                <span class="price-selling">₹32,000</span>
+                            </div>
+                        </div>
+                        <div class="vip-card__actions">
+                            <a href="#" class="btn btn--outline btn--sm">View</a>
+                            <a href="https://wa.me/919999999999?text=Hello%2C%20I%20am%20interested%20in%20VIP%20number%208888881234." target="_blank" class="btn btn--whatsapp btn--sm"><span class="iconify" data-icon="mdi:whatsapp"></span> Buy</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Card 8 (Available) -->
+                <article class="vip-card">
+                    <div class="vip-card__inner">
+                        <div class="vip-card__top">
+                            <span class="vip-card__badge">Penta</span>
+                            <span class="vip-card__status vip-card__status--available"><span class="iconify" data-icon="mdi:check-circle"></span> Available</span>
+                        </div>
+                        <div class="vip-card__number-area">
+                            <span class="vip-card__prefix">+91</span>
+                            <h3 class="vip-card__number">99999 <span class="highlight-gold">11111</span></h3>
+                            <span class="vip-card__sum">Sum = 55 - 10 - 1</span>
+                        </div>
+                        <div class="vip-card__divider"></div>
+                        <div class="vip-card__prices">
+                            <div class="price-block--original">
+                                <span class="price-original">₹35,000</span>
+                                <span class="discount-badge">20% OFF</span>
+                            </div>
+                            <div class="price-block--selling">
+                                <span class="price-selling">₹28,000</span>
+                            </div>
+                        </div>
+                        <div class="vip-card__actions">
+                            <a href="#" class="btn btn--outline btn--sm">View</a>
+                            <a href="https://wa.me/919999999999?text=Hello%2C%20I%20am%20interested%20in%20VIP%20number%209999911111." target="_blank" class="btn btn--whatsapp btn--sm"><span class="iconify" data-icon="mdi:whatsapp"></span> Buy</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Card 9 (Available) -->
+                <article class="vip-card">
+                    <div class="vip-card__inner">
+                        <div class="vip-card__top">
+                            <span class="vip-card__badge" style="background: rgba(155, 109, 255, 0.12); color: var(--purple-accent);">AB AB</span>
+                            <span class="vip-card__status vip-card__status--available"><span class="iconify" data-icon="mdi:check-circle"></span> Available</span>
+                        </div>
+                        <div class="vip-card__number-area">
+                            <span class="vip-card__prefix">+91</span>
+                            <h3 class="vip-card__number">99887 <span class="highlight-gold">76655</span></h3>
+                            <span class="vip-card__sum">Sum = 68 - 14 - 5</span>
+                        </div>
+                        <div class="vip-card__divider"></div>
+                        <div class="vip-card__prices">
+                            <div class="price-block--original">
+                                <span class="price-original">₹22,000</span>
+                                <span class="discount-badge">18% OFF</span>
+                            </div>
+                            <div class="price-block--selling">
+                                <span class="price-selling">₹18,000</span>
+                            </div>
+                        </div>
+                        <div class="vip-card__actions">
+                            <a href="#" class="btn btn--outline btn--sm">View</a>
+                            <a href="https://wa.me/919999999999?text=Hello%2C%20I%20am%20interested%20in%20VIP%20number%209988776655." target="_blank" class="btn btn--whatsapp btn--sm"><span class="iconify" data-icon="mdi:whatsapp"></span> Buy</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Card 10 (Sold) -->
+                <article class="vip-card">
+                    <div class="vip-card__inner">
+                        <div class="vip-card__top">
+                            <span class="vip-card__badge" style="background: rgba(52, 211, 153, 0.12); color: var(--green-accent);">786</span>
+                            <span class="vip-card__status vip-card__status--sold"><span class="iconify" data-icon="mdi:close-circle"></span> Sold</span>
+                        </div>
+                        <div class="vip-card__number-area">
+                            <span class="vip-card__prefix">+91</span>
+                            <h3 class="vip-card__number">78678 <span class="highlight-gold">67867</span></h3>
+                            <span class="vip-card__sum">Sum = 68 - 14 - 5</span>
+                        </div>
+                        <div class="vip-card__divider"></div>
+                        <div class="vip-card__prices">
+                            <div class="price-block--original">
+                                <span class="price-original">₹9,000</span>
+                                <span class="discount-badge">22% OFF</span>
+                            </div>
+                            <div class="price-block--selling">
+                                <span class="price-selling">₹7,000</span>
+                            </div>
+                        </div>
+                        <div class="vip-card__actions">
+                            <button class="btn btn--disabled btn--sm" style="flex: 1; justify-content: center;"><span class="iconify" data-icon="mdi:lock"></span> Sold Out</button>
+                        </div>
+                    </div>
+                </article>
+
+            </div> <!-- End of vip-number-grid -->
+
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__grid">
+                <div><a href="index.html" class="navbar__brand"><span class="navbar__brand-icon"><img src="logo.png" alt="Logo" class="navbar__logo"></span><span class="navbar__brand-text">Bhudev <span class="gold-text">Sim Store</span></span></a><p class="footer__brand-desc">India's trusted destination for premium VIP mobile numbers.</p><div class="footer__social"><a href="#" class="footer__social-link" aria-label="Facebook"><span class="iconify" data-icon="mdi:facebook"></span></a><a href="#" class="footer__social-link" aria-label="Instagram"><span class="iconify" data-icon="mdi:instagram"></span></a><a href="#" class="footer__social-link" aria-label="WhatsApp"><span class="iconify" data-icon="mdi:whatsapp"></span></a></div></div>
+                <div><h4 class="footer__heading">Quick Links</h4><ul class="footer__list"><li><a href="index.html">Home</a></li><li><a href="premium-numbers.html">Premium Numbers</a></li><li><a href="vip-number-filter.html">Filter Numbers</a></li><li><a href="about-us.html">About Us</a></li></ul></div>
+                <div><h4 class="footer__heading">Legal</h4><ul class="footer__list"><li><a href="privacy-policy.html">Privacy Policy</a></li><li><a href="privacy-policy.html">Shipping & Delivery</a></li><li><a href="privacy-policy.html">Refund & Cancellation</a></li></ul></div>
+                <div><h4 class="footer__heading">Contact Us</h4><ul class="footer__contact-list"><li><span class="iconify" data-icon="mdi:whatsapp"></span><span>+91 99999 99999</span></li><li><span class="iconify" data-icon="mdi:email"></span><span>support@bhudevsimstore.com</span></li></ul></div>
+            </div>
+            <div class="footer__bottom"><p>&copy; 2026 Bhudev Sim Store. All Rights Reserved.</p></div>
+        </div>
+    </footer>
+
+    <!-- MINIMAL UI ONLY JAVASCRIPT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Navbar Scroll & Mobile Menu Toggle
+            const navbar = document.querySelector('[data-js="navbar"]');
+            const menuOpen = document.querySelector('[data-js="menu-open"]');
+            const menuClose = document.querySelector('[data-js="menu-close"]');
+            const menuOverlay = document.querySelector('[data-js="menu-overlay"]');
+            const body = document.body;
+            
+            const toggleMenu = () => body.classList.toggle('menu-open');
+            if(menuOpen) menuOpen.addEventListener('click', toggleMenu);
+            if(menuClose) menuClose.addEventListener('click', toggleMenu);
+            if(menuOverlay) menuOverlay.addEventListener('click', toggleMenu);
+            
+            window.addEventListener('scroll', () => { 
+                if(navbar) navbar.classList.toggle('navbar--scrolled', window.scrollY > 50); 
+            });
+
+            // 2. Filter Tabs Switching (UI Only)
+            document.querySelectorAll('.search-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.search-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.search-tab-content').forEach(c => c.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(`tab-${tab.dataset.tab}`).classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
