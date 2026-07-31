@@ -17,3 +17,10 @@ if ($conn->connect_error) {
 $conn->set_charset('utf8mb4');
 
 
+// if (!isset($_SESSION['admin_id'])) {
+//     echo json_encode([
+//         "success" => false,
+//         "message" => "Please login first."
+//     ]);
+//     exit;
+// }

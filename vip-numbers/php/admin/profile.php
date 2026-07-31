@@ -112,15 +112,15 @@
                     <div class="profile-wrapper">
                         <button class="profile-btn" onclick="toggleDropdown('profileDropdown')" aria-label="Profile menu">
                             <div class="profile-avatar">
-                                <span>A</span>
+                                <span id="headerAvatarInitials">A</span>
                             </div>
-                            <span class="profile-name">Admin</span>
+                            <span class="profile-name" id="headerProfileName">Admin</span>
                             <i data-lucide="chevron-down" class="profile-chevron"></i>
                         </button>
                         <div class="dropdown" id="profileDropdown">
                             <div class="dropdown-header">
-                                <p class="dropdown-header-name">Admin User</p>
-                                <p class="dropdown-header-email">admin@vipnumbers.com</p>
+                                <p class="dropdown-header-name" id="headerDropdownName">Admin User</p>
+                                <p class="dropdown-header-email" id="headerDropdownEmail">admin@vipnumbers.com</p>
                             </div>
                             <a href="profile.html" class="dropdown-item">
                                 <i data-lucide="user"></i> My Profile
@@ -144,28 +144,28 @@
                         <div class="profile-avatar-wrapper">
                             <div class="avatar-ring">
                                 <div class="avatar-inner">
-                                    <span class="avatar-initials" id="avatarInitials">AR</span>
+                                    <span class="avatar-initials" id="avatarInitials">—</span>
                                 </div>
                             </div>
                             <div class="online-dot pulse-green"></div>
                         </div>
 
                         <div class="profile-header-info">
-                            <h1 class="profile-display-name" id="displayName">Arjun Rathore</h1>
+                            <h1 class="profile-display-name" id="displayName">Loading…</h1>
                             <div class="profile-badges">
                                 <span class="badge badge-admin"><i data-lucide="shield-check"></i> Administrator</span>
                                 <span class="badge badge-online"><span class="badge-dot-inline"></span> Online</span>
                                 <span class="badge badge-active"><i data-lucide="check-circle"></i> Active</span>
                             </div>
-                            <p class="profile-handle">@<span id="displayUsername">arjun.rathore</span></p>
+                            <p class="profile-handle">@<span id="displayUsername">—</span></p>
                             <div class="profile-contact-row">
                                 <span class="profile-contact-item">
                                     <i data-lucide="mail"></i>
-                                    <span id="displayEmail">arjun.rathore@vipnumbers.com</span>
+                                    <span id="displayEmail">—</span>
                                 </span>
                                 <span class="profile-contact-item">
                                     <i data-lucide="phone"></i>
-                                    <span id="displayPhone">+91 98765 43210</span>
+                                    <span id="displayPhone">—</span>
                                 </span>
                             </div>
                         </div>
@@ -189,19 +189,19 @@
                     <div class="info-grid">
                         <div class="info-row">
                             <span class="info-label">Full Name</span>
-                            <span class="info-value" id="infoFullName">Arjun Rathore</span>
+                            <span class="info-value" id="infoFullName">—</span>
                         </div>
                         <div class="info-row">
                             <span class="info-label">Username</span>
-                            <span class="info-value" id="infoUsername">arjun.rathore</span>
+                            <span class="info-value" id="infoUsername">—</span>
                         </div>
                         <div class="info-row info-row--full">
                             <span class="info-label">Email Address</span>
-                            <span class="info-value" id="infoEmail">arjun.rathore@vipnumbers.com</span>
+                            <span class="info-value" id="infoEmail">—</span>
                         </div>
                         <div class="info-row info-row--full">
                             <span class="info-label">Mobile Number</span>
-                            <span class="info-value" id="infoPhone">+91 98765 43210</span>
+                            <span class="info-value" id="infoPhone">—</span>
                         </div>
                     </div>
                 </section>
@@ -233,7 +233,7 @@
                     <div class="security-hints">
                         <div class="security-hint security-hint--green">
                             <i data-lucide="shield-check"></i>
-                            <span>Password last changed 45 days ago</span>
+                            <span id="passwordUpdatedHint">Password last updated —</span>
                         </div>
                         <div class="security-hint security-hint--gold">
                             <i data-lucide="info"></i>
@@ -270,25 +270,25 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label" for="pFullName">Full Name <span class="required">*</span></label>
-                            <input type="text" id="pFullName" class="input-field" placeholder="Enter full name" value="Arjun Rathore">
+                            <input type="text" id="pFullName" class="input-field" placeholder="Enter full name" value="">
                             <p class="error-msg" id="pFullNameError">Full name is required</p>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="pUsername">Username <span class="required">*</span></label>
-                            <input type="text" id="pUsername" class="input-field" placeholder="Enter username" value="arjun.rathore">
+                            <input type="text" id="pUsername" class="input-field" placeholder="Enter username" value="">
                             <p class="error-msg" id="pUsernameError">Username is required</p>
                         </div>
                     </div>
                     <div class="form-group form-group--full">
                         <label class="form-label" for="pEmail">Email Address <span class="required">*</span></label>
-                        <input type="email" id="pEmail" class="input-field" placeholder="Enter email address" value="arjun.rathore@vipnumbers.com">
+                        <input type="email" id="pEmail" class="input-field" placeholder="Enter email address" value="">
                         <p class="error-msg" id="pEmailError">Please enter a valid email address</p>
                     </div>
                     <div class="form-group form-group--full">
                         <label class="form-label" for="pPhone">Mobile Number <span class="required">*</span></label>
                         <div class="phone-input-wrap">
                             <span class="phone-prefix">+91</span>
-                            <input type="text" id="pPhone" class="input-field phone-input" placeholder="10-digit number" maxlength="10" value="9876543210" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                            <input type="text" id="pPhone" class="input-field phone-input" placeholder="10-digit number" maxlength="10" value="" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                         </div>
                         <p class="error-msg" id="pPhoneError">Please enter a valid 10-digit mobile number</p>
                     </div>
@@ -405,15 +405,16 @@
     </div>
 
     <script>
-        /* =========================================
-   Admin Data (Simulated)
+/* =========================================
+   Admin Data (loaded from the API)
 ======================================== */
 var adminData = {
-    fullName: 'Arjun Rathore',
-    username: 'arjun.rathore',
-    email: 'arjun.rathore@vipnumbers.com',
-    phone: '9876543210',
-    currentPassword: 'Admin@2024'
+    id: null,
+    fullName: '',
+    username: '',
+    email: '',
+    phone: '',
+    updatedAt: ''
 };
 
 /* =========================================
@@ -422,6 +423,7 @@ var adminData = {
 document.addEventListener('DOMContentLoaded', function() {
     lucide.createIcons();
     initScrollReveal();
+    loadProfile();
 
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
@@ -443,6 +445,67 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+/* =========================================
+   Load profile from get_profile.php
+======================================== */
+function formatDate(str) {
+    if (!str) return '—';
+    var d = new Date(str.replace(' ', 'T'));
+    if (isNaN(d)) return str;
+    return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function loadProfile() {
+    fetch('../api/get_profile.php')
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (!data.success || !data.user) {
+                showToast(data.message || 'Could not load your profile', 'error');
+                return;
+            }
+            var u = data.user;
+            adminData.id = u.id;
+            adminData.fullName = u.full_name;
+            adminData.username = u.username;
+            adminData.email = u.email;
+            adminData.phone = u.mobile_number;
+            adminData.updatedAt = u.updated_at;
+            renderProfile();
+        })
+        .catch(function() {
+            showToast('Failed to reach the server', 'error');
+        });
+}
+
+function renderProfile() {
+    var initials = (adminData.fullName || '')
+        .split(' ')
+        .filter(Boolean)
+        .map(function(n) { return n[0]; })
+        .join('')
+        .substring(0, 2)
+        .toUpperCase() || '—';
+    var formattedPhone = adminData.phone ? '+91 ' + adminData.phone.replace(/(\d{5})(\d{5})/, '$1 $2') : '—';
+
+    document.getElementById('avatarInitials').textContent = initials;
+    document.getElementById('displayName').textContent = adminData.fullName || '—';
+    document.getElementById('displayUsername').textContent = adminData.username || '—';
+    document.getElementById('displayEmail').textContent = adminData.email || '—';
+    document.getElementById('displayPhone').textContent = formattedPhone;
+
+    document.getElementById('infoFullName').textContent = adminData.fullName || '—';
+    document.getElementById('infoUsername').textContent = adminData.username || '—';
+    document.getElementById('infoEmail').textContent = adminData.email || '—';
+    document.getElementById('infoPhone').textContent = formattedPhone;
+
+    document.getElementById('headerAvatarInitials').textContent = initials.charAt(0) || 'A';
+    document.getElementById('headerProfileName').textContent = adminData.fullName || 'Admin';
+    document.getElementById('headerDropdownName').textContent = adminData.fullName || 'Admin User';
+    document.getElementById('headerDropdownEmail').textContent = adminData.email || '';
+
+    document.getElementById('passwordUpdatedHint').textContent = 'Password last updated ' + formatDate(adminData.updatedAt);
+}
 
 /* =========================================
    Sidebar Toggle
@@ -539,10 +602,11 @@ function clearAllPasswordErrors() {
         document.getElementById(errors[j]).classList.remove('show');
     }
     document.getElementById('pwNewError').textContent = 'New password is required';
+    document.getElementById('pwCurrentError').textContent = 'Current password is required';
 }
 
 /* =========================================
-   Save Profile
+   Save Profile (POST to update_profile.php)
 ======================================== */
 function saveProfile() {
     clearAllProfileErrors();
@@ -576,30 +640,47 @@ function saveProfile() {
 
     if (!valid) return;
 
-    adminData.fullName = fullName;
-    adminData.username = username;
-    adminData.email = email;
-    adminData.phone = phone;
+    var btn = document.getElementById('profileSaveBtn');
+    btn.disabled = true;
 
-    var initials = fullName.split(' ').map(function(n) { return n[0]; }).join('').substring(0, 2).toUpperCase();
-    var formattedPhone = '+91 ' + phone.replace(/(\d{5})(\d{5})/, '$1 $2');
+    var formData = new FormData();
+    formData.append('full_name', fullName);
+    formData.append('username', username);
+    formData.append('email', email);
+    formData.append('mobile_number', phone);
 
-    document.getElementById('avatarInitials').textContent = initials;
-    document.getElementById('displayName').textContent = fullName;
-    document.getElementById('displayUsername').textContent = username;
-    document.getElementById('displayEmail').textContent = email;
-    document.getElementById('displayPhone').textContent = formattedPhone;
-    document.getElementById('infoFullName').textContent = fullName;
-    document.getElementById('infoUsername').textContent = username;
-    document.getElementById('infoEmail').textContent = email;
-    document.getElementById('infoPhone').textContent = formattedPhone;
+     fetch('../api/update_profile.php', { method: 'POST', body: formData })
+        .then(function(res) { return res.json(); })
+        .then(async function(data) {
+            if (data.success) {
+                adminData.fullName = fullName;
+                adminData.username = username;
+                adminData.email = email;
+                adminData.phone = phone;
+                renderProfile();
+                closeModal('profileModal');
+                await addActivity(
+                    "Profile Updated",
+                    fullName + " updated profile information",
+                    "purple"
+                );
+                showToast(data.message || 'Profile updated successfully', 'success');
+            } else {
+                showToast(data.message || 'Could not update profile', 'error');
+            }
+        })
+        .catch(function(err) {
+            showToast('Failed to reach the server', 'error');
 
-    closeModal('profileModal');
-    showToast('Profile updated successfully', 'success');
+            
+        })
+        .finally(function() {
+            btn.disabled = false;
+        });
 }
 
 /* =========================================
-   Save Password
+   Save Password (POST to change_password.php)
 ======================================== */
 function savePassword() {
     clearAllPasswordErrors();
@@ -638,16 +719,50 @@ function savePassword() {
     if (!valid) return;
 
     var strength = getPasswordStrength(newPw);
-    if (strength < 3) {
+    if (strength < 5) {
         document.getElementById('pwNew').classList.add('error');
-        document.getElementById('pwNewError').textContent = 'Password is too weak';
+        document.getElementById('pwNewError').textContent = 'Password is too weak — meet all the requirements below';
         document.getElementById('pwNewError').classList.add('show');
         return;
     }
 
-    adminData.currentPassword = newPw;
-    closeModal('passwordModal');
-    showToast('Password updated successfully', 'success');
+    var btn = document.getElementById('pwSaveBtn');
+    btn.disabled = true;
+
+    var formData = new FormData();
+    formData.append('current_password', current);
+    formData.append('new_password', newPw);
+    formData.append('confirm_password', confirm);
+
+    fetch('../api/change_password.php', { method: 'POST', body: formData })
+        .then(function(res) { return res.json(); })
+        .then(async function(data) {
+            if (data.success) {
+                closeModal('passwordModal');
+                await addActivity(
+                    "Password Changed",
+                    "Account password was updated",
+                    "purple"
+                );
+                showToast(data.message || 'Password updated successfully', 'success');
+                loadProfile(); // refreshes the "last updated" hint
+            } else {
+                // Surface a wrong-current-password error inline rather than just a toast
+                if (data.message && data.message.toLowerCase().indexOf('current password') !== -1) {
+                    document.getElementById('pwCurrent').classList.add('error');
+                    document.getElementById('pwCurrentError').textContent = data.message;
+                    document.getElementById('pwCurrentError').classList.add('show');
+                }
+                showToast(data.message || 'Could not update password', 'error');
+            }
+        })
+        .catch(function(err) {
+            showToast('Failed to reach the server', 'error');
+            console.error(err);
+        })
+        .finally(function() {
+            btn.disabled = false;
+        });
 }
 
 /* =========================================
@@ -762,6 +877,23 @@ function initScrollReveal() {
     for (var i = 0; i < reveals.length; i++) {
         observer.observe(reveals[i]);
     }
+}
+async function addActivity(title, description, color) {
+
+    console.log("addActivity called", title, description, color);
+
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("color", color);
+
+    const response = await fetch("../api/add_activity.php", {
+        method: "POST",
+        body: formData
+    });
+
+    const result = await response.json();
+    return result;
 }
     </script>
 </body>
