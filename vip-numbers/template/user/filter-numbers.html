@@ -147,22 +147,40 @@
         .vip-card__actions { display: flex; gap: 8px; margin-top: auto; }
         .vip-card__actions .btn { flex: 1; justify-content: center; padding: 10px 12px; font-size: 12px; }
 
-        /* Footer */
-        .footer { background: var(--charcoal); border-top: 1px solid rgba(255, 255, 255, 0.04); padding: 64px 0 0; margin-top: 80px; }
-        .footer__grid { display: grid; grid-template-columns: 1fr; gap: 40px; padding-bottom: 48px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
-        .footer__brand-desc { font-size: 13px; color: var(--text-muted); line-height: 1.8; margin: 16px 0 24px; max-width: 280px; }
-        .footer__social { display: flex; gap: 10px; flex-wrap: wrap; }
-        .footer__social-link { width: 40px; height: 40px; border-radius: var(--radius-sm); border: 1px solid rgba(255, 255, 255, 0.06); display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 18px; transition: all var(--transition-fast); }
-        .footer__social-link:hover { color: var(--gold); border-color: var(--gold-border-hover); background: var(--gold-muted); }
-        .footer__heading { font-family: var(--font-heading); font-weight: 600; font-size: 14px; color: var(--text-primary); margin-bottom: 20px; }
-        .footer__list li { margin-bottom: 12px; }
-        .footer__list a { font-size: 13px; color: var(--text-muted); transition: color var(--transition-fast); }
-        .footer__list a:hover { color: var(--gold); }
-        .footer__contact-list li { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 20px; }
-        .footer__contact-list .iconify { color: var(--gold); font-size: 18px; margin-top: 2px; flex-shrink: 0; }
-        .footer__contact-list span { display: block; font-size: 13px; color: var(--text-secondary); word-break: break-word; }
-        .footer__bottom { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 24px 0; text-align: center; }
-        .footer__bottom p { font-size: 12px; color: var(--text-dim); }
+        /* ========================================== FOOTER ========================================== */
+.footer { background: var(--charcoal); border-top: 1px solid rgba(255, 255, 255, 0.04); padding: 64px 0 0; }
+.footer__grid { display: grid; grid-template-columns: 1fr; gap: 40px; padding-bottom: 48px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
+.footer__brand-desc { font-size: 13px; color: var(--text-muted); line-height: 1.8; margin: 16px 0 24px; max-width: 280px; }
+.footer__social { display: flex; gap: 10px; flex-wrap: wrap; }
+.footer__social-link { width: 40px; height: 40px; border-radius: var(--radius-sm); border: 1px solid rgba(255, 255, 255, 0.06); display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 18px; transition: all var(--transition-fast); }
+.footer__social-link:hover { color: var(--gold); border-color: var(--gold-border-hover); background: var(--gold-muted); }
+.footer__heading { font-family: var(--font-heading); font-weight: 600; font-size: 14px; color: var(--text-primary); margin-bottom: 20px; letter-spacing: 0.02em; }
+.footer__list li { margin-bottom: 12px; }
+.footer__list a { font-size: 13px; color: var(--text-muted); transition: color var(--transition-fast); }
+.footer__list a:hover { color: var(--gold); }
+.footer__contact-list li { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 20px; }
+.footer__contact-list .iconify { color: var(--gold); font-size: 18px; margin-top: 2px; flex-shrink: 0; }
+.footer__contact-list span { display: block; font-size: 13px; color: var(--text-secondary); word-break: break-word; }
+.footer__contact-list small { display: block; font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+.footer__bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 0;
+}
+
+.footer__bottom p {
+    width: 100%;
+    margin: 0;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-dim);
+}
+.footer__bottom-links { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; }
+.footer__bottom-links a { font-size: 12px; color: var(--text-dim); transition: color var(--transition-fast); }
+.footer__bottom-links a:hover { color: var(--gold); }
+
 
         /* ============================================ RESPONSIVE ============================================ */
         @media (max-width: 1280px) { .vip-number-grid { grid-template-columns: repeat(3, 1fr); } }
@@ -368,7 +386,6 @@
                             </div>
                         </div>
                         <div class="vip-card__actions">
-                            <a href="#" class="btn btn--outline btn--sm">View</a>
                             <a href="https://wa.me/919999999999?text=Hello%2C%20I%20am%20interested%20in%20VIP%20number%209876543210." target="_blank" class="btn btn--whatsapp btn--sm"><span class="iconify" data-icon="mdi:whatsapp"></span> Buy</a>
                         </div>
                     </div>
@@ -397,7 +414,6 @@
                             </div>
                         </div>
                         <div class="vip-card__actions">
-                            <a href="#" class="btn btn--outline btn--sm">View</a>
                             <a href="https://wa.me/919999999999?text=Hello%2C%20I%20am%20interested%20in%20VIP%20number%209999988888." target="_blank" class="btn btn--whatsapp btn--sm"><span class="iconify" data-icon="mdi:whatsapp"></span> Buy</a>
                         </div>
                     </div>
@@ -454,7 +470,6 @@
                             </div>
                         </div>
                         <div class="vip-card__actions">
-                            <a href="#" class="btn btn--outline btn--sm">View</a>
                             <a href="https://wa.me/919999999999?text=Hello%2C%20I%20am%20interested%20in%20VIP%20number%209877777777." target="_blank" class="btn btn--whatsapp btn--sm"><span class="iconify" data-icon="mdi:whatsapp"></span> Buy</a>
                         </div>
                     </div>
@@ -483,7 +498,6 @@
                             </div>
                         </div>
                         <div class="vip-card__actions">
-                            <a href="#" class="btn btn--outline btn--sm">View</a>
                             <a href="https://wa.me/919999999999?text=Hello%2C%20I%20am%20interested%20in%20VIP%20number%209999000099." target="_blank" class="btn btn--whatsapp btn--sm"><span class="iconify" data-icon="mdi:whatsapp"></span> Buy</a>
                         </div>
                     </div>
@@ -540,7 +554,6 @@
                             </div>
                         </div>
                         <div class="vip-card__actions">
-                            <a href="#" class="btn btn--outline btn--sm">View</a>
                             <a href="https://wa.me/919999999999?text=Hello%2C%20I%20am%20interested%20in%20VIP%20number%208888881234." target="_blank" class="btn btn--whatsapp btn--sm"><span class="iconify" data-icon="mdi:whatsapp"></span> Buy</a>
                         </div>
                     </div>
@@ -569,7 +582,6 @@
                             </div>
                         </div>
                         <div class="vip-card__actions">
-                            <a href="#" class="btn btn--outline btn--sm">View</a>
                             <a href="https://wa.me/919999999999?text=Hello%2C%20I%20am%20interested%20in%20VIP%20number%209999911111." target="_blank" class="btn btn--whatsapp btn--sm"><span class="iconify" data-icon="mdi:whatsapp"></span> Buy</a>
                         </div>
                     </div>
@@ -598,7 +610,6 @@
                             </div>
                         </div>
                         <div class="vip-card__actions">
-                            <a href="#" class="btn btn--outline btn--sm">View</a>
                             <a href="https://wa.me/919999999999?text=Hello%2C%20I%20am%20interested%20in%20VIP%20number%209988776655." target="_blank" class="btn btn--whatsapp btn--sm"><span class="iconify" data-icon="mdi:whatsapp"></span> Buy</a>
                         </div>
                     </div>
@@ -641,10 +652,58 @@
     <footer class="footer">
         <div class="container">
             <div class="footer__grid">
-                <div><a href="index.html" class="navbar__brand"><span class="navbar__brand-icon"><img src="logo.png" alt="Logo" class="navbar__logo"></span><span class="navbar__brand-text">Bhudev <span class="gold-text">Sim Store</span></span></a><p class="footer__brand-desc">India's trusted destination for premium VIP mobile numbers.</p><div class="footer__social"><a href="#" class="footer__social-link" aria-label="Facebook"><span class="iconify" data-icon="mdi:facebook"></span></a><a href="#" class="footer__social-link" aria-label="Instagram"><span class="iconify" data-icon="mdi:instagram"></span></a><a href="#" class="footer__social-link" aria-label="WhatsApp"><span class="iconify" data-icon="mdi:whatsapp"></span></a></div></div>
-                <div><h4 class="footer__heading">Quick Links</h4><ul class="footer__list"><li><a href="index.html">Home</a></li><li><a href="premium-numbers.html">Premium Numbers</a></li><li><a href="vip-number-filter.html">Filter Numbers</a></li><li><a href="about-us.html">About Us</a></li></ul></div>
-                <div><h4 class="footer__heading">Legal</h4><ul class="footer__list"><li><a href="privacy-policy.html">Privacy Policy</a></li><li><a href="privacy-policy.html">Shipping & Delivery</a></li><li><a href="privacy-policy.html">Refund & Cancellation</a></li></ul></div>
-                <div><h4 class="footer__heading">Contact Us</h4><ul class="footer__contact-list"><li><span class="iconify" data-icon="mdi:whatsapp"></span><span>+91 99999 99999</span></li><li><span class="iconify" data-icon="mdi:email"></span><span>support@bhudevsimstore.com</span></li></ul></div>
+                <div>
+                    <a href="index.html" class="navbar__brand">
+                        <span class="navbar__brand-icon">
+                            <img src="logo.png" alt="Bhudev Sim Store Logo" class="navbar__logo">
+                        </span>
+                        <span class="navbar__brand-text">Bhudev <span class="gold-text">Sim Store</span></span>
+                    </a>
+                    <p class="footer__brand-desc">Bhudev Sim Store specializes in premium VIP mobile numbers, including fancy, lucky, repeating, and business numbers. We help you find the perfect number that makes a lasting impression.</p>
+                    <div class="footer__social">
+                        <a href="#" class="footer__social-link" aria-label="Facebook"><span class="iconify" data-icon="mdi:facebook"></span></a>
+                        <a href="#" class="footer__social-link" aria-label="Instagram"><span class="iconify" data-icon="mdi:instagram"></span></a>
+                        <a href="#" class="footer__social-link" aria-label="WhatsApp"><span class="iconify" data-icon="mdi:whatsapp"></span></a>
+                        <a href="#" class="footer__social-link" aria-label="YouTube"><span class="iconify" data-icon="mdi:youtube"></span></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="footer__heading">Quick Links</h4>
+                    <ul class="footer__list">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="premium-numbers.html">Premium Numbers</a></li>
+                        <li><a href="filter-numbers.html">Filter Numbers</a></li>
+                        <li><a href="about-us.html">About Us</a></li>
+                        <li><a href="contact-us.html">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer__heading">Legal</h4>
+                    <ul class="footer__list">
+                        <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                        <li><a href="privacy-policy.html">Shipping & Delivery</a></li>
+                        <li><a href="privacy-policy.html">Refund & Cancellation</a></li>
+                        <li><a href="privacy-policy.html">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer__heading">Contact Us</h4>
+                    <ul class="footer__contact-list">
+                        <li>
+                            <span class="iconify" data-icon="mdi:map-marker"></span>
+                            <span>Main Market, New Delhi, India</span>
+                        </li>
+                        <li>
+                            <span class="iconify" data-icon="mdi:phone"></span>
+                            <span>+91 98765 43210</span>
+                            <small>Mon - Sat: 10am - 7pm</small>
+                        </li>
+                        <li>
+                            <span class="iconify" data-icon="mdi:email"></span>
+                            <span>support@bhudevsimstore.com</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
             <div class="footer__bottom"><p>&copy; 2026 Bhudev Sim Store. All Rights Reserved.</p></div>
         </div>
