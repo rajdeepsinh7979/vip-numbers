@@ -27,17 +27,17 @@
         </div>
         <nav class="sidebar-nav" aria-label="Main navigation">
             <p class="nav-section-label">Main</p>
-            <a href="dashboard.html" class="sidebar-link">
+            <a href="dashboard.php" class="sidebar-link">
                 <i data-lucide="layout-dashboard"></i> Dashboard
             </a>
-            <a href="add-numbers.html" class="sidebar-link active">
+            <a href="add-numbers.php" class="sidebar-link active">
                 <i data-lucide="phone"></i> Add Numbers
             </a>
-            <a href="numbers.html" class="sidebar-link">
+            <a href="numbers.php" class="sidebar-link">
                 <i data-lucide="check-circle"></i> Number List
             </a>
             <p class="nav-section-label nav-section-label--spaced">Settings</p>
-            <a href="profile.html" class="sidebar-link">
+            <a href="profile.php" class="sidebar-link">
                 <i data-lucide="user"></i> Profile
             </a>
             <a href="logout.php" class="sidebar-link">
@@ -120,10 +120,10 @@
                                 <div class="dropdown-user-name">Admin User</div>
                                 <div class="dropdown-header-email">admin@vipnumbers.com</div>
                             </div>
-                            <div class="dropdown-item" onclick="window.location.href='profile.html'">
+                            <div class="dropdown-item" onclick="window.location.href='profile.php'">
                                 <i data-lucide="user"></i> My Profile
                             </div>
-                            <div class="dropdown-item" onclick="window.location.href='dashboard.html'">
+                            <div class="dropdown-item" onclick="window.location.href='dashboard.php'">
                                 <i data-lucide="settings"></i> Settings
                             </div>
                             <div class="dropdown-divider"></div>
@@ -139,8 +139,8 @@
         <!-- Dashboard Content -->
         <div class="dashboard-content">
             <div class="page-layout">
-                <!-- Form Area -->
-                <form id="addNumberForm">
+                <!-- Form Area -->  
+                <form id="addNumberForm" method="post">
                 <div class="form-area">
                     <!-- Number Information -->
                     <section class="glass-card form-section reveal">
@@ -321,13 +321,13 @@
 
                     <!-- Actions -->
                     <div class="form-actions reveal">
-                        <button type="submit" class="btn-gold" onclick="saveNumber()">
+                        <button type="submit" class="btn-gold" onclick="saveNumber(event)">
                             <i data-lucide="save"></i> Save Number
                         </button>
                         <button type="button" class="btn-outline" onclick="resetForm()">
                             <i data-lucide="rotate-ccw"></i> Reset
                         </button>
-                        <button type="button" class="btn-ghost" onclick="window.location.href='numbers.html'">
+                        <button type="button" class="btn-ghost" onclick="window.location.href='numbers.php'">
                             Cancel
                         </button>
                     </div>
@@ -677,12 +677,12 @@ const previewCategory = document.getElementById('preview-category');
 if (categorySelect && previewCategory) {
     const categoryBadgeMap = {
         'VIP': 'badge--Vip',
-        'Premium': 'badge-Ppremium',
+        'Premium': 'badge--Premium',
         'Fancy': 'badge--Fancy',
         'Reserved': 'badge--Reserved',
         'Available': 'badge--Available',
         'Sold': 'badge--Sold'
-    };
+    };y
 
     function updatePreviewCategory() {
         const val = categorySelect.value;
@@ -703,8 +703,8 @@ if (categorySelect && previewCategory) {
         // =============================================
         // Form Actions
         // =============================================
-       function saveNumber() {
-
+       function saveNumber(event) {
+        if (event) event.preventDefault();
         const phone = document.getElementById("phoneNumber").value.trim();
         const category = document.getElementById("category").value;
         const originalPrice = document.getElementById("originalPrice").value;
@@ -757,7 +757,8 @@ if (categorySelect && previewCategory) {
 
         fetch("../api/add_number.php", {
             method: "POST",
-            body: formData
+            body: formData,
+            action: "dashboard"
         })
         .then(res => res.json())
         .then(async (data) => {
@@ -769,7 +770,7 @@ if (categorySelect && previewCategory) {
                     "green"
                 );
 
-                resetForm();
+               window.location.href = "dashboard.php";
             }
 
             showToast(data.message, data.success ? "success" : "error");
@@ -782,7 +783,6 @@ if (categorySelect && previewCategory) {
             showToast("Server Error", "error");
 
         });
-
     }
 
         function resetForm() {

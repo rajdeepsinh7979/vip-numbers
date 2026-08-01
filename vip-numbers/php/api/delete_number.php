@@ -1,10 +1,13 @@
 <?php
 
+header("Content-Type: application/json");
+
 require_once "../lib/db.php";
 
 // Check if ID exists
 if (!isset($_GET['id']) || empty($_GET['id'])) {
-    die("Invalid ID");
+    echo json_encode(["success" => false, "message" => "Invalid ID"]);
+    exit;
 }
 
 $id = (int)$_GET['id'];
@@ -21,7 +24,9 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result->num_rows == 0) {
-    die("Number not found");
+    echo json_encode(["success" => false, "message" => "Number not found"]);
+    $stmt->close();
+    exit;
 }
 
 $number = $result->fetch_assoc()['mobile_number'];
@@ -60,16 +65,13 @@ if ($stmt->execute()) {
     $log->execute();
     $log->close();
 
-    header("Location: ../admin/dashboard.php?deleted=1");
-    exit;
+    echo json_encode(["success" => true, "message" => $number . " deleted"]);
 
 } else {
 
-    echo "Delete failed.";
+    echo json_encode(["success" => false, "message" => "Delete failed: " . $stmt->error]);
 
 }
 
 $stmt->close();
 $conn->close();
-
-?>

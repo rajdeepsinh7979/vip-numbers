@@ -34,17 +34,17 @@
         <!-- Navigation -->
         <nav class="sidebar-nav" aria-label="Main navigation">
             <p class="nav-section-label">Main</p>
-            <a href="dashboard.html" class="sidebar-link active" data-section="stats">
+            <a href="dashboard.php" class="sidebar-link active" data-section="stats">
                 <i data-lucide="layout-dashboard"></i> Dashboard
             </a>
-            <a href="add-numbers.html" class="sidebar-link" data-section="numbers">
+            <a href="add-numbers.php" class="sidebar-link" data-section="numbers">
                 <i data-lucide="phone"></i>Add Numbers
             </a>
-            <a href="numbers.html" class="sidebar-link" data-section="numberStatus">
+            <a href="numbers.php" class="sidebar-link" data-section="numberStatus">
                 <i data-lucide="check-circle"></i> Number List & Status
             </a>
             <p class="nav-section-label nav-section-label--spaced">Settings</p>
-            <a href="profile.html" class="sidebar-link" data-section="profile">
+            <a href="profile.php" class="sidebar-link" data-section="profile">
                 <i data-lucide="user"></i> Profile
             </a>
             <a href="logout.php" class="sidebar-link">
@@ -108,7 +108,7 @@
                                 <p class="dropdown-header-name">Admin User</p>
                                 <p class="dropdown-header-email">admin@vipnumbers.com</p>
                             </div>
-                            <a href="profile.html" class="dropdown-item">
+                            <a href="profile.php" class="dropdown-item">
                                 <i data-lucide="user"></i> My Profile
                             </a>
                             <a href="logout.php" class="dropdown-item">
@@ -472,7 +472,7 @@
                             <div class="icon-wrap"><i data-lucide="file-bar-chart"></i></div>
                             <span>Reports</span>
                         </a>
-                        <a href="settings.html" class="quick-btn">
+                        <a href="settings.php" class="quick-btn">
                             <div class="icon-wrap"><i data-lucide="settings"></i></div>
                             <span>Settings</span>
                         </a>
@@ -803,6 +803,36 @@
             return "₹" + Number(price).toLocaleString("en-IN");
         }
 
+        // ========================================
+        // Delete a number (fetch instead of a plain <a href> link,
+        // since delete_number.php returns JSON, not a redirect)
+        // ========================================
+        async function deleteNumber(btn, id) {
+            if (!confirm('Delete this number?')) return;
+
+            btn.style.pointerEvents = 'none';
+
+            try {
+                const response = await fetch(`../api/delete_number.php?id=${encodeURIComponent(id)}`, { cache: 'no-store' });
+                const data = await response.json();
+
+                if (data.success) {
+                    // Refresh everything that could be affected by the delete
+                    loadRecentNumbers();
+                    loadDashboardStats();
+                    loadInventory();
+                    loadDistribution();
+                } else {
+                    alert(data.message || 'Could not delete number');
+                    btn.style.pointerEvents = '';
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Failed to reach the server');
+                btn.style.pointerEvents = '';
+            }
+        }
+
         function renderTable(data){
 
             const tbody = document.getElementById("tableBody");
@@ -872,12 +902,12 @@
                                 <i data-lucide="edit-3"></i>
                             </a>
 
-                            <a
-                                href="../api/delete_number.php?id=${n.id}"
+                            <button
+                                type="button"
                                 class="action-btn action-btn--danger"
-                                onclick="return confirm('Delete this number?')">
+                                onclick="deleteNumber(this, ${n.id})">
                                 <i data-lucide="trash-2"></i>
-                            </a>
+                            </button>
 
                         </div>
 

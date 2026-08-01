@@ -31,17 +31,17 @@
         </div>
         <nav class="sidebar-nav" aria-label="Main navigation">
             <p class="sidebar-nav-label">Main</p>
-            <a href="dashboard.html" class="sidebar-link">
+            <a href="dashboard.php" class="sidebar-link">
                 <i data-lucide="layout-dashboard"></i> Dashboard
             </a>
-            <a href="add-numbers.html" class="sidebar-link">
+            <a href="add-numbers.php" class="sidebar-link">
                 <i data-lucide="phone"></i>Add Numbers
             </a>
-            <a href="numbers.html" class="sidebar-link active">
+            <a href="numbers.php" class="sidebar-link active">
                 <i data-lucide="check-circle"></i> Number List & Status
             </a>
             <p class="sidebar-nav-label">Settings</p>
-            <a href="profile.html" class="sidebar-link">
+            <a href="profile.php" class="sidebar-link">
                 <i data-lucide="user"></i> Profile
             </a>
             <a href="logout.php" class="sidebar-link">
@@ -74,9 +74,9 @@
                     </div>
                 </div>
                 <div class="header-right">
-                    <form method="GET" action="number-status.php" class="header-search-box">
+                    <form action="#" class="header-search-box" id="headerSearchForm">
                         <i data-lucide="search" class="header-search-icon"></i>
-                        <input type="text" name="search" placeholder="Quick search..." class="header-search-input">
+                        <input type="text" name="search" id="headerSearchInput" placeholder="Quick search..." class="header-search-input">
                     </form>
                     <button class="header-icon-btn" id="filterToggleBtn" aria-label="Toggle filters">
                         <i data-lucide="sliders-horizontal"></i>
@@ -131,7 +131,7 @@
                                 <p class="dropdown-profile-name">Admin User</p>
                                 <p class="dropdown-profile-email">admin@vipnumbers.com</p>
                             </div>
-                            <a href="profile.html" class="dropdown-item"><i data-lucide="user"></i> My Profile</a>
+                            <a href="profile.php" class="dropdown-item"><i data-lucide="user"></i> My Profile</a>
                             <a href="logout.php" class="dropdown-item"><i data-lucide="log-out"></i> Logout</a>
                         </div>
                     </div>
@@ -146,12 +146,8 @@
                     <div class="stat-card-inner">
                         <div class="stat-info">
                             <p class="stat-label">Total Numbers</p>
-                            <p class="stat-value">25</p>
-                            <div class="stat-trend">
-                                <i data-lucide="trending-up" style="color:var(--green);"></i>
-                                <span class="stat-trend-value" style="color:var(--green);">+12.5%</span>
-                                <span class="stat-trend-period">vs last month</span>
-                            </div>
+                            <p class="stat-value" id="statTotalCount">—</p>
+                            <div class="stat-trend" id="statTotalTrend"></div>
                         </div>
                         <div class="stat-icon" style="background:rgba(74,157,255,0.1);">
                             <i data-lucide="phone" style="color:var(--accent-blue);"></i>
@@ -162,12 +158,8 @@
                     <div class="stat-card-inner">
                         <div class="stat-info">
                             <p class="stat-label">Available Numbers</p>
-                            <p class="stat-value">17</p>
-                            <div class="stat-trend">
-                                <i data-lucide="trending-up" style="color:var(--green);"></i>
-                                <span class="stat-trend-value" style="color:var(--green);">+8.3%</span>
-                                <span class="stat-trend-period">vs last month</span>
-                            </div>
+                            <p class="stat-value" id="statAvailableCount">—</p>
+                            <div class="stat-trend" id="statAvailableTrend"></div>
                         </div>
                         <div class="stat-icon" style="background:rgba(34,197,94,0.1);">
                             <i data-lucide="check-circle" style="color:var(--green);"></i>
@@ -178,12 +170,8 @@
                     <div class="stat-card-inner">
                         <div class="stat-info">
                             <p class="stat-label">Sold Numbers</p>
-                            <p class="stat-value">8</p>
-                            <div class="stat-trend">
-                                <i data-lucide="trending-up" style="color:var(--red);"></i>
-                                <span class="stat-trend-value" style="color:var(--red);">+22.1%</span>
-                                <span class="stat-trend-period">vs last month</span>
-                            </div>
+                            <p class="stat-value" id="statSoldCount">—</p>
+                            <div class="stat-trend" id="statSoldTrend"></div>
                         </div>
                         <div class="stat-icon" style="background:rgba(239,68,68,0.1);">
                             <i data-lucide="x-circle" style="color:var(--red);"></i>
@@ -194,12 +182,8 @@
                     <div class="stat-card-inner">
                         <div class="stat-info">
                             <p class="stat-label">Premium Numbers</p>
-                            <p class="stat-value">8</p>
-                            <div class="stat-trend">
-                                <i data-lucide="trending-up" style="color:var(--accent);"></i>
-                                <span class="stat-trend-value" style="color:var(--accent);">+18.2%</span>
-                                <span class="stat-trend-period">vs last month</span>
-                            </div>
+                            <p class="stat-value" id="statPremiumCount">—</p>
+                            <div class="stat-trend" id="statPremiumTrend"></div>
                         </div>
                         <div class="stat-icon" style="background:rgba(212,175,55,0.1);">
                             <i data-lucide="crown" style="color:var(--accent);"></i>
@@ -210,7 +194,7 @@
 
             <!-- Filters Section -->
             <section class="glass-card glass-card--static filter-section reveal" id="filterPanel">
-                <form method="GET" action="number-status.php" id="filterForm">
+                <form action="#" id="filterForm">
                     <div class="filter-grid" style="align-items: flex-end;">
                         <div class="filter-group">
                             <label class="filter-label" for="filterSearch">Search Number</label>
@@ -255,12 +239,9 @@
             <!-- Bulk Actions Bar -->
             <div class="bulk-bar" id="bulkBar" style="display:none;">
                 <span class="bulk-count" id="bulkCount">0 selected</span>
-                <form method="POST" action="bulk_update.php" class="bulk-form" id="bulkForm">
-                    <input type="hidden" name="ids" id="bulkIds" value="">
-                    <button type="submit" name="action" value="available" class="bulk-btn gold">Mark Available</button>
-                    <button type="submit" name="action" value="sold" class="bulk-btn">Mark Sold</button>
-                    <button type="submit" name="action" value="delete" formaction="bulk_delete.php" class="bulk-btn red">Delete</button>
-                </form>
+                <button type="button" class="bulk-btn gold" id="bulkAvailableBtn">Mark Available</button>
+                <button type="button" class="bulk-btn" id="bulkSoldBtn">Mark Sold</button>
+                <button type="button" class="bulk-btn red" id="bulkDeleteBtn">Delete</button>
                 <button type="button" class="bulk-btn" id="bulkCancelBtn">Cancel</button>
             </div>
 
@@ -283,701 +264,27 @@
                                 <th style="text-align:right;">Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="custom-checkbox row-checkbox" data-id="1" role="checkbox" aria-checked="false" aria-label="Select row 1">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                </td>
-                                <td><span class="row-number">9999 0011 22</span></td>
-                                <td><span class="badge badge-fancy">Fancy</span></td>
-                                <td><span class="badge badge-available">Available</span></td>
-                                <td>2025-01-15 14:30</td>
-                                <td>
-                                    <form method="POST" action="update_status.php" class="status-update-form">
-                                        <input type="hidden" name="id" value="1">
-                                        <select name="status" class="status-select status-available" onchange="this.form.submit()">
-                                            <option value="Available" selected>Available</option>
-                                            <option value="Sold">Sold</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="action-btns">
-                                        <button type="button" class="action-btn gold" onclick="openViewModal(this)" data-number="9999 0011 22" data-category="Fancy" data-original-price="₹55,000" data-selling-price="₹45,000" data-status="Available" data-date="2025-01-15" data-updated="2025-01-15 14:30" title="View details"><i data-lucide="eye"></i></button>
-                                        <a href="edit.php?id=1" class="action-btn" title="Edit"><i data-lucide="pencil"></i></a>
-                                        <form method="POST" action="delete.php" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this number?')"><input type="hidden" name="id" value="1"><button type="submit" class="action-btn" title="Delete"><i data-lucide="trash-2"></i></button></form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="custom-checkbox row-checkbox" data-id="2" role="checkbox" aria-checked="false" aria-label="Select row 2">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                </td>
-                                <td><span class="row-number">8888 7777 66</span></td>
-                                <td><span class="badge badge-premium">Premium</span></td>
-                                <td><span class="badge badge-sold">Sold</span></td>
-                                <td>2025-01-14 18:22</td>
-                                <td>
-                                    <form method="POST" action="update_status.php" class="status-update-form">
-                                        <input type="hidden" name="id" value="2">
-                                        <select name="status" class="status-select status-sold" onchange="this.form.submit()">
-                                            <option value="Available">Available</option>
-                                            <option value="Sold" selected>Sold</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="action-btns">
-                                        <button type="button" class="action-btn gold" onclick="openViewModal(this)" data-number="8888 7777 66" data-category="Premium" data-original-price="₹1,50,000" data-selling-price="₹1,25,000" data-status="Sold" data-date="2025-01-14" data-updated="2025-01-14 18:22" title="View details"><i data-lucide="eye"></i></button>
-                                        <a href="edit.php?id=2" class="action-btn" title="Edit"><i data-lucide="pencil"></i></a>
-                                        <form method="POST" action="delete.php" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this number?')"><input type="hidden" name="id" value="2"><button type="submit" class="action-btn" title="Delete"><i data-lucide="trash-2"></i></button></form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="custom-checkbox row-checkbox" data-id="3" role="checkbox" aria-checked="false" aria-label="Select row 3">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                </td>
-                                <td><span class="row-number">7777 6666 55</span></td>
-                                <td><span class="badge badge-vip">VIP</span></td>
-                                <td><span class="badge badge-available">Available</span></td>
-                                <td>2025-01-14 11:05</td>
-                                <td>
-                                    <form method="POST" action="update_status.php" class="status-update-form">
-                                        <input type="hidden" name="id" value="3">
-                                        <select name="status" class="status-select status-available" onchange="this.form.submit()">
-                                            <option value="Available" selected>Available</option>
-                                            <option value="Sold">Sold</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="action-btns">
-                                        <button type="button" class="action-btn gold" onclick="openViewModal(this)" data-number="7777 6666 55" data-category="VIP" data-original-price="₹95,000" data-selling-price="₹78,000" data-status="Available" data-date="2025-01-14" data-updated="2025-01-14 11:05" title="View details"><i data-lucide="eye"></i></button>
-                                        <a href="edit.php?id=3" class="action-btn" title="Edit"><i data-lucide="pencil"></i></a>
-                                        <form method="POST" action="delete.php" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this number?')"><input type="hidden" name="id" value="3"><button type="submit" class="action-btn" title="Delete"><i data-lucide="trash-2"></i></button></form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="custom-checkbox row-checkbox" data-id="4" role="checkbox" aria-checked="false" aria-label="Select row 4">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                </td>
-                                <td><span class="row-number">9999 1111 22</span></td>
-                                <td><span class="badge badge-fancy">Fancy</span></td>
-                                <td><span class="badge badge-available">Available</span></td>
-                                <td>2025-01-13 09:47</td>
-                                <td>
-                                    <form method="POST" action="update_status.php" class="status-update-form">
-                                        <input type="hidden" name="id" value="4">
-                                        <select name="status" class="status-select status-available" onchange="this.form.submit()">
-                                            <option value="Available" selected>Available</option>
-                                            <option value="Sold">Sold</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="action-btns">
-                                        <button type="button" class="action-btn gold" onclick="openViewModal(this)" data-number="9999 1111 22" data-category="Fancy" data-original-price="₹70,000" data-selling-price="₹55,000" data-status="Available" data-date="2025-01-13" data-updated="2025-01-13 09:47" title="View details"><i data-lucide="eye"></i></button>
-                                        <a href="edit.php?id=4" class="action-btn" title="Edit"><i data-lucide="pencil"></i></a>
-                                        <form method="POST" action="delete.php" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this number?')"><input type="hidden" name="id" value="4"><button type="submit" class="action-btn" title="Delete"><i data-lucide="trash-2"></i></button></form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="custom-checkbox row-checkbox" data-id="5" role="checkbox" aria-checked="false" aria-label="Select row 5">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                </td>
-                                <td><span class="row-number">8888 0000 99</span></td>
-                                <td><span class="badge badge-vip">VIP</span></td>
-                                <td><span class="badge badge-available">Available</span></td>
-                                <td>2025-01-13 16:33</td>
-                                <td>
-                                    <form method="POST" action="update_status.php" class="status-update-form">
-                                        <input type="hidden" name="id" value="5">
-                                        <select name="status" class="status-select status-available" onchange="this.form.submit()">
-                                            <option value="Available" selected>Available</option>
-                                            <option value="Sold">Sold</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="action-btns">
-                                        <button type="button" class="action-btn gold" onclick="openViewModal(this)" data-number="8888 0000 99" data-category="VIP" data-original-price="₹2,50,000" data-selling-price="₹2,10,000" data-status="Available" data-date="2025-01-13" data-updated="2025-01-13 16:33" title="View details"><i data-lucide="eye"></i></button>
-                                        <a href="edit.php?id=5" class="action-btn" title="Edit"><i data-lucide="pencil"></i></a>
-                                        <form method="POST" action="delete.php" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this number?')"><input type="hidden" name="id" value="5"><button type="submit" class="action-btn" title="Delete"><i data-lucide="trash-2"></i></button></form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="custom-checkbox row-checkbox" data-id="6" role="checkbox" aria-checked="false" aria-label="Select row 6">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                </td>
-                                <td><span class="row-number">6666 5555 44</span></td>
-                                <td><span class="badge badge-fancy">Fancy</span></td>
-                                <td><span class="badge badge-sold">Sold</span></td>
-                                <td>2025-01-12 20:18</td>
-                                <td>
-                                    <form method="POST" action="update_status.php" class="status-update-form">
-                                        <input type="hidden" name="id" value="6">
-                                        <select name="status" class="status-select status-sold" onchange="this.form.submit()">
-                                            <option value="Available">Available</option>
-                                            <option value="Sold" selected>Sold</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="action-btns">
-                                        <button type="button" class="action-btn gold" onclick="openViewModal(this)" data-number="6666 5555 44" data-category="Fancy" data-original-price="₹40,000" data-selling-price="₹32,000" data-status="Sold" data-date="2025-01-12" data-updated="2025-01-12 20:18" title="View details"><i data-lucide="eye"></i></button>
-                                        <a href="edit.php?id=6" class="action-btn" title="Edit"><i data-lucide="pencil"></i></a>
-                                        <form method="POST" action="delete.php" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this number?')"><input type="hidden" name="id" value="6"><button type="submit" class="action-btn" title="Delete"><i data-lucide="trash-2"></i></button></form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="custom-checkbox row-checkbox" data-id="7" role="checkbox" aria-checked="false" aria-label="Select row 7">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                </td>
-                                <td><span class="row-number">9999 8888 77</span></td>
-                                <td><span class="badge badge-premium">Premium</span></td>
-                                <td><span class="badge badge-available">Available</span></td>
-                                <td>2025-01-12 08:55</td>
-                                <td>
-                                    <form method="POST" action="update_status.php" class="status-update-form">
-                                        <input type="hidden" name="id" value="7">
-                                        <select name="status" class="status-select status-available" onchange="this.form.submit()">
-                                            <option value="Available" selected>Available</option>
-                                            <option value="Sold">Sold</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="action-btns">
-                                        <button type="button" class="action-btn gold" onclick="openViewModal(this)" data-number="9999 8888 77" data-category="Premium" data-original-price="₹2,20,000" data-selling-price="₹1,85,000" data-status="Available" data-date="2025-01-12" data-updated="2025-01-12 08:55" title="View details"><i data-lucide="eye"></i></button>
-                                        <a href="edit.php?id=7" class="action-btn" title="Edit"><i data-lucide="pencil"></i></a>
-                                        <form method="POST" action="delete.php" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this number?')"><input type="hidden" name="id" value="7"><button type="submit" class="action-btn" title="Delete"><i data-lucide="trash-2"></i></button></form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="custom-checkbox row-checkbox" data-id="8" role="checkbox" aria-checked="false" aria-label="Select row 8">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                </td>
-                                <td><span class="row-number">7777 0000 88</span></td>
-                                <td><span class="badge badge-vip">VIP</span></td>
-                                <td><span class="badge badge-available">Available</span></td>
-                                <td>2025-01-11 13:40</td>
-                                <td>
-                                    <form method="POST" action="update_status.php" class="status-update-form">
-                                        <input type="hidden" name="id" value="8">
-                                        <select name="status" class="status-select status-available" onchange="this.form.submit()">
-                                            <option value="Available" selected>Available</option>
-                                            <option value="Sold">Sold</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="action-btns">
-                                        <button type="button" class="action-btn gold" onclick="openViewModal(this)" data-number="7777 0000 88" data-category="VIP" data-original-price="₹80,000" data-selling-price="₹65,000" data-status="Available" data-date="2025-01-11" data-updated="2025-01-11 13:40" title="View details"><i data-lucide="eye"></i></button>
-                                        <a href="edit.php?id=8" class="action-btn" title="Edit"><i data-lucide="pencil"></i></a>
-                                        <form method="POST" action="delete.php" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this number?')"><input type="hidden" name="id" value="8"><button type="submit" class="action-btn" title="Delete"><i data-lucide="trash-2"></i></button></form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="custom-checkbox row-checkbox" data-id="9" role="checkbox" aria-checked="false" aria-label="Select row 9">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                </td>
-                                <td><span class="row-number">5555 4444 33</span></td>
-                                <td><span class="badge badge-fancy">Fancy</span></td>
-                                <td><span class="badge badge-sold">Sold</span></td>
-                                <td>2025-01-11 07:12</td>
-                                <td>
-                                    <form method="POST" action="update_status.php" class="status-update-form">
-                                        <input type="hidden" name="id" value="9">
-                                        <select name="status" class="status-select status-sold" onchange="this.form.submit()">
-                                            <option value="Available">Available</option>
-                                            <option value="Sold" selected>Sold</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="action-btns">
-                                        <button type="button" class="action-btn gold" onclick="openViewModal(this)" data-number="5555 4444 33" data-category="Fancy" data-original-price="₹28,000" data-selling-price="₹22,000" data-status="Sold" data-date="2025-01-11" data-updated="2025-01-11 07:12" title="View details"><i data-lucide="eye"></i></button>
-                                        <a href="edit.php?id=9" class="action-btn" title="Edit"><i data-lucide="pencil"></i></a>
-                                        <form method="POST" action="delete.php" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this number?')"><input type="hidden" name="id" value="9"><button type="submit" class="action-btn" title="Delete"><i data-lucide="trash-2"></i></button></form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="custom-checkbox row-checkbox" data-id="10" role="checkbox" aria-checked="false" aria-label="Select row 10">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                </td>
-                                <td><span class="row-number">9999 7777 66</span></td>
-                                <td><span class="badge badge-premium">Premium</span></td>
-                                <td><span class="badge badge-available">Available</span></td>
-                                <td>2025-01-10 15:28</td>
-                                <td>
-                                    <form method="POST" action="update_status.php" class="status-update-form">
-                                        <input type="hidden" name="id" value="10">
-                                        <select name="status" class="status-select status-available" onchange="this.form.submit()">
-                                            <option value="Available" selected>Available</option>
-                                            <option value="Sold">Sold</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="action-btns">
-                                        <button type="button" class="action-btn gold" onclick="openViewModal(this)" data-number="9999 7777 66" data-category="Premium" data-original-price="₹1,80,000" data-selling-price="₹1,55,000" data-status="Available" data-date="2025-01-10" data-updated="2025-01-10 15:28" title="View details"><i data-lucide="eye"></i></button>
-                                        <a href="edit.php?id=10" class="action-btn" title="Edit"><i data-lucide="pencil"></i></a>
-                                        <form method="POST" action="delete.php" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this number?')"><input type="hidden" name="id" value="10"><button type="submit" class="action-btn" title="Delete"><i data-lucide="trash-2"></i></button></form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="custom-checkbox row-checkbox" data-id="11" role="checkbox" aria-checked="false" aria-label="Select row 11">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                </td>
-                                <td><span class="row-number">8888 6666 55</span></td>
-                                <td><span class="badge badge-vip">VIP</span></td>
-                                <td><span class="badge badge-sold">Sold</span></td>
-                                <td>2025-01-10 22:05</td>
-                                <td>
-                                    <form method="POST" action="update_status.php" class="status-update-form">
-                                        <input type="hidden" name="id" value="11">
-                                        <select name="status" class="status-select status-sold" onchange="this.form.submit()">
-                                            <option value="Available">Available</option>
-                                            <option value="Sold" selected>Sold</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="action-btns">
-                                        <button type="button" class="action-btn gold" onclick="openViewModal(this)" data-number="8888 6666 55" data-category="VIP" data-original-price="₹1,20,000" data-selling-price="₹98,000" data-status="Sold" data-date="2025-01-10" data-updated="2025-01-10 22:05" title="View details"><i data-lucide="eye"></i></button>
-                                        <a href="edit.php?id=11" class="action-btn" title="Edit"><i data-lucide="pencil"></i></a>
-                                        <form method="POST" action="delete.php" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this number?')"><input type="hidden" name="id" value="11"><button type="submit" class="action-btn" title="Delete"><i data-lucide="trash-2"></i></button></form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="custom-checkbox row-checkbox" data-id="12" role="checkbox" aria-checked="false" aria-label="Select row 12">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                </td>
-                                <td><span class="row-number">7777 8888 99</span></td>
-                                <td><span class="badge badge-fancy">Fancy</span></td>
-                                <td><span class="badge badge-available">Available</span></td>
-                                <td>2025-01-09 10:15</td>
-                                <td>
-                                    <form method="POST" action="update_status.php" class="status-update-form">
-                                        <input type="hidden" name="id" value="12">
-                                        <select name="status" class="status-select status-available" onchange="this.form.submit()">
-                                            <option value="Available" selected>Available</option>
-                                            <option value="Sold">Sold</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="action-btns">
-                                        <button type="button" class="action-btn gold" onclick="openViewModal(this)" data-number="7777 8888 99" data-category="Fancy" data-original-price="₹65,000" data-selling-price="₹52,000" data-status="Available" data-date="2025-01-09" data-updated="2025-01-09 10:15" title="View details"><i data-lucide="eye"></i></button>
-                                        <a href="edit.php?id=12" class="action-btn" title="Edit"><i data-lucide="pencil"></i></a>
-                                        <form method="POST" action="delete.php" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this number?')"><input type="hidden" name="id" value="12"><button type="submit" class="action-btn" title="Delete"><i data-lucide="trash-2"></i></button></form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="custom-checkbox row-checkbox" data-id="13" role="checkbox" aria-checked="false" aria-label="Select row 13">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                </td>
-                                <td><span class="row-number">9999 3333 44</span></td>
-                                <td><span class="badge badge-premium">Premium</span></td>
-                                <td><span class="badge badge-available">Available</span></td>
-                                <td>2025-01-09 17:42</td>
-                                <td>
-                                    <form method="POST" action="update_status.php" class="status-update-form">
-                                        <input type="hidden" name="id" value="13">
-                                        <select name="status" class="status-select status-available" onchange="this.form.submit()">
-                                            <option value="Available" selected>Available</option>
-                                            <option value="Sold">Sold</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="action-btns">
-                                        <button type="button" class="action-btn gold" onclick="openViewModal(this)" data-number="9999 3333 44" data-category="Premium" data-original-price="₹1,70,000" data-selling-price="₹1,40,000" data-status="Available" data-date="2025-01-09" data-updated="2025-01-09 17:42" title="View details"><i data-lucide="eye"></i></button>
-                                        <a href="edit.php?id=13" class="action-btn" title="Edit"><i data-lucide="pencil"></i></a>
-                                        <form method="POST" action="delete.php" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this number?')"><input type="hidden" name="id" value="13"><button type="submit" class="action-btn" title="Delete"><i data-lucide="trash-2"></i></button></form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="custom-checkbox row-checkbox" data-id="14" role="checkbox" aria-checked="false" aria-label="Select row 14">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                </td>
-                                <td><span class="row-number">8888 2222 33</span></td>
-                                <td><span class="badge badge-vip">VIP</span></td>
-                                <td><span class="badge badge-sold">Sold</span></td>
-                                <td>2025-01-08 12:30</td>
-                                <td>
-                                    <form method="POST" action="update_status.php" class="status-update-form">
-                                        <input type="hidden" name="id" value="14">
-                                        <select name="status" class="status-select status-sold" onchange="this.form.submit()">
-                                            <option value="Available">Available</option>
-                                            <option value="Sold" selected>Sold</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="action-btns">
-                                        <button type="button" class="action-btn gold" onclick="openViewModal(this)" data-number="8888 2222 33" data-category="VIP" data-original-price="₹1,10,000" data-selling-price="₹90,000" data-status="Sold" data-date="2025-01-08" data-updated="2025-01-08 12:30" title="View details"><i data-lucide="eye"></i></button>
-                                        <a href="edit.php?id=14" class="action-btn" title="Edit"><i data-lucide="pencil"></i></a>
-                                        <form method="POST" action="delete.php" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this number?')"><input type="hidden" name="id" value="14"><button type="submit" class="action-btn" title="Delete"><i data-lucide="trash-2"></i></button></form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="custom-checkbox row-checkbox" data-id="15" role="checkbox" aria-checked="false" aria-label="Select row 15">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                </td>
-                                <td><span class="row-number">6666 7777 88</span></td>
-                                <td><span class="badge badge-fancy">Fancy</span></td>
-                                <td><span class="badge badge-available">Available</span></td>
-                                <td>2025-01-08 06:55</td>
-                                <td>
-                                    <form method="POST" action="update_status.php" class="status-update-form">
-                                        <input type="hidden" name="id" value="15">
-                                        <select name="status" class="status-select status-available" onchange="this.form.submit()">
-                                            <option value="Available" selected>Available</option>
-                                            <option value="Sold">Sold</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="action-btns">
-                                        <button type="button" class="action-btn gold" onclick="openViewModal(this)" data-number="6666 7777 88" data-category="Fancy" data-original-price="₹35,000" data-selling-price="₹28,000" data-status="Available" data-date="2025-01-08" data-updated="2025-01-08 06:55" title="View details"><i data-lucide="eye"></i></button>
-                                        <a href="edit.php?id=15" class="action-btn" title="Edit"><i data-lucide="pencil"></i></a>
-                                        <form method="POST" action="delete.php" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this number?')"><input type="hidden" name="id" value="15"><button type="submit" class="action-btn" title="Delete"><i data-lucide="trash-2"></i></button></form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="custom-checkbox row-checkbox" data-id="16" role="checkbox" aria-checked="false" aria-label="Select row 16">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                </td>
-                                <td><span class="row-number">9999 0000 99</span></td>
-                                <td><span class="badge badge-premium">Premium</span></td>
-                                <td><span class="badge badge-available">Available</span></td>
-                                <td>2025-01-07 19:18</td>
-                                <td>
-                                    <form method="POST" action="update_status.php" class="status-update-form">
-                                        <input type="hidden" name="id" value="16">
-                                        <select name="status" class="status-select status-available" onchange="this.form.submit()">
-                                            <option value="Available" selected>Available</option>
-                                            <option value="Sold">Sold</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="action-btns">
-                                        <button type="button" class="action-btn gold" onclick="openViewModal(this)" data-number="9999 0000 99" data-category="Premium" data-original-price="₹3,00,000" data-selling-price="₹2,60,000" data-status="Available" data-date="2025-01-07" data-updated="2025-01-07 19:18" title="View details"><i data-lucide="eye"></i></button>
-                                        <a href="edit.php?id=16" class="action-btn" title="Edit"><i data-lucide="pencil"></i></a>
-                                        <form method="POST" action="delete.php" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this number?')"><input type="hidden" name="id" value="16"><button type="submit" class="action-btn" title="Delete"><i data-lucide="trash-2"></i></button></form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="custom-checkbox row-checkbox" data-id="17" role="checkbox" aria-checked="false" aria-label="Select row 17">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                </td>
-                                <td><span class="row-number">7777 1111 22</span></td>
-                                <td><span class="badge badge-vip">VIP</span></td>
-                                <td><span class="badge badge-sold">Sold</span></td>
-                                <td>2025-01-07 14:02</td>
-                                <td>
-                                    <form method="POST" action="update_status.php" class="status-update-form">
-                                        <input type="hidden" name="id" value="17">
-                                        <select name="status" class="status-select status-sold" onchange="this.form.submit()">
-                                            <option value="Available">Available</option>
-                                            <option value="Sold" selected>Sold</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="action-btns">
-                                        <button type="button" class="action-btn gold" onclick="openViewModal(this)" data-number="7777 1111 22" data-category="VIP" data-original-price="₹85,000" data-selling-price="₹70,000" data-status="Sold" data-date="2025-01-07" data-updated="2025-01-07 14:02" title="View details"><i data-lucide="eye"></i></button>
-                                        <a href="edit.php?id=17" class="action-btn" title="Edit"><i data-lucide="pencil"></i></a>
-                                        <form method="POST" action="delete.php" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this number?')"><input type="hidden" name="id" value="17"><button type="submit" class="action-btn" title="Delete"><i data-lucide="trash-2"></i></button></form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="custom-checkbox row-checkbox" data-id="18" role="checkbox" aria-checked="false" aria-label="Select row 18">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                </td>
-                                <td><span class="row-number">8888 5555 66</span></td>
-                                <td><span class="badge badge-fancy">Fancy</span></td>
-                                <td><span class="badge badge-available">Available</span></td>
-                                <td>2025-01-06 09:38</td>
-                                <td>
-                                    <form method="POST" action="update_status.php" class="status-update-form">
-                                        <input type="hidden" name="id" value="18">
-                                        <select name="status" class="status-select status-available" onchange="this.form.submit()">
-                                            <option value="Available" selected>Available</option>
-                                            <option value="Sold">Sold</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="action-btns">
-                                        <button type="button" class="action-btn gold" onclick="openViewModal(this)" data-number="8888 5555 66" data-category="Fancy" data-original-price="₹45,000" data-selling-price="₹36,000" data-status="Available" data-date="2025-01-06" data-updated="2025-01-06 09:38" title="View details"><i data-lucide="eye"></i></button>
-                                        <a href="edit.php?id=18" class="action-btn" title="Edit"><i data-lucide="pencil"></i></a>
-                                        <form method="POST" action="delete.php" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this number?')"><input type="hidden" name="id" value="18"><button type="submit" class="action-btn" title="Delete"><i data-lucide="trash-2"></i></button></form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="custom-checkbox row-checkbox" data-id="19" role="checkbox" aria-checked="false" aria-label="Select row 19">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                </td>
-                                <td><span class="row-number">9999 2222 33</span></td>
-                                <td><span class="badge badge-premium">Premium</span></td>
-                                <td><span class="badge badge-available">Available</span></td>
-                                <td>2025-01-06 21:45</td>
-                                <td>
-                                    <form method="POST" action="update_status.php" class="status-update-form">
-                                        <input type="hidden" name="id" value="19">
-                                        <select name="status" class="status-select status-available" onchange="this.form.submit()">
-                                            <option value="Available" selected>Available</option>
-                                            <option value="Sold">Sold</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="action-btns">
-                                        <button type="button" class="action-btn gold" onclick="openViewModal(this)" data-number="9999 2222 33" data-category="Premium" data-original-price="₹1,95,000" data-selling-price="₹1,65,000" data-status="Available" data-date="2025-01-06" data-updated="2025-01-06 21:45" title="View details"><i data-lucide="eye"></i></button>
-                                        <a href="edit.php?id=19" class="action-btn" title="Edit"><i data-lucide="pencil"></i></a>
-                                        <form method="POST" action="delete.php" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this number?')"><input type="hidden" name="id" value="19"><button type="submit" class="action-btn" title="Delete"><i data-lucide="trash-2"></i></button></form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="custom-checkbox row-checkbox" data-id="20" role="checkbox" aria-checked="false" aria-label="Select row 20">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                </td>
-                                <td><span class="row-number">6666 8888 99</span></td>
-                                <td><span class="badge badge-vip">VIP</span></td>
-                                <td><span class="badge badge-sold">Sold</span></td>
-                                <td>2025-01-05 11:20</td>
-                                <td>
-                                    <form method="POST" action="update_status.php" class="status-update-form">
-                                        <input type="hidden" name="id" value="20">
-                                        <select name="status" class="status-select status-sold" onchange="this.form.submit()">
-                                            <option value="Available">Available</option>
-                                            <option value="Sold" selected>Sold</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="action-btns">
-                                        <button type="button" class="action-btn gold" onclick="openViewModal(this)" data-number="6666 8888 99" data-category="VIP" data-original-price="₹1,30,000" data-selling-price="₹1,08,000" data-status="Sold" data-date="2025-01-05" data-updated="2025-01-05 11:20" title="View details"><i data-lucide="eye"></i></button>
-                                        <a href="edit.php?id=20" class="action-btn" title="Edit"><i data-lucide="pencil"></i></a>
-                                        <form method="POST" action="delete.php" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this number?')"><input type="hidden" name="id" value="20"><button type="submit" class="action-btn" title="Delete"><i data-lucide="trash-2"></i></button></form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="custom-checkbox row-checkbox" data-id="21" role="checkbox" aria-checked="false" aria-label="Select row 21">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                </td>
-                                <td><span class="row-number">7777 5555 66</span></td>
-                                <td><span class="badge badge-fancy">Fancy</span></td>
-                                <td><span class="badge badge-available">Available</span></td>
-                                <td>2025-01-05 16:55</td>
-                                <td>
-                                    <form method="POST" action="update_status.php" class="status-update-form">
-                                        <input type="hidden" name="id" value="21">
-                                        <select name="status" class="status-select status-available" onchange="this.form.submit()">
-                                            <option value="Available" selected>Available</option>
-                                            <option value="Sold">Sold</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="action-btns">
-                                        <button type="button" class="action-btn gold" onclick="openViewModal(this)" data-number="7777 5555 66" data-category="Fancy" data-original-price="₹38,000" data-selling-price="₹30,000" data-status="Available" data-date="2025-01-05" data-updated="2025-01-05 16:55" title="View details"><i data-lucide="eye"></i></button>
-                                        <a href="edit.php?id=21" class="action-btn" title="Edit"><i data-lucide="pencil"></i></a>
-                                        <form method="POST" action="delete.php" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this number?')"><input type="hidden" name="id" value="21"><button type="submit" class="action-btn" title="Delete"><i data-lucide="trash-2"></i></button></form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="custom-checkbox row-checkbox" data-id="22" role="checkbox" aria-checked="false" aria-label="Select row 22">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                </td>
-                                <td><span class="row-number">8888 3333 44</span></td>
-                                <td><span class="badge badge-premium">Premium</span></td>
-                                <td><span class="badge badge-available">Available</span></td>
-                                <td>2025-01-04 08:10</td>
-                                <td>
-                                    <form method="POST" action="update_status.php" class="status-update-form">
-                                        <input type="hidden" name="id" value="22">
-                                        <select name="status" class="status-select status-available" onchange="this.form.submit()">
-                                            <option value="Available" selected>Available</option>
-                                            <option value="Sold">Sold</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="action-btns">
-                                        <button type="button" class="action-btn gold" onclick="openViewModal(this)" data-number="8888 3333 44" data-category="Premium" data-original-price="₹1,60,000" data-selling-price="₹1,35,000" data-status="Available" data-date="2025-01-04" data-updated="2025-01-04 08:10" title="View details"><i data-lucide="eye"></i></button>
-                                        <a href="edit.php?id=22" class="action-btn" title="Edit"><i data-lucide="pencil"></i></a>
-                                        <form method="POST" action="delete.php" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this number?')"><input type="hidden" name="id" value="22"><button type="submit" class="action-btn" title="Delete"><i data-lucide="trash-2"></i></button></form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="custom-checkbox row-checkbox" data-id="23" role="checkbox" aria-checked="false" aria-label="Select row 23">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                </td>
-                                <td><span class="row-number">9999 4444 55</span></td>
-                                <td><span class="badge badge-vip">VIP</span></td>
-                                <td><span class="badge badge-sold">Sold</span></td>
-                                <td>2025-01-04 20:33</td>
-                                <td>
-                                    <form method="POST" action="update_status.php" class="status-update-form">
-                                        <input type="hidden" name="id" value="23">
-                                        <select name="status" class="status-select status-sold" onchange="this.form.submit()">
-                                            <option value="Available">Available</option>
-                                            <option value="Sold" selected>Sold</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="action-btns">
-                                        <button type="button" class="action-btn gold" onclick="openViewModal(this)" data-number="9999 4444 55" data-category="VIP" data-original-price="₹2,40,000" data-selling-price="₹2,00,000" data-status="Sold" data-date="2025-01-04" data-updated="2025-01-04 20:33" title="View details"><i data-lucide="eye"></i></button>
-                                        <a href="edit.php?id=23" class="action-btn" title="Edit"><i data-lucide="pencil"></i></a>
-                                        <form method="POST" action="delete.php" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this number?')"><input type="hidden" name="id" value="23"><button type="submit" class="action-btn" title="Delete"><i data-lucide="trash-2"></i></button></form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="custom-checkbox row-checkbox" data-id="24" role="checkbox" aria-checked="false" aria-label="Select row 24">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                </td>
-                                <td><span class="row-number">5555 6666 77</span></td>
-                                <td><span class="badge badge-fancy">Fancy</span></td>
-                                <td><span class="badge badge-available">Available</span></td>
-                                <td>2025-01-03 13:15</td>
-                                <td>
-                                    <form method="POST" action="update_status.php" class="status-update-form">
-                                        <input type="hidden" name="id" value="24">
-                                        <select name="status" class="status-select status-available" onchange="this.form.submit()">
-                                            <option value="Available" selected>Available</option>
-                                            <option value="Sold">Sold</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="action-btns">
-                                        <button type="button" class="action-btn gold" onclick="openViewModal(this)" data-number="5555 6666 77" data-category="Fancy" data-original-price="₹32,000" data-selling-price="₹25,000" data-status="Available" data-date="2025-01-03" data-updated="2025-01-03 13:15" title="View details"><i data-lucide="eye"></i></button>
-                                        <a href="edit.php?id=24" class="action-btn" title="Edit"><i data-lucide="pencil"></i></a>
-                                        <form method="POST" action="delete.php" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this number?')"><input type="hidden" name="id" value="24"><button type="submit" class="action-btn" title="Delete"><i data-lucide="trash-2"></i></button></form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="custom-checkbox row-checkbox" data-id="25" role="checkbox" aria-checked="false" aria-label="Select row 25">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                </td>
-                                <td><span class="row-number">8888 9999 00</span></td>
-                                <td><span class="badge badge-premium">Premium</span></td>
-                                <td><span class="badge badge-available">Available</span></td>
-                                <td>2025-01-03 07:42</td>
-                                <td>
-                                    <form method="POST" action="update_status.php" class="status-update-form">
-                                        <input type="hidden" name="id" value="25">
-                                        <select name="status" class="status-select status-available" onchange="this.form.submit()">
-                                            <option value="Available" selected>Available</option>
-                                            <option value="Sold">Sold</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="action-btns">
-                                        <button type="button" class="action-btn gold" onclick="openViewModal(this)" data-number="8888 9999 00" data-category="Premium" data-original-price="₹2,75,000" data-selling-price="₹2,30,000" data-status="Available" data-date="2025-01-03" data-updated="2025-01-03 07:42" title="View details"><i data-lucide="eye"></i></button>
-                                        <a href="edit.php?id=25" class="action-btn" title="Edit"><i data-lucide="pencil"></i></a>
-                                        <form method="POST" action="delete.php" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this number?')"><input type="hidden" name="id" value="25"><button type="submit" class="action-btn" title="Delete"><i data-lucide="trash-2"></i></button></form>
-                                    </div>
-                                </td>
-                            </tr>
+                        <tbody id="numbersTableBody">
+                            <!-- rows injected dynamically from get_all_numbers.php -->
                         </tbody>
                     </table>
 
-                    <!-- Empty State (hidden, shown by PHP when no results) -->
+                    <!-- Empty State -->
                     <div class="empty-state" id="emptyState" style="display:none;">
                         <div class="empty-icon">
                             <i data-lucide="search-x"></i>
                         </div>
                         <h3 class="empty-title">No VIP numbers found</h3>
                         <p class="empty-description">Try adjusting your search or filter criteria</p>
-                        <a href="number-status.php" class="btn-gold">
+                        <button type="button" class="btn-gold" id="resetFiltersBtn">
                             <i data-lucide="rotate-ccw"></i> Reset Filters
-                        </a>
+                        </button>
                     </div>
                 </div>
 
                 <!-- Result Count Bar -->
                 <div class="result-count-bar">
-                    <span class="result-text">25 numbers found</span>
+                    <span class="result-text" id="resultCountText">Loading…</span>
                     <button class="back-to-top-btn" id="scrollToTopBtn">
                         <i data-lucide="arrow-up"></i> Back to top
                     </button>
@@ -996,8 +303,6 @@
                 </div>
                 <div class="footer-meta">
                     <span>v2.4.1</span>
-                    <span class="footer-dot"></span>
-                    <span>Last updated: Jan 15, 2025</span>
                     <span class="footer-dot"></span>
                     <span>2025 All Rights Reserved</span>
                 </div>
@@ -1018,57 +323,55 @@
         </div>
     </div>
 
+    <!-- Toast container -->
+    <div class="toast-container" id="toastContainer"></div>
+
     <script>
         /* =============================================
-           Initialize Lucide Icons
+           Config
+        ============================================= */
+        var STATS_API   = '../api/dashboard_stats.php';
+        var LIST_API    = '../api/get_all_numbers.php';
+        var DELETE_API  = '../api/delete_number.php';
+        var EDIT_PAGE   = 'update-number.php';
+        var MARK_AVAILABLE_API = '../api/mark_available.php';
+        var MARK_SOLD_API      = '../api/mark_sold.php';
+        var BULK_DELETE_API    = '../api/delete_numbers.php';
+
+        /* =============================================
+           Initialize
         ============================================= */
         document.addEventListener('DOMContentLoaded', function() {
             lucide.createIcons();
             initScrollReveal();
             initEventListeners();
+            initTableDelegation();
+            loadStats();
+            loadNumbers();
         });
 
         /* =============================================
            Event Listener Setup
         ============================================= */
         function initEventListeners() {
-            // Sidebar toggle (mobile)
             var menuToggle = document.getElementById('menuToggle');
             var sidebarOverlay = document.getElementById('sidebarOverlay');
             if (menuToggle) menuToggle.addEventListener('click', toggleSidebar);
             if (sidebarOverlay) sidebarOverlay.addEventListener('click', toggleSidebar);
 
-            // Select all checkbox
             var selectAllCb = document.getElementById('selectAllCheckbox');
             if (selectAllCb) selectAllCb.addEventListener('click', toggleSelectAll);
 
-            // Individual row checkboxes
-            document.querySelectorAll('.row-checkbox').forEach(function(cb) {
-                cb.addEventListener('click', function() {
-                    toggleRowSelect(this);
-                });
-            });
-
-            // Bulk cancel button
             var bulkCancelBtn = document.getElementById('bulkCancelBtn');
             if (bulkCancelBtn) bulkCancelBtn.addEventListener('click', clearSelection);
 
-            // Bulk form - collect selected IDs before submit
-            var bulkForm = document.getElementById('bulkForm');
-            if (bulkForm) {
-                bulkForm.addEventListener('submit', function() {
-                    var ids = [];
-                    document.querySelectorAll('.row-checkbox.checked').forEach(function(cb) {
-                        ids.push(cb.dataset.id);
-                    });
-                    document.getElementById('bulkIds').value = ids.join(',');
-                    if (ids.length === 0) {
-                        return false;
-                    }
-                });
-            }
+            var bulkAvailableBtn = document.getElementById('bulkAvailableBtn');
+            var bulkSoldBtn = document.getElementById('bulkSoldBtn');
+            var bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+            if (bulkAvailableBtn) bulkAvailableBtn.addEventListener('click', function() { performBulkAction('available'); });
+            if (bulkSoldBtn) bulkSoldBtn.addEventListener('click', function() { performBulkAction('sold'); });
+            if (bulkDeleteBtn) bulkDeleteBtn.addEventListener('click', function() { performBulkAction('delete'); });
 
-            // Dropdown toggles
             var notifBtn = document.getElementById('notifBtn');
             var profileBtn = document.getElementById('profileBtn');
             if (notifBtn) notifBtn.addEventListener('click', function(e) {
@@ -1080,7 +383,6 @@
                 toggleDropdown('profileDropdown');
             });
 
-            // Close dropdowns on outside click
             document.addEventListener('click', function(e) {
                 if (!e.target.closest('.dropdown-trigger')) {
                     document.querySelectorAll('.dropdown').forEach(function(d) {
@@ -1089,35 +391,30 @@
                 }
             });
 
-            // Filter panel toggle
             var filterToggleBtn = document.getElementById('filterToggleBtn');
             if (filterToggleBtn) filterToggleBtn.addEventListener('click', toggleFilterPanel);
 
-            // Refresh button
             var refreshBtn = document.getElementById('refreshBtn');
             if (refreshBtn) refreshBtn.addEventListener('click', function() {
-                location.reload();
+                loadStats();
+                loadNumbers();
             });
 
-            // Modal close
             var viewModalClose = document.getElementById('viewModalClose');
             if (viewModalClose) viewModalClose.addEventListener('click', function() {
                 closeModal('viewModal');
             });
 
-            // Close modal on overlay click
             var viewModal = document.getElementById('viewModal');
             if (viewModal) viewModal.addEventListener('click', function(e) {
                 if (e.target === this) closeModal('viewModal');
             });
 
-            // Table scroll - show/hide back to top
             var tableScrollWrapper = document.getElementById('tableScrollWrapper');
             if (tableScrollWrapper) {
                 tableScrollWrapper.addEventListener('scroll', handleTableScroll);
             }
 
-            // Back to top button
             var scrollToTopBtn = document.getElementById('scrollToTopBtn');
             if (scrollToTopBtn) {
                 scrollToTopBtn.addEventListener('click', function() {
@@ -1125,7 +422,23 @@
                 });
             }
 
-            // Show profile username on larger screens
+            var resetFiltersBtn = document.getElementById('resetFiltersBtn');
+            if (resetFiltersBtn) resetFiltersBtn.addEventListener('click', resetFilters);
+
+            var filterForm = document.getElementById('filterForm');
+            if (filterForm) filterForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                document.getElementById('headerSearchInput').value = document.getElementById('filterSearch').value;
+                loadNumbers();
+            });
+
+            var headerSearchForm = document.getElementById('headerSearchForm');
+            if (headerSearchForm) headerSearchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                document.getElementById('filterSearch').value = document.getElementById('headerSearchInput').value;
+                loadNumbers();
+            });
+
             updateProfileVisibility();
             window.addEventListener('resize', updateProfileVisibility);
         }
@@ -1137,17 +450,23 @@
             }
         }
 
+        function resetFilters() {
+            document.getElementById('filterSearch').value = '';
+            document.getElementById('filterCategory').value = 'all';
+            document.getElementById('filterStatus').value = 'all';
+            document.getElementById('filterSort').value = 'latest';
+            document.getElementById('headerSearchInput').value = '';
+            loadNumbers();
+        }
+
         /* =============================================
-           Sidebar Toggle
+           Sidebar / Dropdowns / Filter Panel
         ============================================= */
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
             document.getElementById('sidebarOverlay').classList.toggle('visible');
         }
 
-        /* =============================================
-           Dropdown Toggle
-        ============================================= */
         function toggleDropdown(id) {
             var dd = document.getElementById(id);
             var isOpen = dd.classList.contains('visible');
@@ -1157,14 +476,258 @@
             if (!isOpen) dd.classList.add('visible');
         }
 
-        /* =============================================
-           Filter Panel Toggle
-        ============================================= */
         var filterPanelVisible = true;
         function toggleFilterPanel() {
             var panel = document.getElementById('filterPanel');
             filterPanelVisible = !filterPanelVisible;
             panel.style.display = filterPanelVisible ? 'block' : 'none';
+        }
+
+        /* =============================================
+           Stats Cards
+        ============================================= */
+        function renderTrend(elId, percent) {
+            var el = document.getElementById(elId);
+            if (!el) return;
+            var p = Number(percent) || 0;
+            var icon = p > 0 ? 'trending-up' : (p < 0 ? 'trending-down' : 'minus');
+            var color = p > 0 ? 'var(--green)' : (p < 0 ? 'var(--red)' : 'rgba(255,255,255,0.4)');
+            var sign = p > 0 ? '+' : '';
+            el.innerHTML =
+                '<i data-lucide="' + icon + '" style="color:' + color + ';"></i>' +
+                '<span class="stat-trend-value" style="color:' + color + ';">' + sign + p + '%</span>' +
+                '<span class="stat-trend-period">vs last month</span>';
+        }
+
+        function loadStats() {
+            fetch(STATS_API, { cache: 'no-store' })
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    if (!data || !data.total) return;
+                    document.getElementById('statTotalCount').textContent = data.total.count;
+                    document.getElementById('statAvailableCount').textContent = data.available.count;
+                    document.getElementById('statSoldCount').textContent = data.reserved.count;
+                    document.getElementById('statPremiumCount').textContent = data.premium.count;
+
+                    renderTrend('statTotalTrend', data.total.percent);
+                    renderTrend('statAvailableTrend', data.available.percent);
+                    renderTrend('statSoldTrend', data.reserved.percent);
+                    renderTrend('statPremiumTrend', data.premium.percent);
+                    lucide.createIcons();
+                })
+                .catch(function() {
+                    showToast('Failed to load dashboard stats', 'error');
+                });
+        }
+
+        /* =============================================
+           Table: load + render
+        ============================================= */
+        function formatMobile(num) {
+            if (!num) return '';
+            var digits = String(num).replace(/\D/g, '');
+            if (digits.length !== 10) return digits;
+            return digits.slice(0, 4) + ' ' + digits.slice(4, 8) + ' ' + digits.slice(8);
+        }
+
+        function formatCurrency(val) {
+            var n = Number(val) || 0;
+            return '\u20B9' + n.toLocaleString('en-IN');
+        }
+
+        function formatDateTime(str) {
+            if (!str) return '—';
+            var d = new Date(str.replace(' ', 'T'));
+            if (isNaN(d)) return str;
+            return d.toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) + ' ' +
+                   d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function formatDateOnly(str) {
+            if (!str) return '—';
+            var d = new Date(str.replace(' ', 'T'));
+            if (isNaN(d)) return str;
+            return d.toISOString().slice(0, 10);
+        }
+
+        function categoryBadgeClass(cat) {
+            var map = { VIP: 'badge-vip', Premium: 'badge-premium', Fancy: 'badge-fancy' };
+            return map[cat] || 'badge-fancy';
+        }
+
+        function buildQueryParams() {
+            var params = new URLSearchParams();
+            var search = document.getElementById('filterSearch').value.trim();
+            var category = document.getElementById('filterCategory').value;
+            var status = document.getElementById('filterStatus').value;
+            var sort = document.getElementById('filterSort').value;
+            if (search) params.set('search', search);
+            if (category && category !== 'all') params.set('category', category);
+            if (status && status !== 'all') params.set('status', status);
+            if (sort) params.set('sort', sort);
+            return params.toString();
+        }
+
+        function loadNumbers() {
+            var qs = buildQueryParams();
+            fetch(LIST_API + (qs ? '?' + qs : ''), { cache: 'no-store' })
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    if (!data.success) {
+                        showToast(data.message || 'Could not load numbers', 'error');
+                        return;
+                    }
+                    renderTable(data.numbers);
+                })
+                .catch(function() {
+                    showToast('Failed to reach the server', 'error');
+                });
+        }
+
+        function renderTable(numbers) {
+            var tbody = document.getElementById('numbersTableBody');
+            var emptyState = document.getElementById('emptyState');
+            var table = document.getElementById('numbersTable');
+            var resultText = document.getElementById('resultCountText');
+
+            tbody.innerHTML = '';
+
+            if (!numbers || numbers.length === 0) {
+                table.style.display = 'none';
+                emptyState.style.display = 'flex';
+                resultText.textContent = '0 numbers found';
+                clearSelection();
+                return;
+            }
+
+            table.style.display = '';
+            emptyState.style.display = 'none';
+            resultText.textContent = numbers.length + ' number' + (numbers.length === 1 ? '' : 's') + ' found';
+
+            numbers.forEach(function(num) {
+                var tr = document.createElement('tr');
+                tr.setAttribute('data-id', num.id);
+
+                var statusClass = num.status === 'Available' ? 'status-available' : 'status-sold';
+                var badgeClass = num.status === 'Available' ? 'badge-available' : 'badge-sold';
+
+                tr.innerHTML =
+                    '<td><div class="custom-checkbox row-checkbox" data-id="' + num.id + '" role="checkbox" aria-checked="false" aria-label="Select row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div></td>' +
+                    '<td><span class="row-number">' + formatMobile(num.mobile_number) + '</span></td>' +
+                    '<td><span class="badge ' + categoryBadgeClass(num.category) + '">' + (num.category || '—') + '</span></td>' +
+                    '<td><span class="badge ' + badgeClass + '">' + num.status + '</span></td>' +
+                    '<td>' + formatDateTime(num.updated_at) + '</td>' +
+                    '<td>' +
+                        '<select class="status-select ' + statusClass + '" data-id="' + num.id + '">' +
+                            '<option value="Available"' + (num.status === 'Available' ? ' selected' : '') + '>Available</option>' +
+                            '<option value="Sold"' + (num.status === 'Sold' ? ' selected' : '') + '>Sold</option>' +
+                        '</select>' +
+                    '</td>' +
+                    '<td style="text-align:right;">' +
+                        '<div class="action-btns">' +
+                            '<button type="button" class="action-btn gold view-btn" data-id="' + num.id + '" title="View details"><i data-lucide="eye"></i></button>' +
+                            '<a href="' + EDIT_PAGE + '?id=' + num.id + '" class="action-btn" title="Edit"><i data-lucide="pencil"></i></a>' +
+                            '<button type="button" class="action-btn delete-btn" data-id="' + num.id + '" title="Delete"><i data-lucide="trash-2"></i></button>' +
+                        '</div>' +
+                    '</td>';
+
+                // stash the raw record on the row for the view modal
+                tr._record = num;
+                tbody.appendChild(tr);
+            });
+
+            lucide.createIcons();
+        }
+
+        // Delegated listeners — attached ONCE to the tbody instead of per-row,
+        // so re-rendering the table never leaves stale/duplicate handlers around.
+        function initTableDelegation() {
+            var tbody = document.getElementById('numbersTableBody');
+            if (!tbody) return;
+
+            tbody.addEventListener('click', function(e) {
+                var checkboxEl = e.target.closest('.row-checkbox');
+                if (checkboxEl) {
+                    toggleRowSelect(checkboxEl);
+                    return;
+                }
+
+                var viewBtn = e.target.closest('.view-btn');
+                if (viewBtn) {
+                    var tr = viewBtn.closest('tr');
+                    openViewModal(tr._record);
+                    return;
+                }
+
+                var deleteBtn = e.target.closest('.delete-btn');
+                if (deleteBtn) {
+                    var id = deleteBtn.getAttribute('data-id');
+                    if (!confirm('Are you sure you want to delete this number?')) return;
+
+                    deleteBtn.disabled = true;
+
+                    fetch(DELETE_API + '?id=' + encodeURIComponent(id), { cache: 'no-store' })
+                        .then(function(res) { return res.json(); })
+                        .then(function(data) {
+                            if (data.success) {
+                                showToast(data.message || 'Number deleted', 'success');
+                                var row = deleteBtn.closest('tr');
+                                if (row) row.remove();
+                                updateResultCountAfterRemoval();
+                                loadStats();
+                            } else {
+                                showToast(data.message || 'Could not delete number', 'error');
+                                deleteBtn.disabled = false;
+                            }
+                        })
+                        .catch(function() {
+                            showToast('Failed to reach the server', 'error');
+                            deleteBtn.disabled = false;
+                        });
+                    return;
+                }
+            });
+
+            tbody.addEventListener('change', function(e) {
+                var sel = e.target.closest('.status-select');
+                if (!sel) return;
+
+                var id = sel.getAttribute('data-id');
+                var newStatus = sel.value;
+                var api = newStatus === 'Available' ? MARK_AVAILABLE_API : MARK_SOLD_API;
+                var formData = new FormData();
+                formData.append('ids[]', id);
+
+                sel.disabled = true;
+
+                fetch(api, { method: 'POST', body: formData })
+                    .then(function(res) { return res.json(); })
+                    .then(function(data) {
+                        if (data.success) {
+                            showToast(data.message || 'Status updated', 'success');
+                            loadStats();
+                            loadNumbers();
+                        } else {
+                            showToast(data.message || 'Could not update status', 'error');
+                            loadNumbers();
+                        }
+                    })
+                    .catch(function() {
+                        showToast('Failed to reach the server', 'error');
+                        sel.disabled = false;
+                    });
+            });
+        }
+
+        function updateResultCountAfterRemoval() {
+            var tbody = document.getElementById('numbersTableBody');
+            var remaining = tbody.querySelectorAll('tr').length;
+            var resultText = document.getElementById('resultCountText');
+            resultText.textContent = remaining + ' number' + (remaining === 1 ? '' : 's') + ' found';
+            if (remaining === 0) {
+                document.getElementById('numbersTable').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'flex';
+            }
         }
 
         /* =============================================
@@ -1195,23 +758,30 @@
 
         function clearSelection() {
             var selectAll = document.getElementById('selectAllCheckbox');
-            selectAll.classList.remove('checked');
-            selectAll.setAttribute('aria-checked', 'false');
-
+            if (selectAll) {
+                selectAll.classList.remove('checked');
+                selectAll.setAttribute('aria-checked', 'false');
+            }
             document.querySelectorAll('.row-checkbox').forEach(function(cb) {
                 cb.classList.remove('checked');
                 cb.setAttribute('aria-checked', 'false');
                 cb.closest('tr').classList.remove('selected-row');
             });
-
             updateBulkBar();
         }
 
+        function getSelectedIds() {
+            var ids = [];
+            document.querySelectorAll('.row-checkbox.checked').forEach(function(cb) {
+                ids.push(cb.dataset.id);
+            });
+            return ids;
+        }
+
         function updateBulkBar() {
-            var checked = document.querySelectorAll('.row-checkbox.checked').length;
+            var checked = getSelectedIds().length;
             var bar = document.getElementById('bulkBar');
             var count = document.getElementById('bulkCount');
-
             if (checked > 0) {
                 bar.style.display = 'flex';
                 count.textContent = checked + ' selected';
@@ -1221,49 +791,85 @@
         }
 
         /* =============================================
+           Bulk Actions
+        ============================================= */
+        function performBulkAction(action) {
+            var ids = getSelectedIds();
+            if (ids.length === 0) {
+                showToast('Select at least one number first', 'error');
+                return;
+            }
+
+            var api, confirmMsg, successVerb;
+            if (action === 'available') {
+                api = MARK_AVAILABLE_API;
+                confirmMsg = 'Mark ' + ids.length + ' number(s) as Available?';
+            } else if (action === 'sold') {
+                api = MARK_SOLD_API;
+                confirmMsg = 'Mark ' + ids.length + ' number(s) as Sold?';
+            } else if (action === 'delete') {
+                api = BULK_DELETE_API;
+                confirmMsg = 'Delete ' + ids.length + ' number(s)? This cannot be undone.';
+            } else {
+                return;
+            }
+
+            if (!confirm(confirmMsg)) return;
+
+            var formData = new FormData();
+            ids.forEach(function(id) { formData.append('ids[]', id); });
+
+            fetch(api, { method: 'POST', body: formData })
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    if (data.success) {
+                        showToast(data.message || 'Done', 'success');
+                        clearSelection();
+                        loadStats();
+                        loadNumbers();
+                    } else {
+                        showToast(data.message || 'Bulk action failed', 'error');
+                    }
+                })
+                .catch(function() { showToast('Failed to reach the server', 'error'); });
+        }
+
+        /* =============================================
            View Modal
         ============================================= */
-        function openViewModal(btn) {
+        function openViewModal(num) {
             var modal = document.getElementById('viewModal');
             var content = document.getElementById('viewModalContent');
 
-            var number = btn.dataset.number;
-            var category = btn.dataset.category;
-            var origPrice = btn.dataset.originalPrice;
-            var sellPrice = btn.dataset.sellingPrice;
-            var status = btn.dataset.status;
-            var date = btn.dataset.date;
-            var updated = btn.dataset.updated;
-
-            var categoryBadgeClass = 'badge-' + category.toLowerCase();
-            var statusBadgeClass = status === 'Available' ? 'badge-available' : 'badge-sold';
+            var badgeClass = categoryBadgeClass(num.category);
+            var statusBadgeClass = num.status === 'Available' ? 'badge-available' : 'badge-sold';
 
             content.innerHTML =
-                '<div class="modal-number-display">' + number + '</div>' +
+                '<div class="modal-number-display">' + formatMobile(num.mobile_number) + '</div>' +
                 '<div class="modal-details-grid">' +
                     '<div class="modal-detail-item">' +
                         '<span class="modal-detail-label">Category</span>' +
-                        '<span class="badge ' + categoryBadgeClass + '">' + category + '</span>' +
+                        '<span class="badge ' + badgeClass + '">' + num.category + '</span>' +
                     '</div>' +
                     '<div class="modal-detail-item">' +
                         '<span class="modal-detail-label">Status</span>' +
-                        '<span class="badge ' + statusBadgeClass + '">' + status + '</span>' +
+                        '<span class="badge ' + statusBadgeClass + '">' + num.status + '</span>' +
                     '</div>' +
                     '<div class="modal-detail-item">' +
                         '<span class="modal-detail-label">Original Price</span>' +
-                        '<span class="modal-detail-value">' + origPrice + '</span>' +
+                        '<span class="modal-detail-value">' + formatCurrency(num.original_price) + '</span>' +
                     '</div>' +
                     '<div class="modal-detail-item">' +
                         '<span class="modal-detail-label">Selling Price</span>' +
-                        '<span class="modal-detail-value">' + sellPrice + '</span>' +
+                        '<span class="modal-detail-value">' + formatCurrency(num.selling_price) + '</span>' +
                     '</div>' +
                     '<div class="modal-detail-item">' +
                         '<span class="modal-detail-label">Date Added</span>' +
-                        '<span class="modal-detail-value">' + date + '</span>' +
+                        '<span class="modal-detail-value">' + formatDateOnly(num.created_at) + '</span>' +
                     '</div>' +
                     '<div class="modal-detail-item">' +
                         '<span class="modal-detail-label">Last Updated</span>' +
-                        '<span class="modal-detail-value">' + updated + '</span>' +
+                        '<span class="modal-detail-value">' + formatDateTime(num.updated_at) + '</span>' +
                     '</div>' +
                 '</div>';
 
@@ -1285,61 +891,69 @@
         }
 
         /* =============================================
+           Toasts
+        ============================================= */
+        function showToast(message, type) {
+            type = type || 'info';
+            var container = document.getElementById('toastContainer');
+            var toast = document.createElement('div');
+            toast.className = 'toast ' + type;
+            var iconMap = { success: 'check-circle', error: 'x-circle', info: 'info' };
+            toast.innerHTML = '<i data-lucide="' + iconMap[type] + '" style="width:18px;height:18px;flex-shrink:0;"></i><span>' + message + '</span>';
+            container.appendChild(toast);
+            lucide.createIcons();
+            requestAnimationFrame(function() { toast.classList.add('show'); });
+            setTimeout(function() {
+                toast.classList.remove('show');
+                setTimeout(function() { toast.remove(); }, 400);
+            }, 3000);
+        }
+
+        /* =============================================
            Scroll Reveal Animation
         ============================================= */
         function initScrollReveal() {
             var observer = new IntersectionObserver(function(entries) {
-                entries.forEach(function(entry, index) {
+                entries.forEach(function(entry) {
                     if (entry.isIntersecting) {
-                        var delay = Array.prototype.indexOf.call(
-                            document.querySelectorAll('.reveal'), entry.target
-                        ) * 80;
-                        setTimeout(function() {
-                            entry.target.classList.add('visible');
-                        }, delay);
+                        entry.target.classList.add('visible');
                         observer.unobserve(entry.target);
                     }
                 });
             }, { threshold: 0.1 });
-
-            document.querySelectorAll('.reveal').forEach(function(el) {
-                observer.observe(el);
-            });
+            document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
         }
+
         /* =============================================
-   Mobile Dropdown Enhancements
-============================================= */
-(function() {
-    // Close all dropdowns when tapping outside on mobile
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('.dropdown-trigger')) {
-            document.querySelectorAll('.dropdown.visible').forEach(function(d) {
-                d.classList.remove('visible');
+           Mobile Dropdown Enhancements
+        ============================================= */
+        (function() {
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown-trigger')) {
+                    document.querySelectorAll('.dropdown.visible').forEach(function(d) {
+                        d.classList.remove('visible');
+                    });
+                }
             });
-        }
-    });
 
-    // Close any open dropdown when the mobile menu toggle is tapped,
-    // preventing dropdown from lingering behind the sidebar overlay
-    var menuToggle = document.getElementById('menuToggle');
-    if (menuToggle) {
-        menuToggle.addEventListener('click', function() {
-            document.querySelectorAll('.dropdown.visible').forEach(function(d) {
-                d.classList.remove('visible');
-            });
-        });
-    }
+            var menuToggle = document.getElementById('menuToggle');
+            if (menuToggle) {
+                menuToggle.addEventListener('click', function() {
+                    document.querySelectorAll('.dropdown.visible').forEach(function(d) {
+                        d.classList.remove('visible');
+                    });
+                });
+            }
 
-    // Close any open dropdown when the sidebar overlay is tapped
-    var sidebarOverlay = document.getElementById('sidebarOverlay');
-    if (sidebarOverlay) {
-        sidebarOverlay.addEventListener('click', function() {
-            document.querySelectorAll('.dropdown.visible').forEach(function(d) {
-                d.classList.remove('visible');
-            });
-        });
-    }
-})();
+            var sidebarOverlay = document.getElementById('sidebarOverlay');
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', function() {
+                    document.querySelectorAll('.dropdown.visible').forEach(function(d) {
+                        d.classList.remove('visible');
+                    });
+                });
+            }
+        })();
     </script>
 </body>
 </html>

@@ -26,11 +26,11 @@
         </div>
         <nav class="sidebar-nav" aria-label="Main navigation">
             <p class="nav-section-label">Main</p>
-            <a href="dashboard.html" class="sidebar-link"><i data-lucide="layout-dashboard"></i> Dashboard</a>
-            <a href="add-numbers.html" class="sidebar-link"><i data-lucide="phone"></i> Add Numbers</a>
-            <a href="numbers.html" class="sidebar-link active"><i data-lucide="check-circle"></i> Number List & Status</a>
+            <a href="dashboard.php" class="sidebar-link"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+            <a href="add-numbers.php" class="sidebar-link"><i data-lucide="phone"></i> Add Numbers</a>
+            <a href="numbers.php" class="sidebar-link active"><i data-lucide="check-circle"></i> Number List & Status</a>
             <p class="nav-section-label nav-section-label--spaced">Settings</p>
-            <a href="profile.html" class="sidebar-link"><i data-lucide="user"></i> Profile</a>
+            <a href="profile.php" class="sidebar-link"><i data-lucide="user"></i> Profile</a>
             <a href="logout.php" class="sidebar-link"><i data-lucide="log-out"></i> Logout</a>
         </nav>
         <div class="sidebar-footer">
@@ -71,7 +71,7 @@
                         </button>
                         <div class="dropdown" id="profileDropdown">
                             <div class="dropdown-header"><p class="dropdown-user-name">Admin User</p><p class="dropdown-header-email">admin@vipnumbers.com</p></div>
-                            <a href="profile.html" class="dropdown-item"><i data-lucide="user"></i> My Profile</a>
+                            <a href="profile.php" class="dropdown-item"><i data-lucide="user"></i> My Profile</a>
                             <div class="dropdown-divider"></div>
                             <a href="logout.php" class="dropdown-item dropdown-item--danger"><i data-lucide="log-out"></i> Logout</a>
                         </div>
