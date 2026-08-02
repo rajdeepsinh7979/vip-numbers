@@ -1,3 +1,4 @@
+<?php require_once "../api/auth.php"; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,7 +41,7 @@
             <a href="profile.php" class="sidebar-link">
                 <i data-lucide="user"></i> Profile
             </a>
-            <a href="logout.php" class="sidebar-link">
+            <a href="../api/logout.php" class="sidebar-link">
                 <i data-lucide="log-out"></i> Logout
             </a>
         </nav>
@@ -127,7 +128,7 @@
                                 <i data-lucide="settings"></i> Settings
                             </div>
                             <div class="dropdown-divider"></div>
-                            <div class="dropdown-item dropdown-item--danger" onclick="window.location.href='logout.php'">
+                            <div class="dropdown-item dropdown-item--danger" onclick="window.location.href='../api/logout.php'">
                                 <i data-lucide="log-out"></i> Logout
                             </div>
                         </div>

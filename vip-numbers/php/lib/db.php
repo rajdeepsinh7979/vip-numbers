@@ -6,6 +6,10 @@ $dbname = 'vip_numbers_db';
 $dbuser = 'root';
 $dbpass = '';
 
+$MAIL ='jalpitparmar1234@gmail.com';
+$APP_PASSWORD = 'bmbf bgad tgve nyeu';
+$LINK = 'http://localhost/vip-numbers/vip-numbers/php/forgot-password.php?cod=';
+
 $conn = new mysqli($host, $dbuser, $dbpass, $dbname);
 
 if ($conn->connect_error) {

@@ -1,3 +1,4 @@
+<?php require_once "../api/auth.php"; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,7 +32,7 @@
             <a href="numbers.php" class="sidebar-link active"><i data-lucide="check-circle"></i> Number List & Status</a>
             <p class="nav-section-label nav-section-label--spaced">Settings</p>
             <a href="profile.php" class="sidebar-link"><i data-lucide="user"></i> Profile</a>
-            <a href="logout.php" class="sidebar-link"><i data-lucide="log-out"></i> Logout</a>
+            <a href="../api/logout.php" class="sidebar-link"><i data-lucide="log-out"></i> Logout</a>
         </nav>
         <div class="sidebar-footer">
             <div class="sidebar-health-card">
@@ -73,7 +74,7 @@
                             <div class="dropdown-header"><p class="dropdown-user-name">Admin User</p><p class="dropdown-header-email">admin@vipnumbers.com</p></div>
                             <a href="profile.php" class="dropdown-item"><i data-lucide="user"></i> My Profile</a>
                             <div class="dropdown-divider"></div>
-                            <a href="logout.php" class="dropdown-item dropdown-item--danger"><i data-lucide="log-out"></i> Logout</a>
+                            <a href="../api/logout.php" class="dropdown-item dropdown-item--danger"><i data-lucide="log-out"></i> Logout</a>
                         </div>
                     </div>
                 </div>
