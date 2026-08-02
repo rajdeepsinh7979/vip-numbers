@@ -79,6 +79,14 @@ $response=[
         )
     ],
 
+    "sold"=>[
+        "count"=>getCount($conn,"status='Sold'"),
+        "percent"=>percentage(
+            getMonthCount($conn,"status='Sold'"),
+            getLastMonthCount($conn,"status='Sold'")
+        )
+    ],
+
     "premium"=>[
         "count"=>getCount($conn,"category='Premium'"),
         "percent"=>percentage(

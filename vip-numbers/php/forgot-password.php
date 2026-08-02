@@ -415,10 +415,16 @@
 
             fetch(RESET_API, { method: 'POST', body: formData, cache: 'no-store' })
                 .then(function(res) { return res.json(); })
-                .then(function(data) {
+                .then(async function(data) {
                     if (data.success) {
+                        await addActivity(
+                            "Password Reset",
+                            "Password changed using reset link",
+                            "purple"
+                        );
                         document.getElementById('formState').style.display = 'none';
                         document.getElementById('successState').classList.add('is-visible');
+                        
                     } else {
                         newPasswordErrorText.textContent = data.message || 'Could not reset password.';
                         newPasswordError.classList.add('is-visible');
@@ -434,6 +440,23 @@
                     resetBtn.disabled = false;
                 });
         });
+        async function addActivity(title, description, color) {
+
+            console.log("addActivity called", title, description, color);
+
+            const formData = new FormData();
+            formData.append("title", title);
+            formData.append("description", description);
+            formData.append("color", color);
+
+            const response = await fetch("api/add_activity.php", {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.json();
+            return result;
+        }
     </script>
 </body>
 </html>

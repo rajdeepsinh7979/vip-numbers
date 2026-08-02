@@ -46,6 +46,10 @@ $stmt->bind_param(
 
 if ($stmt->execute()) {
 
+    // Keep the table trimmed to roughly the last 30 days — delete anything older
+    // every time a new activity comes in, so it never needs a separate cron job.
+    $conn->query("DELETE FROM activity_log WHERE created_at < (NOW() - INTERVAL 30 DAY)");
+
     echo json_encode([
         "success" => true,
         "message" => "Activity added successfully."

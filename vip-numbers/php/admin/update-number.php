@@ -37,7 +37,7 @@
         <div class="sidebar-footer">
             <div class="sidebar-health-card">
                 <p class="sidebar-health-title">Inventory Health</p>
-                <p class="sidebar-health-text">8,432 numbers available across 5 categories</p>
+                <p id="sidebarHealthText" class="sidebar-health-text">8,432 numbers available across 5 categories</p>
                 <div class="progress-track progress-track--thin" style="margin-top:12px;"><div class="progress-fill" style="width:65%"></div></div>
             </div>
         </div>
@@ -67,11 +67,11 @@
                     <div style="position:relative;">
                         <button class="profile-btn" id="profileBtn" aria-label="Profile menu">
                             <div class="profile-avatar"><span>A</span></div>
-                            <span class="profile-name">Admin</span>
+                            <span class="profile-name"><?php echo htmlspecialchars($_SESSION['username'] ?? ''); ?></span>
                             <span class="profile-chevron"><i data-lucide="chevron-down"></i></span>
                         </button>
                         <div class="dropdown" id="profileDropdown">
-                            <div class="dropdown-header"><p class="dropdown-user-name">Admin User</p><p class="dropdown-header-email">admin@vipnumbers.com</p></div>
+                            <div class="dropdown-header"><p class="dropdown-user-name"><?php echo htmlspecialchars($_SESSION['full_name'] ?? ''); ?></p><p class="dropdown-header-email"><?php echo htmlspecialchars($_SESSION['email'] ?? ''); ?></p></div>
                             <a href="profile.php" class="dropdown-item"><i data-lucide="user"></i> My Profile</a>
                             <div class="dropdown-divider"></div>
                             <a href="../api/logout.php" class="dropdown-item dropdown-item--danger"><i data-lucide="log-out"></i> Logout</a>
@@ -627,7 +627,8 @@
 
         // ---------- Init ----------
         loadRecord();
-        
+        const s = JSON.parse(localStorage.getItem("dashboardStats"));
+        document.getElementById("sidebarHealthText").textContent=s.total.count.toLocaleString("en-IN")+" numbers available across 5 categories";
     </script>
 </body>
 </html>

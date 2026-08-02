@@ -48,7 +48,7 @@
         <div class="sidebar-footer">
             <div class="glass-card sidebar-health-card">
                 <p class="sidebar-health-title">Inventory Health</p>
-                <p class="sidebar-health-text">8,432 numbers available across 5 categories</p>
+                <p id="sidebarHealthText" class="sidebar-health-text">8,432 numbers available across 5 categories</p>
                 <div class="progress-track progress-track--thin" style="margin-top:12px;">
                     <div class="progress-fill" style="width:65%"></div>
                 </div>
@@ -113,13 +113,13 @@
                     <div style="position:relative;">
                         <button type="button" class="profile-btn" onclick="toggleDropdown('profileDropdown')" aria-label="Profile menu">
                             <div class="profile-avatar"><span>A</span></div>
-                            <span class="profile-name">Admin</span>
+                            <span class="profile-name"><?php echo htmlspecialchars($_SESSION['username'] ?? ''); ?></span>
                             <span class="profile-chevron"><i data-lucide="chevron-down"></i></span>
                         </button>
                         <div class="dropdown" id="profileDropdown">
                             <div class="dropdown-header">
-                                <div class="dropdown-user-name">Admin User</div>
-                                <div class="dropdown-header-email">admin@vipnumbers.com</div>
+                                <div class="dropdown-user-name"><?php echo htmlspecialchars($_SESSION['full_name'] ?? ''); ?></div>
+                                <div class="dropdown-header-email"><?php echo htmlspecialchars($_SESSION['email'] ?? ''); ?></div>
                             </div>
                             <div class="dropdown-item" onclick="window.location.href='profile.php'">
                                 <i data-lucide="user"></i> My Profile
@@ -352,7 +352,7 @@
                                     </div>
                                     <span class="summary-item-label">Available</span>
                                 </div>
-                                <span class="summary-item-value summary-item-value--green">8,432</span>
+                                <span id="availableCount" class="summary-item-value summary-item-value--green">8,432</span>
                             </div>
                             <div class="summary-item">
                                 <div class="summary-item-left">
@@ -361,16 +361,16 @@
                                     </div>
                                     <span class="summary-item-label">Reserved</span>
                                 </div>
-                                <span class="summary-item-value summary-item-value--white">234</span>
+                                <span id="reservedCount" class="summary-item-value summary-item-value--white">234</span>
                             </div>
                             <div class="summary-item">
                                 <div class="summary-item-left">
                                     <div class="icon-box icon-box--pink" style="width:28px;height:28px;">
                                         <i data-lucide="shopping-bag"></i>
                                     </div>
-                                    <span class="summary-item-label">Sold Today</span>
+                                    <span class="summary-item-label">Sold</span>
                                 </div>
-                                <span class="summary-item-value summary-item-value--gold">18</span>
+                                <span id="soldCount" class="summary-item-value summary-item-value--gold">18</span>
                             </div>
                         </div>
                     </div>
@@ -383,34 +383,9 @@
                             </div>
                             <span class="card-title">Recently Added</span>
                         </div>
-                        <div class="recent-list">
+                        <div class="recent-list" id="recentList">
                             <div class="recent-item">
-                                <span class="recent-item-number">98765 43210</span>
-                                <div style="text-align:right;">
-                                    <span class="badge badge--vip badge--sm">VIP</span>
-                                    <p class="recent-item-meta">5 min ago</p>
-                                </div>
-                            </div>
-                            <div class="recent-item">
-                                <span class="recent-item-number">99999 88888</span>
-                                <div style="text-align:right;">
-                                    <span class="badge badge--premium badge--sm">Premium</span>
-                                    <p class="recent-item-meta">22 min ago</p>
-                                </div>
-                            </div>
-                            <div class="recent-item">
-                                <span class="recent-item-number">88888 77777</span>
-                                <div style="text-align:right;">
-                                    <span class="badge badge--fancy badge--sm">Fancy</span>
-                                    <p class="recent-item-meta">1 hr ago</p>
-                                </div>
-                            </div>
-                            <div class="recent-item">
-                                <span class="recent-item-number">77777 66666</span>
-                                <div style="text-align:right;">
-                                    <span class="badge badge--available badge--sm">Available</span>
-                                    <p class="recent-item-meta">2 hr ago</p>
-                                </div>
+                                <span class="recent-item-meta" style="opacity:0.5;">Loading recent numbers...</span>
                             </div>
                         </div>
                     </div>
@@ -442,6 +417,7 @@
     </div>
 
     <script>
+
         // =============================================
         // Initialize Lucide Icons
         // =============================================
@@ -683,8 +659,7 @@ if (categorySelect && previewCategory) {
         'Reserved': 'badge--Reserved',
         'Available': 'badge--Available',
         'Sold': 'badge--Sold'
-    };y
-
+    };
     function updatePreviewCategory() {
         const val = categorySelect.value;
         previewCategory.textContent = val || 'Not Selected';
@@ -984,6 +959,85 @@ async function addActivity(title, description, color) {
     const result = await response.json();
     return result;
 }
+
+// =============================================
+// Recently Added Numbers (dynamic, from dashboard_numbers.php)
+// =============================================
+const RECENT_NUMBERS_API = '../api/dashboard_numbers.php';
+
+const recentCategoryBadgeMap = {
+    'VIP': 'badge--vip',
+    'Premium': 'badge--premium',
+    'Fancy': 'badge--fancy',
+    'Golden': 'badge--golden',
+    'Platinum': 'badge--platinum'
+};
+
+function formatRecentMobile(num) {
+    const digits = String(num).replace(/\D/g, '');
+    if (digits.length !== 10) return digits;
+    return digits.slice(0, 5) + ' ' + digits.slice(5);
+}
+
+function formatRecentDate(dateStr) {
+    const target = new Date(dateStr);
+    if (isNaN(target)) return dateStr;
+    const now = new Date();
+    const t0 = new Date(target.getFullYear(), target.getMonth(), target.getDate());
+    const n0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const diffDays = Math.round((n0 - t0) / (1000 * 60 * 60 * 24));
+    if (diffDays <= 0) return 'Today';
+    if (diffDays === 1) return 'Yesterday';
+    return diffDays + ' days ago';
+}
+
+function renderRecentNumbers(numbers) {
+    const container = document.getElementById('recentList');
+    if (!numbers || numbers.length === 0) {
+        container.innerHTML = '<div class="recent-item"><span class="recent-item-meta" style="opacity:0.5;">No numbers added yet</span></div>';
+        return;
+    }
+
+    container.innerHTML = numbers.map(function(n) {
+        const badgeClass = recentCategoryBadgeMap[n.category] || 'badge--default';
+        return `
+            <div class="recent-item">
+                <span class="recent-item-number">${formatRecentMobile(n.number)}</span>
+                <div style="text-align:right;">
+                    <span class="badge ${badgeClass} badge--sm">${n.category}</span>
+                    <p class="recent-item-meta">${formatRecentDate(n.date)}</p>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    lucide.createIcons();
+}
+
+function loadRecentNumbers() {
+    fetch(RECENT_NUMBERS_API, { cache: 'no-store' })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (data.success) {
+                renderRecentNumbers(data.numbers);
+            } else {
+                document.getElementById('recentList').innerHTML =
+                    '<div class="recent-item"><span class="recent-item-meta" style="opacity:0.5;">Could not load recent numbers</span></div>';
+            }
+        })
+        .catch(function() {
+            document.getElementById('recentList').innerHTML =
+                '<div class="recent-item"><span class="recent-item-meta" style="opacity:0.5;">Failed to reach the server</span></div>';
+        });
+}
+
+loadRecentNumbers();
+
+const s = JSON.parse(localStorage.getItem("dashboardStats"));
+document.getElementById("sidebarHealthText").textContent=s.total.count.toLocaleString("en-IN")+" numbers available across 5 categories";
+document.getElementById("availableCount").textContent=s.available.count.toLocaleString("en-IN");
+document.getElementById("reservedCount").textContent=s.reserved.count.toLocaleString("en-IN");
+document.getElementById("soldCount").textContent=s.sold.count.toLocaleString("en-IN");
     </script>
 </body>
 </html>

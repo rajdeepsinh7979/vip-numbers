@@ -281,8 +281,11 @@
 
             fetch(LOGIN_API, { method: 'POST', body: formData, cache: 'no-store' })
                 .then(function(res) { return res.json(); })
-                .then(function(data) {
+                .then(async function(data) {
                     if (data.success) {
+                        await addActivity("Admin Login",
+                        "Administrator logged into the dashboard",
+                        "purple");
                         window.location.href = data.redirect || 'admin/dashboard.php';
                         return; // leave the button disabled — the page is navigating away
                     }
@@ -301,6 +304,23 @@
                     loginBtn.disabled = false;
                 });
         });
+        async function addActivity(title, description, color) {
+
+            console.log("addActivity called", title, description, color);
+
+            const formData = new FormData();
+            formData.append("title", title);
+            formData.append("description", description);
+            formData.append("color", color);
+
+            const response = await fetch("api/add_activity.php", {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.json();
+            return result;
+        }
     </script>
 </body>
 </html>

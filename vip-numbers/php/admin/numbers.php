@@ -52,7 +52,7 @@
         <div class="sidebar-footer">
             <div class="sidebar-stats-card">
                 <p class="sidebar-stats-title">Inventory Health</p>
-                <p class="sidebar-stats-text">8,432 numbers available across 5 categories</p>
+                <p id="sidebarHealthText" class="sidebar-stats-text">8,432 numbers available across 5 categories</p>
                 <div class="sidebar-stats-progress">
                     <div class="sidebar-stats-progress-fill" style="width:65%"></div>
                 </div>
@@ -124,13 +124,13 @@
                     <div class="dropdown-trigger">
                         <button class="profile-menu-btn" id="profileBtn" aria-label="Profile menu">
                             <div class="profile-avatar">A</div>
-                            <span class="profile-username" style="display:none;">Admin</span>
+                            <span class="profile-username" style="display:none;"><?php echo htmlspecialchars($_SESSION['username'] ?? ''); ?></span>
                             <i data-lucide="chevron-down" class="profile-chevron"></i>
                         </button>
                         <div class="dropdown" id="profileDropdown">
                             <div style="padding:10px 12px;" class="dropdown-divider">
-                                <p class="dropdown-profile-name">Admin User</p>
-                                <p class="dropdown-profile-email">admin@vipnumbers.com</p>
+                                <p class="dropdown-profile-name"><?php echo htmlspecialchars($_SESSION['full_name'] ?? ''); ?></p>
+                                <p class="dropdown-profile-email"><?php echo htmlspecialchars($_SESSION['email'] ?? ''); ?></p>
                             </div>
                             <a href="profile.php" class="dropdown-item"><i data-lucide="user"></i> My Profile</a>
                             <a href="../api/logout.php" class="dropdown-item"><i data-lucide="log-out"></i> Logout</a>
@@ -507,12 +507,12 @@
                     if (!data || !data.total) return;
                     document.getElementById('statTotalCount').textContent = data.total.count;
                     document.getElementById('statAvailableCount').textContent = data.available.count;
-                    document.getElementById('statSoldCount').textContent = data.reserved.count;
+                    document.getElementById('statSoldCount').textContent = data.sold.count;
                     document.getElementById('statPremiumCount').textContent = data.premium.count;
 
                     renderTrend('statTotalTrend', data.total.percent);
                     renderTrend('statAvailableTrend', data.available.percent);
-                    renderTrend('statSoldTrend', data.reserved.percent);
+                    renderTrend('statSoldTrend', data.sold.percent);
                     renderTrend('statPremiumTrend', data.premium.percent);
                     lucide.createIcons();
                 })
@@ -955,6 +955,8 @@
                 });
             }
         })();
+        const s = JSON.parse(localStorage.getItem("dashboardStats"));
+        document.getElementById("sidebarHealthText").textContent=s.total.count.toLocaleString("en-IN")+" numbers available across 5 categories";
     </script>
 </body>
 </html>

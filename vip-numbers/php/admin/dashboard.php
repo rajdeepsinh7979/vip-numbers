@@ -57,7 +57,7 @@
         <div class="sidebar-footer">
             <div class="glass-card sidebar-health-card">
                 <p class="sidebar-health-title">Inventory Health</p>
-                <p class="sidebar-health-text">8,432 numbers available across 5 categories</p>
+                <p id="sidebarHealthText" class="sidebar-health-text">8,432 numbers available across 5 categories</p>
                 <div class="progress-track progress-track--compact" style="margin-top:12px;">
                     <div class="progress-fill progress-fill--gold" data-width="65" style="width:65%"></div>
                 </div>
@@ -101,13 +101,13 @@
                             <div class="profile-avatar">
                                 <span>A</span>
                             </div>
-                            <span class="profile-name">Admin</span>
+                            <span class="profile-name"><?php echo htmlspecialchars($_SESSION['username'] ?? ''); ?></span>
                             <i data-lucide="chevron-down" class="profile-chevron"></i>
                         </button>
                         <div class="dropdown" id="profileDropdown">
                             <div class="dropdown-header">
-                                <p class="dropdown-header-name">Admin User</p>
-                                <p class="dropdown-header-email">admin@vipnumbers.com</p>
+                                <p id="adminName" class="dropdown-header-name"><?php echo htmlspecialchars($_SESSION['full_name'] ?? ''); ?></p>
+                                <p id="adminEmail" class="dropdown-header-email"><?php echo htmlspecialchars($_SESSION['email'] ?? ''); ?></p>
                             </div>
                             <a href="profile.php" class="dropdown-item">
                                 <i data-lucide="user"></i> My Profile
@@ -750,6 +750,11 @@
             updateStatCard("reserved", stats.reserved);
 
             document.getElementById("totalCount2").textContent=stats.total.count.toLocaleString("en-IN");
+
+            // Store in browser session
+            localStorage.setItem("dashboardStats", JSON.stringify(stats));
+            const s = JSON.parse(localStorage.getItem("dashboardStats"));
+            document.getElementById("sidebarHealthText").textContent=s.total.count.toLocaleString("en-IN")+" numbers available across 5 categories";
         }
         function updateStatCard(prefix, data) {
 
