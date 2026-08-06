@@ -10,7 +10,9 @@ $MAIL ='jalpitparmar1234@gmail.com';
 $APP_PASSWORD = 'bmbf bgad tgve nyeu';
 $LINK = 'http://localhost/vip-numbers/vip-numbers/php/forgot-password.php?cod=';
 
-$conn = new mysqli($host, $dbuser, $dbpass, $dbname);
+$SECRET_KEY = '6LfAeHgtAAAAAKr7fMUxmzQHlzUyawqVTjitYJds';
+
+$conn = new mysqli($host, $dbuser, $dbpass, $dbname);   
 
 if ($conn->connect_error) {
     http_response_code(500);
