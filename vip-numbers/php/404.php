@@ -162,7 +162,7 @@
         </p>
 
         <div class="actions">
-            <a href="/vip-numbers/vip-numbers/php/index.html" class="btn btn--gold">
+            <a href="index.php" class="btn btn--gold">
                 <span class="iconify" data-icon="mdi:home-outline"></span>
                 Back to Home
             </a>

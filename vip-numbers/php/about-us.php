@@ -16,7 +16,7 @@
     <!-- ========== NAVIGATION ========== -->
     <header class="navbar" data-js="navbar">
         <div class="container navbar__inner">
-            <a href="index.html" class="navbar__brand">
+            <a href="index.php" class="navbar__brand">
                 <span class="navbar__brand-icon">
                     <img src="logo.png" alt="Bhudev Sim Store Logo" class="navbar__logo">
                 </span>
@@ -24,16 +24,16 @@
             </a>
 
             <nav class="navbar__menu">
-                <a href="index.html" class="navbar__link">Home</a>
-                <a href="premium-numbers.html" class="navbar__link">Premium Numbers</a>
-                <a href="filter-numbers.html" class="navbar__link">Filter Numbers</a>
-                <a href="about-us.html" class="navbar__link navbar__link--active">About Us</a>
-                <a href="contact-us.html" class="navbar__link">Contact Us</a>
-                <a href="privacy-policy.html" class="navbar__link">Privacy Policy</a>
+                <a href="index.php" class="navbar__link">Home</a>
+                <a href="premium-numbers.php" class="navbar__link">Premium Numbers</a>
+                <a href="filter-numbers.php" class="navbar__link">Filter Numbers</a>
+                <a href="about-us.php" class="navbar__link navbar__link--active">About Us</a>
+                <a href="contact-us.php" class="navbar__link">Contact Us</a>
+                <a href="privacy-policy.php" class="navbar__link">Privacy Policy</a>
             </nav>
 
             <div class="navbar__actions">
-                <a href="premium-numbers.html" class="btn btn--gold btn--sm">
+                <a href="premium-numbers.php" class="btn btn--gold btn--sm">
                     <span class="iconify" data-icon="mdi:crown"></span>
                     Browse Numbers
                 </a>
@@ -56,27 +56,27 @@
             </button>
         </div>
         <nav class="mobile-menu__nav">
-            <a href="index.html" class="mobile-menu__link">
+            <a href="index.php" class="mobile-menu__link">
                 <span class="iconify" data-icon="mdi:home"></span> Home
             </a>
-            <a href="premium-numbers.html" class="mobile-menu__link">
+            <a href="premium-numbers.php" class="mobile-menu__link">
                 <span class="iconify" data-icon="mdi:crown"></span> Premium Numbers
             </a>
-            <a href="filter-numbers.html" class="mobile-menu__link">
+            <a href="filter-numbers.php" class="mobile-menu__link">
                 <span class="iconify" data-icon="mdi:filter-variant"></span> Filter Numbers
             </a>
-            <a href="about-us.html" class="mobile-menu__link mobile-menu__link--active">
+            <a href="about-us.php" class="mobile-menu__link mobile-menu__link--active">
                 <span class="iconify" data-icon="mdi:information"></span> About Us
             </a>
-            <a href="contact-us.html" class="mobile-menu__link">
+            <a href="contact-us.php" class="mobile-menu__link">
                 <span class="iconify" data-icon="mdi:email"></span> Contact Us
             </a>
-            <a href="privacy-policy.html" class="mobile-menu__link">
+            <a href="privacy-policy.php" class="mobile-menu__link">
                 <span class="iconify" data-icon="mdi:shield-check"></span> Privacy Policy
             </a>
         </nav>
         <div class="mobile-menu__cta">
-            <a href="premium-numbers.html" class="btn btn--gold" style="width:100%; justify-content:center;">
+            <a href="premium-numbers.php" class="btn btn--gold" style="width:100%; justify-content:center;">
                 <span class="iconify" data-icon="mdi:crown"></span> Browse Numbers
             </a>
         </div>
@@ -131,11 +131,11 @@
                     Bhudev Sim Store is a trusted seller of premium, memorable, business-friendly, and lucky mobile numbers. We are committed to quality, transparency, and customer satisfaction — delivering a premium buying experience that matches the exclusivity of every number we offer.
                 </p>
                 <div class="about-hero__actions reveal">
-                    <a href="premium-numbers.html" class="btn btn--gold btn--lg">
+                    <a href="premium-numbers.php" class="btn btn--gold btn--lg">
                         <span class="iconify" data-icon="mdi:crown"></span>
                         Browse Premium Numbers
                     </a>
-                    <a href="contact-us.html" class="btn btn--outline btn--lg">
+                    <a href="contact-us.php" class="btn btn--outline btn--lg">
                         <span class="iconify" data-icon="mdi:phone"></span>
                         Contact Us
                     </a>
@@ -408,11 +408,11 @@
                 <h2 class="cta-section__title">Ready to Find Your <span class="gold-text">Perfect Number?</span></h2>
                 <p class="cta-section__desc">Explore our vast collection of premium VIP numbers and make a statement today.</p>
                 <div class="cta-section__actions">
-                    <a href="filter-numbers.html" class="btn btn--gold btn--lg">
+                    <a href="filter-numbers.php" class="btn btn--gold btn--lg">
                         <span class="iconify" data-icon="mdi:magnify"></span>
                         Browse Numbers
                     </a>
-                    <a href="contact-us.html" class="btn btn--outline btn--lg">
+                    <a href="contact-us.php" class="btn btn--outline btn--lg">
                         <span class="iconify" data-icon="mdi:phone"></span>
                         Contact Us
                     </a>
@@ -426,7 +426,7 @@
         <div class="container">
             <div class="footer__grid">
                 <div class="footer__brand-block">
-                    <a href="index.html" class="navbar__brand">
+                    <a href="index.php" class="navbar__brand">
                         <span class="navbar__brand-icon"><img src="logo.png" alt="Logo"></span>
                         <span class="navbar__brand-text">Bhudev <span class="gold-text">Sim Store</span></span>
                     </a>
@@ -442,21 +442,21 @@
                 <div>
                     <h4 class="footer__heading">Quick Links</h4>
                     <ul class="footer__list">
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="premium-numbers.html">Premium Numbers</a></li>
-                        <li><a href="filter-numbers.html">Filter Numbers</a></li>
-                        <li><a href="about-us.html">About Us</a></li>
-                        <li><a href="contact-us.html">Contact Us</a></li>
+                        <li><a href="index.php">Home</a></li>
+                        <li><a href="premium-numbers.php">Premium Numbers</a></li>
+                        <li><a href="filter-numbers.php">Filter Numbers</a></li>
+                        <li><a href="about-us.php">About Us</a></li>
+                        <li><a href="contact-us.php">Contact Us</a></li>
                     </ul>
                 </div>
 
                 <div>
                     <h4 class="footer__heading">Legal</h4>
                     <ul class="footer__list">
-                        <li><a href="privacy-policy.html">Privacy Policy</a></li>
-                        <li><a href="privacy-policy.html">Shipping & Delivery</a></li>
-                        <li><a href="privacy-policy.html">Refund & Cancellation</a></li>
-                        <li><a href="privacy-policy.html">Terms of Service</a></li>
+                        <li><a href="privacy-policy.php">Privacy Policy</a></li>
+                        <li><a href="privacy-policy.php">Shipping & Delivery</a></li>
+                        <li><a href="privacy-policy.php">Refund & Cancellation</a></li>
+                        <li><a href="privacy-policy.php">Terms of Service</a></li>
                     </ul>
                 </div>
 

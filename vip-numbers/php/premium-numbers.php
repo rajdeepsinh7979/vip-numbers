@@ -16,7 +16,7 @@
     <!-- ========== NAVIGATION ========== -->
     <header class="navbar" data-js="navbar">
         <div class="container navbar__inner">
-            <a href="index.html" class="navbar__brand">
+            <a href="index.php" class="navbar__brand">
                 <span class="navbar__brand-icon">
                     <img src="logo.png" alt="Bhudev Sim Store Logo" class="navbar__logo">
                 </span>
@@ -24,16 +24,16 @@
             </a>
 
             <nav class="navbar__menu">
-                <a href="index.html" class="navbar__link">Home</a>
-                <a href="premium-numbers.html" class="navbar__link navbar__link--active">Premium Numbers</a>
-                <a href="filter-numbers.html" class="navbar__link">Filter Numbers</a>
-                <a href="about-us.html" class="navbar__link">About Us</a>
-                <a href="contact-us.html" class="navbar__link">Contact Us</a>
-                <a href="privacy-policy.html" class="navbar__link">Privacy Policy</a>
+                <a href="index.php" class="navbar__link">Home</a>
+                <a href="premium-numbers.php" class="navbar__link navbar__link--active">Premium Numbers</a>
+                <a href="filter-numbers.php" class="navbar__link">Filter Numbers</a>
+                <a href="about-us.php" class="navbar__link">About Us</a>
+                <a href="contact-us.php" class="navbar__link">Contact Us</a>
+                <a href="privacy-policy.php" class="navbar__link">Privacy Policy</a>
             </nav>
 
             <div class="navbar__actions">
-                <a href="filter-numbers.html" class="btn btn--gold btn--sm">
+                <a href="filter-numbers.php" class="btn btn--gold btn--sm">
                     <span class="iconify" data-icon="mdi:filter-variant"></span>
                     Browse Filters
                 </a>
@@ -56,27 +56,27 @@
             </button>
         </div>
         <nav class="mobile-menu__nav">
-            <a href="index.html" class="mobile-menu__link">
+            <a href="index.php" class="mobile-menu__link">
                 <span class="iconify" data-icon="mdi:home"></span> Home
             </a>
-            <a href="premium-numbers.html" class="mobile-menu__link mobile-menu__link--active">
+            <a href="premium-numbers.php" class="mobile-menu__link mobile-menu__link--active">
                 <span class="iconify" data-icon="mdi:crown"></span> Premium Numbers
             </a>
-            <a href="filter-numbers.html" class="mobile-menu__link">
+            <a href="filter-numbers.php" class="mobile-menu__link">
                 <span class="iconify" data-icon="mdi:filter-variant"></span> Filter Numbers
             </a>
-            <a href="about-us.html" class="mobile-menu__link">
+            <a href="about-us.php" class="mobile-menu__link">
                 <span class="iconify" data-icon="mdi:information"></span> About Us
             </a>
-            <a href="contact-us.html" class="mobile-menu__link">
+            <a href="contact-us.php" class="mobile-menu__link">
                 <span class="iconify" data-icon="mdi:email"></span> Contact Us
             </a>
-            <a href="privacy-policy.html" class="mobile-menu__link">
+            <a href="privacy-policy.php" class="mobile-menu__link">
                 <span class="iconify" data-icon="mdi:shield-check"></span> Privacy Policy
             </a>
         </nav>
         <div class="mobile-menu__cta">
-            <a href="filter-numbers.html" class="btn btn--gold" style="width:100%; justify-content:center;">
+            <a href="filter-numbers.php" class="btn btn--gold" style="width:100%; justify-content:center;">
                 <span class="iconify" data-icon="mdi:filter-variant"></span> Browse Filters
             </a>
         </div>
@@ -111,7 +111,7 @@
                     <span class="iconify" data-icon="mdi:crown"></span>
                     Browse All Numbers
                 </a>
-                <a href="filter-numbers.html" class="btn btn--outline btn--lg">
+                <a href="filter-numbers.php" class="btn btn--outline btn--lg">
                     <span class="iconify" data-icon="mdi:filter-variant"></span>
                     Advanced Filters
                 </a>
@@ -147,7 +147,7 @@
                         <p class="collection-header__desc">Our most exclusive and highly demanded VIP numbers</p>
                     </div>
                 </div>
-                <a href="filter-numbers.html" class="btn btn--outline btn--sm collection-header__btn">
+                <a href="filter-numbers.php" class="btn btn--outline btn--sm collection-header__btn">
                     View All <span class="iconify" data-icon="mdi:arrow-right"></span>
                 </a>
             </div>
@@ -213,11 +213,11 @@
                 <h2 class="cta-section__title">Can't Find Your <span class="gold-text">Perfect Match?</span></h2>
                 <p class="cta-section__desc">Explore our advanced filter tool to search through thousands of numbers by specific patterns, digits, or price ranges.</p>
                 <div class="cta-section__actions">
-                    <a href="filter-numbers.html" class="btn btn--gold btn--lg">
+                    <a href="filter-numbers.php" class="btn btn--gold btn--lg">
                         <span class="iconify" data-icon="mdi:filter-variant"></span>
                         Open Number Filters
                     </a>
-                    <a href="contact-us.html" class="btn btn--outline btn--lg">
+                    <a href="contact-us.php" class="btn btn--outline btn--lg">
                         <span class="iconify" data-icon="mdi:phone"></span>
                         Contact Us
                     </a>
@@ -231,7 +231,7 @@
         <div class="container">
             <div class="footer__grid">
                 <div class="footer__brand-block">
-                    <a href="index.html" class="navbar__brand">
+                    <a href="index.php" class="navbar__brand">
                         <span class="navbar__brand-icon"><img src="logo.png" alt="Logo"></span>
                         <span class="navbar__brand-text">Bhudev <span class="gold-text">Sim Store</span></span>
                     </a>
@@ -247,11 +247,11 @@
                 <div>
                     <h4 class="footer__heading">Quick Links</h4>
                     <ul class="footer__list">
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="premium-numbers.html">Premium Numbers</a></li>
-                        <li><a href="filter-numbers.html">Filter Numbers</a></li>
-                        <li><a href="about-us.html">About Us</a></li>
-                        <li><a href="contact-us.html">Contact Us</a></li>
+                        <li><a href="index.php">Home</a></li>
+                        <li><a href="premium-numbers.php">Premium Numbers</a></li>
+                        <li><a href="filter-numbers.php">Filter Numbers</a></li>
+                        <li><a href="about-us.php">About Us</a></li>
+                        <li><a href="contact-us.php">Contact Us</a></li>
                     </ul>
                 </div>
 
@@ -359,42 +359,62 @@ async function loadNumbers() {
 
         grid.innerHTML = "";
 
+        // Normalize once so "VIP", "vip", " Vip " etc. all match the same way.
         data.numbers.forEach(number => {
+            number._category = String(number.category || "").trim().toLowerCase();
+            number._status = String(number.status || "").trim().toLowerCase();
+        });
 
-            const statusClass =
-                number.status === "available"
-                    ? "vip-card__status--available"
-                    : "vip-card__status--sold";
+        // Show VIP numbers first (top 12), then Premium numbers next (next 12).
+        const vipNumbers = data.numbers.filter(n => n._category === "vip");
+        const premiumNumbers = data.numbers.filter(n => n._category !== "vip");
+        const orderedNumbers = [...vipNumbers.slice(0, 12), ...premiumNumbers.slice(0, 12)];
 
-            const statusIcon =
-                number.status === "available"
-                    ? "mdi:check-circle"
-                    : "mdi:close-circle";
+        orderedNumbers.forEach(number => {
 
-            const actionButton =
-                number.status === "available"
+            const isVip = number._category === "vip";
+            const isAvailable = number._status === "available";
+
+            const statusClass = isAvailable
+                ? "vip-card__status--available"
+                : "vip-card__status--sold";
+
+            const statusStyle = isAvailable
+                ? "background:rgba(34,197,94,0.15); color:#22c55e; border:1px solid rgba(34,197,94,0.4);"
+                : "background:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.4);";
+
+            const statusIcon = isAvailable
+                ? "mdi:check-circle"
+                : "mdi:close-circle";
+
+            const actionButton = isAvailable
                 ? `
                     <a
                         href="https://wa.me/91YOURNUMBER?text=${encodeURIComponent('Hello, I am interested in VIP number ' + number.mobile_number)}"
                         target="_blank"
                         class="btn btn--whatsapp btn--sm"
-                        style="flex:1;justify-content:center;"
+                        style="flex:1;justify-content:center;background:#22c55e;border-color:#22c55e;color:#fff;"
                     >
                         <span class="iconify" data-icon="mdi:whatsapp"></span>
                         Buy
                     </a>
                 `
                 : `
-                    <button class="btn btn--disabled btn--sm"
+                    <button class="btn btn--disabled btn--sm" disabled
                         style="flex:1;justify-content:center;">
                         Sold Out
                     </button>
                 `;
 
-            const badge =
-                number.category === "vip"
-                    ? "VIP Choice"
-                    : "Premium";
+            const badgeClass = isVip
+                ? "number-card__badge--purple"
+                : "number-card__badge--gold";
+
+            const badgeStyle = isVip
+                ? "background:rgba(147,51,234,0.15); color:#a855f7; border:1px solid rgba(147,51,234,0.4);"
+                : "";
+
+            const badge = isVip ? "VIP Choice" : "Premium";
 
             grid.innerHTML += `
                 <article class="number-card reveal">
@@ -403,11 +423,11 @@ async function loadNumbers() {
 
                         <div class="number-card__top">
 
-                            <span class="number-card__badge number-card__badge--gold">
+                            <span class="number-card__badge ${badgeClass}" style="${badgeStyle}">
                                 ${badge}
                             </span>
 
-                            <span class="vip-card__status ${statusClass}">
+                            <span class="vip-card__status ${statusClass}" style="${statusStyle}">
                                 <span class="iconify" data-icon="${statusIcon}"></span>
                                 ${number.status}
                             </span>

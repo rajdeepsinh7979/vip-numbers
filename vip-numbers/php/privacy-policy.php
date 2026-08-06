@@ -10,237 +10,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
-    <style>
-        /* ============================================
-   BHUDEV SIM STORE — PREMIUM DARK THEME
-   Pure CSS3 — No Frameworks
-   ============================================ */
-
-/* ---------- CSS Custom Properties ---------- */
-:root {
-    --black: #0B0B0B;
-    --charcoal: #161616;
-    --dark-gray: #222222;
-    --mid-gray: #2A2A2A;
-    --light-gray: #333333;
-    --surface-gray: #3D3D3D;
-    --gold: #D4AF37;
-    --gold-light: #E8C547;
-    --gold-pale: #F5E8A8;
-    --gold-dark: #8B7536;
-    --gold-muted: rgba(212, 175, 55, 0.15);
-    --gold-border: rgba(212, 175, 55, 0.1);
-    --gold-border-hover: rgba(212, 175, 55, 0.3);
-    --text-primary: #E8E8E8;
-    --text-secondary: #999999;
-    --text-muted: #666666;
-    --text-dim: #444444;
-    --blue-accent: #4A7CFF;
-    --purple-accent: #9B6DFF;
-    --green-accent: #34D399;
-    --red-accent: #F87171;
-
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
-    --radius-xl: 20px;
-    --radius-full: 9999px;
-
-    --shadow-gold: 0 20px 50px -15px rgba(212, 175, 55, 0.12);
-    --shadow-card: 0 4px 20px -5px rgba(0, 0, 0, 0.4);
-
-    --transition-fast: 0.2s ease;
-    --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-
-    --font-heading: 'Outfit', sans-serif;
-    --font-body: 'Inter', sans-serif;
-    --font-accent: 'Poppins', sans-serif;
-
-    --container-max: 1440px;
-    --container-wide: 1600px;
-    --container-padding: clamp(16px, 4vw, 48px);
-    --section-padding-y: clamp(56px, 8vw, 120px);
-}
-
-/* ---------- Reset & Base ---------- */
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
-body {
-    font-family: var(--font-body);
-    font-size: 15px;
-    line-height: 1.6;
-    color: var(--text-primary);
-    background: var(--black);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
-    max-width: 100vw;
-    scrollbar-gutter: stable both-edges;
-}
-a { color: inherit; text-decoration: none; transition: color var(--transition-fast); }
-ul, ol { list-style: none; }
-img { max-width: 100%; display: block; height: auto; }
-button, input, select, textarea { font: inherit; color: inherit; border: none; outline: none; background: none; }
-button { cursor: pointer; }
-
-/* ---------- Utilities ---------- */
-.container { width: 100%; max-width: var(--container-max); margin: 0 auto; padding-left: var(--container-padding); padding-right: var(--container-padding); }
-.container--wide { max-width: var(--container-wide); }
-.gold-text { background: linear-gradient(135deg, #D4AF37 0%, #F5E8A8 45%, #D4AF37 65%, #8B7536 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-.gold-shimmer {
-    background: linear-gradient(110deg, #D4AF37 0%, #F5E8A8 28%, #D4AF37 52%, #F0D97A 78%, #D4AF37 100%);
-    background-size: 200% 100%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: shimmer 4s ease-in-out infinite;
-}
-@keyframes shimmer { 0%, 100% { background-position: 0% center; } 50% { background-position: 200% center; } }
-
-/* ---------- Buttons ---------- */
-.btn { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-accent); font-weight: 600; font-size: 14px; border-radius: var(--radius-md); padding: 12px 24px; transition: all var(--transition); white-space: nowrap; line-height: 1; }
-.btn--sm { font-size: 12px; padding: 10px 18px; border-radius: var(--radius-sm); }
-.btn--lg { font-size: 15px; padding: 16px 32px; border-radius: var(--radius-lg); }
-.btn--gold { background: linear-gradient(135deg, #D4AF37 0%, #E8C547 50%, #D4AF37 100%); background-size: 200% 200%; color: var(--black); }
-.btn--gold:hover { background-position: 100% 100%; box-shadow: 0 8px 30px rgba(212, 175, 55, 0.3); transform: translateY(-1px); }
-.btn--outline { background: transparent; border: 1.5px solid var(--gold-border-hover); color: var(--gold); }
-.btn--outline:hover { border-color: var(--gold); background: rgba(212, 175, 55, 0.06); transform: translateY(-1px); }
-
-/* ========================================== NAVIGATION ========================================== */
-.navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 0; transition: all var(--transition); background: transparent; }
-.navbar--scrolled { background: rgba(11, 11, 11, 0.92); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(212, 175, 55, 0.06); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3); }
-.navbar__inner { display: flex; align-items: center; justify-content: space-between; height: 72px; gap: 16px; }
-.navbar__logo { width: 60px; height: auto; max-width: 100%; }
-.navbar__brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-.navbar__brand-icon { width: 38px; height: 38px; border-radius: var(--radius-sm); border: 2px solid #D4AF37; background: transparent; display: flex; align-items: center; justify-content: center; color: #D4AF37; font-size: 18px; overflow: hidden; }
-.navbar__brand-text { font-family: var(--font-heading); font-weight: 700; font-size: 18px; color: var(--text-primary); white-space: nowrap; }
-.navbar__menu { display: none; gap: 4px; flex: 1; justify-content: center; }
-.navbar__link { padding: 8px 16px; font-size: clamp(15px, 1.1vw, 17px); font-weight: 500; color: var(--text-secondary); border-radius: var(--radius-sm); transition: all var(--transition-fast); white-space: nowrap; }
-.navbar__link:hover, .navbar__link--active { color: var(--gold); }
-.navbar__actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
-.navbar__toggle { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: var(--radius-sm); color: var(--text-primary); font-size: 24px; transition: background var(--transition-fast); }
-.navbar__toggle:hover { background: rgba(255, 255, 255, 0.05); }
-
-.menu-overlay { position: fixed; inset: 0; z-index: 1100; background: rgba(0, 0, 0, 0.6); opacity: 0; visibility: hidden; transition: all var(--transition); }
-body.menu-open .menu-overlay { opacity: 1; visibility: visible; }
-.mobile-menu { position: fixed; top: 0; right: 0; bottom: 0; width: 300px; max-width: 85vw; z-index: 1200; background: var(--charcoal); border-left: 1px solid var(--gold-border); transform: translateX(100%); transition: transform var(--transition-slow); display: flex; flex-direction: column; overflow-y: auto; }
-body.menu-open .mobile-menu { transform: translateX(0); }
-.mobile-menu__header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-.mobile-menu__close { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: var(--radius-sm); color: var(--text-secondary); font-size: 20px; transition: all var(--transition-fast); }
-.mobile-menu__close:hover { background: rgba(255, 255, 255, 0.05); color: var(--text-primary); }
-.mobile-menu__nav { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 4px; }
-.mobile-menu__link { display: flex; align-items: center; gap: 12px; padding: 14px 16px; font-size: 14px; font-weight: 500; color: var(--text-secondary); border-radius: var(--radius-md); transition: all var(--transition-fast); }
-.mobile-menu__link:hover, .mobile-menu__link--active { color: var(--gold); background: var(--gold-muted); }
-.mobile-menu__link .iconify { font-size: 18px; opacity: 0.7; }
-.mobile-menu__cta { padding: 16px 24px 24px; border-top: 1px solid rgba(255, 255, 255, 0.05); }
-
-/* ========================================== PAGE HERO ========================================== */
-.page-hero { position: relative; padding: clamp(120px, 15vh, 160px) 0 clamp(40px, 6vh, 60px); overflow: hidden; background: var(--black); text-align: center; }
-.page-hero__grid-pattern { position: absolute; inset: 0; background-image: linear-gradient(rgba(212, 175, 55, 0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(212, 175, 55, 0.025) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; }
-.page-hero__content { position: relative; z-index: 2; max-width: min(660px, 90%); margin: 0 auto; }
-.page-hero::before { content: ''; position: absolute; top: -30%; right: -15%; width: 65%; height: 130%; background: radial-gradient(ellipse, rgba(212, 175, 55, 0.06) 0%, transparent 60%); pointer-events: none; }
-.hero__badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 20px; border-radius: var(--radius-full); border: 1px solid var(--gold-border-hover); background: rgba(212, 175, 55, 0.06); font-size: clamp(10px, 1.5vw, 11px); font-weight: 600; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 32px; }
-.hero__badge .iconify { font-size: 12px; }
-.page-hero__title { font-family: var(--font-heading); font-weight: 800; font-size: clamp(34px, 6.5vw, 56px); line-height: 1.1; letter-spacing: -0.02em; color: var(--text-primary); margin-bottom: 16px; }
-.page-hero__desc { font-size: clamp(15px, 1.8vw, 18px); color: var(--text-muted); line-height: 1.7; max-width: 480px; margin: 0 auto; font-weight: 300; }
-
-/* ========================================== SECTIONS — General ========================================== */
-.section { padding: var(--section-padding-y) 0; }
-.section--alt { background: var(--charcoal); }
-
-/* ========================================== POLICY CONTENT ========================================== */
-.policy-content { max-width: 860px; margin: 0 auto; }
-.policy-card { background: var(--charcoal); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: var(--radius-lg); padding: clamp(24px, 4vw, 48px); margin-bottom: 32px; transition: all var(--transition); }
-.policy-card:hover { border-color: var(--gold-border); }
-.policy-title { font-family: var(--font-heading); font-weight: 700; font-size: clamp(20px, 3vw, 28px); color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
-.policy-title .iconify { color: var(--gold); font-size: 28px; }
-.policy-updated { font-size: 13px; color: var(--text-muted); margin-bottom: 32px; font-style: italic; }
-.policy-text { font-size: 14px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 16px; }
-.policy-text:last-child { margin-bottom: 0; }
-.policy-list { margin: 0 0 16px 24px; list-style: disc; }
-.policy-list--ordered { list-style: decimal; }
-.policy-list li { font-size: 14px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 4px; }
-.policy-list li strong { color: var(--text-primary); }
-.policy-subtitle { font-family: var(--font-heading); font-weight: 600; font-size: 18px; color: var(--gold); margin-top: 28px; margin-bottom: 12px; }
-.policy-contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 24px; }
-.policy-contact-item { display: flex; align-items: center; gap: 16px; padding: 16px; background: var(--dark-gray); border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.06); transition: all var(--transition-fast); }
-.policy-contact-item:hover { border-color: var(--gold-border-hover); }
-.policy-contact-item .iconify { color: var(--gold); font-size: 24px; flex-shrink: 0; }
-.policy-contact-item strong { display: block; font-size: 13px; color: var(--text-primary); margin-bottom: 2px; }
-.policy-contact-item span { display: block; font-size: 14px; color: var(--text-secondary); }
-
-/* ========================================== FOOTER ========================================== */
-.footer { background: var(--charcoal); border-top: 1px solid rgba(255, 255, 255, 0.04); padding: 64px 0 0; }
-.footer__grid { display: grid; grid-template-columns: 1fr; gap: 40px; padding-bottom: 48px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
-.footer__brand-desc { font-size: 13px; color: var(--text-muted); line-height: 1.8; margin: 16px 0 24px; max-width: 280px; }
-.footer__social { display: flex; gap: 10px; flex-wrap: wrap; }
-.footer__social-link { width: 40px; height: 40px; border-radius: var(--radius-sm); border: 1px solid rgba(255, 255, 255, 0.06); display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 18px; transition: all var(--transition-fast); }
-.footer__social-link:hover { color: var(--gold); border-color: var(--gold-border-hover); background: var(--gold-muted); }
-.footer__heading { font-family: var(--font-heading); font-weight: 600; font-size: 14px; color: var(--text-primary); margin-bottom: 20px; letter-spacing: 0.02em; }
-.footer__list li { margin-bottom: 12px; }
-.footer__list a { font-size: 13px; color: var(--text-muted); transition: color var(--transition-fast); }
-.footer__list a:hover { color: var(--gold); }
-.footer__contact-list li { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 20px; }
-.footer__contact-list .iconify { color: var(--gold); font-size: 18px; margin-top: 2px; flex-shrink: 0; }
-.footer__contact-list span { display: block; font-size: 13px; color: var(--text-secondary); word-break: break-word; }
-.footer__contact-list small { display: block; font-size: 11px; color: var(--text-dim); margin-top: 2px; }
-.footer__bottom {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    padding: 24px 0;
-}
-
-.footer__bottom p {
-    width: 100%;
-    margin: 0;
-    text-align: center;
-    font-size: 12px;
-    color: var(--text-dim);
-}
-.footer__bottom-links { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; }
-.footer__bottom-links a { font-size: 12px; color: var(--text-dim); transition: color var(--transition-fast); }
-.footer__bottom-links a:hover { color: var(--gold); }
-
-/* ========================================== SCROLL REVEAL ========================================== */
-.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), transform 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
-.reveal.revealed { opacity: 1; transform: translateY(0); }
-
-/* ========================================== SCROLLBAR ========================================== */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: var(--black); }
-::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: var(--gold); }
-
-/* ============================================ RESPONSIVE BREAKPOINTS ============================================ */
-@media (min-width: 640px) {
-    .footer__grid { grid-template-columns: repeat(2, 1fr); }
-    .footer__bottom { flex-direction: row; justify-content: space-between; }
-}
-@media (min-width: 768px) {
-    .footer__grid { grid-template-columns: 1.4fr 1fr 1fr; gap: 32px; }
-    .footer__brand-block { grid-column: 1 / -1; margin-bottom: 8px; }
-}
-@media (min-width: 1024px) {
-    .navbar__menu { display: flex; }
-    .navbar__toggle { display: none; }
-    .footer__grid { grid-template-columns: 1.6fr 1fr 1fr 1.2fr; gap: 40px; }
-    .footer__brand-block { grid-column: auto; margin-bottom: 0; }
-}
-@media (max-width: 1023px) {
-    .navbar__actions .btn { display: none; }
-}
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; } }
-    </style>
+    <link rel="stylesheet" href="public/css/privacy-policy.css">
 </head>
 <body>
 
     <!-- ========== NAVIGATION ========== -->
     <header class="navbar" data-js="navbar">
         <div class="container navbar__inner">
-            <a href="index.html" class="navbar__brand">
+            <a href="index.php" class="navbar__brand">
                 <span class="navbar__brand-icon">
                     <img src="logo.png" alt="Bhudev Sim Store Logo" class="navbar__logo">
                 </span>
@@ -248,16 +25,16 @@ body.menu-open .mobile-menu { transform: translateX(0); }
             </a>
 
             <nav class="navbar__menu">
-                <a href="index.html" class="navbar__link">Home</a>
-                <a href="premium-numbers.html" class="navbar__link">Premium Numbers</a>
-                <a href="filter-numbers.html" class="navbar__link">Filter Numbers</a>
-                <a href="about-us.html" class="navbar__link">About Us</a>
-                <a href="contact-us.html" class="navbar__link">Contact Us</a>
-                <a href="privacy-policy.html" class="navbar__link navbar__link--active">Privacy Policy</a>
+                <a href="index.php" class="navbar__link">Home</a>
+                <a href="premium-numbers.php" class="navbar__link">Premium Numbers</a>
+                <a href="filter-numbers.php" class="navbar__link">Filter Numbers</a>
+                <a href="about-us.php" class="navbar__link">About Us</a>
+                <a href="contact-us.php" class="navbar__link">Contact Us</a>
+                <a href="privacy-policy.php" class="navbar__link navbar__link--active">Privacy Policy</a>
             </nav>
 
             <div class="navbar__actions">
-                <a href="premium-numbers.html" class="btn btn--gold btn--sm">
+                <a href="premium-numbers.php" class="btn btn--gold btn--sm">
                     <span class="iconify" data-icon="mdi:crown"></span>
                     Browse Numbers
                 </a>
@@ -280,27 +57,27 @@ body.menu-open .mobile-menu { transform: translateX(0); }
             </button>
         </div>
         <nav class="mobile-menu__nav">
-            <a href="index.html" class="mobile-menu__link">
+            <a href="index.php" class="mobile-menu__link">
                 <span class="iconify" data-icon="mdi:home"></span> Home
             </a>
-            <a href="premium-numbers.html" class="mobile-menu__link">
+            <a href="premium-numbers.php" class="mobile-menu__link">
                 <span class="iconify" data-icon="mdi:crown"></span> Premium Numbers
             </a>
-            <a href="filter-numbers.html" class="mobile-menu__link">
+            <a href="filter-numbers.php" class="mobile-menu__link">
                 <span class="iconify" data-icon="mdi:filter-variant"></span> Filter Numbers
             </a>
-            <a href="about-us.html" class="mobile-menu__link">
+            <a href="about-us.php" class="mobile-menu__link">
                 <span class="iconify" data-icon="mdi:information"></span> About Us
             </a>
-            <a href="contact-us.html" class="mobile-menu__link">
+            <a href="contact-us.php" class="mobile-menu__link">
                 <span class="iconify" data-icon="mdi:email"></span> Contact Us
             </a>
-            <a href="privacy-policy.html" class="mobile-menu__link mobile-menu__link--active">
+            <a href="privacy-policy.php" class="mobile-menu__link mobile-menu__link--active">
                 <span class="iconify" data-icon="mdi:shield-check"></span> Privacy Policy
             </a>
         </nav>
         <div class="mobile-menu__cta">
-            <a href="premium-numbers.html" class="btn btn--gold" style="width:100%; justify-content:center;">
+            <a href="premium-numbers.php" class="btn btn--gold" style="width:100%; justify-content:center;">
                 <span class="iconify" data-icon="mdi:crown"></span> Browse Numbers
             </a>
         </div>
@@ -535,7 +312,7 @@ body.menu-open .mobile-menu { transform: translateX(0); }
         <div class="container">
             <div class="footer__grid">
                 <div class="footer__brand-block">
-                    <a href="index.html" class="navbar__brand">
+                    <a href="index.php" class="navbar__brand">
                         <span class="navbar__brand-icon">
                             <img src="logo.png" alt="Bhudev Sim Store Logo" class="navbar__logo">
                         </span>
@@ -552,20 +329,20 @@ body.menu-open .mobile-menu { transform: translateX(0); }
                 <div>
                     <h4 class="footer__heading">Quick Links</h4>
                     <ul class="footer__list">
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="premium-numbers.html">Premium Numbers</a></li>
-                        <li><a href="filter-numbers.html">Filter Numbers</a></li>
-                        <li><a href="about-us.html">About Us</a></li>
-                        <li><a href="contact-us.html">Contact Us</a></li>
+                        <li><a href="index.php">Home</a></li>
+                        <li><a href="premium-numbers.php">Premium Numbers</a></li>
+                        <li><a href="filter-numbers.php">Filter Numbers</a></li>
+                        <li><a href="about-us.php">About Us</a></li>
+                        <li><a href="contact-us.php">Contact Us</a></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="footer__heading">Legal</h4>
                     <ul class="footer__list">
-                        <li><a href="privacy-policy.html">Privacy Policy</a></li>
-                        <li><a href="privacy-policy.html">Shipping & Delivery</a></li>
-                        <li><a href="privacy-policy.html">Refund & Cancellation</a></li>
-                        <li><a href="privacy-policy.html">Terms of Service</a></li>
+                        <li><a href="privacy-policy.php">Privacy Policy</a></li>
+                        <li><a href="privacy-policy.php">Shipping & Delivery</a></li>
+                        <li><a href="privacy-policy.php">Refund & Cancellation</a></li>
+                        <li><a href="privacy-policy.php">Terms of Service</a></li>
                     </ul>
                 </div>
                 <div>
